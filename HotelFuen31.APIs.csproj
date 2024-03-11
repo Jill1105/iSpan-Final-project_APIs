@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Jill\" />
     <Folder Include="StaticFiles\Jill\" />
   </ItemGroup>
 

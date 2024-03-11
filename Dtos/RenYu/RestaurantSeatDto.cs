@@ -1,4 +1,4 @@
-﻿namespace HotelFuen31.APIs.Models.Dtos
+﻿namespace HotelFuen31.APIs.Dtos.RenYu
 {
     public class RestaurantSeatDto
     {

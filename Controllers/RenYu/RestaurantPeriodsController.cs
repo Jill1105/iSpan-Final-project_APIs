@@ -1,4 +1,4 @@
-﻿using HotelFuen31.APIs.Models.Dtos;
+﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
