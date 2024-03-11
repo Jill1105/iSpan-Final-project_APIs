@@ -8,12 +8,86 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class AppDbContext : DbContext
 {
+    public AppDbContext()
+    {
+    }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
     }
 
+    public virtual DbSet<Authorization> Authorizations { get; set; }
+
+    public virtual DbSet<BusRoute> BusRoutes { get; set; }
+
+    public virtual DbSet<BusTracker> BusTrackers { get; set; }
+
+    public virtual DbSet<CarMaintenance> CarMaintenances { get; set; }
+
+    public virtual DbSet<CarManagement> CarManagements { get; set; }
+
+    public virtual DbSet<CarPrice> CarPrices { get; set; }
+
+    public virtual DbSet<CarRentCartItem> CarRentCartItems { get; set; }
+
+    public virtual DbSet<CarRentOrder> CarRentOrders { get; set; }
+
+    public virtual DbSet<CarRentOrderItem> CarRentOrderItems { get; set; }
+
+    public virtual DbSet<CarResponsible> CarResponsibles { get; set; }
+
+    public virtual DbSet<CarTaxiCartItem> CarTaxiCartItems { get; set; }
+
+    public virtual DbSet<CarTaxiOrder> CarTaxiOrders { get; set; }
+
+    public virtual DbSet<CarTaxiOrderItem> CarTaxiOrderItems { get; set; }
+
+    public virtual DbSet<CartRoomItem> CartRoomItems { get; set; }
+
+    public virtual DbSet<Employee> Employees { get; set; }
+
+    public virtual DbSet<EmployeeRole> EmployeeRoles { get; set; }
+
+    public virtual DbSet<HallDishCategory> HallDishCategories { get; set; }
+
+    public virtual DbSet<HallItem> HallItems { get; set; }
+
+    public virtual DbSet<HallLog> HallLogs { get; set; }
+
+    public virtual DbSet<HallMenu> HallMenus { get; set; }
+
+    public virtual DbSet<HallMenuSchedule> HallMenuSchedules { get; set; }
+
+    public virtual DbSet<HallOrderItem> HallOrderItems { get; set; }
+
+    public virtual DbSet<HallOrderVw> HallOrderVws { get; set; }
+
     public virtual DbSet<Member> Members { get; set; }
+
+    public virtual DbSet<MemberLevel> MemberLevels { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
+
+    public virtual DbSet<Reservation> Reservations { get; set; }
+
+    public virtual DbSet<ReservationAppointmentTimePeriod> ReservationAppointmentTimePeriods { get; set; }
+
+    public virtual DbSet<ReservationItem> ReservationItems { get; set; }
+
+    public virtual DbSet<ReservationRoom> ReservationRooms { get; set; }
+
+    public virtual DbSet<ReservationRoomStatus> ReservationRoomStatuses { get; set; }
+
+    public virtual DbSet<ReservationRoomType> ReservationRoomTypes { get; set; }
+
+    public virtual DbSet<ReservationServiceDetail> ReservationServiceDetails { get; set; }
+
+    public virtual DbSet<ReservationServicesType> ReservationServicesTypes { get; set; }
+
+    public virtual DbSet<ReservationStatus> ReservationStatuses { get; set; }
+
+    public virtual DbSet<ReservationTotalPriceView> ReservationTotalPriceViews { get; set; }
 
     public virtual DbSet<RestaurantCustomer> RestaurantCustomers { get; set; }
 
@@ -25,8 +99,448 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<RestaurantStatus> RestaurantStatuses { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<RoleAuthorization> RoleAuthorizations { get; set; }
+
+    public virtual DbSet<Room> Rooms { get; set; }
+
+    public virtual DbSet<RoomBooking> RoomBookings { get; set; }
+
+    public virtual DbSet<RoomCalendar> RoomCalendars { get; set; }
+
+    public virtual DbSet<RoomDaysPrice> RoomDaysPrices { get; set; }
+
+    public virtual DbSet<RoomStatusSetting> RoomStatusSettings { get; set; }
+
+    public virtual DbSet<RoomType> RoomTypes { get; set; }
+
+    public virtual DbSet<ScdsOq> ScdsOqs { get; set; }
+
+    public virtual DbSet<ScdsPe> ScdsPes { get; set; }
+
+    public virtual DbSet<ScdsPr> ScdsPrs { get; set; }
+
+    public virtual DbSet<ScdsTq> ScdsTqs { get; set; }
+
+    public virtual DbSet<ShoppingCartDiscount> ShoppingCartDiscounts { get; set; }
+
+    public virtual DbSet<ShoppingCartDiscountsPriceEqual> ShoppingCartDiscountsPriceEquals { get; set; }
+
+    public virtual DbSet<ShoppingCartDiscountsPriceReduce> ShoppingCartDiscountsPriceReduces { get; set; }
+
+    public virtual DbSet<ShoppingCartDiscountsTheQuantity> ShoppingCartDiscountsTheQuantities { get; set; }
+
+    public virtual DbSet<ShoppingCartDiscountsTotalQuantity> ShoppingCartDiscountsTotalQuantities { get; set; }
+
+    public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Authorization>(entity =>
+        {
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(16);
+        });
+
+        modelBuilder.Entity<BusRoute>(entity =>
+        {
+            entity.HasIndex(e => new { e.StarterStop, e.DestinationStop }, "UC_StarterDestination").IsUnique();
+
+            entity.Property(e => e.DestinationLatitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.DestinationLongtitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.DestinationStop)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.StarterLatitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.StarterLongtitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.StarterStop)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<BusTracker>(entity =>
+        {
+            entity.Property(e => e.Status)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<CarMaintenance>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Maintenance");
+
+            entity.ToTable("CarMaintenance");
+
+            entity.Property(e => e.Action)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Expense).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarMaintenances)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarMaintenance_CarManagements");
+
+            entity.HasOne(d => d.Emp).WithMany(p => p.CarMaintenances)
+                .HasForeignKey(d => d.EmpId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarMaintenance_Employee");
+        });
+
+        modelBuilder.Entity<CarManagement>(entity =>
+        {
+            entity.Property(e => e.Brand)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.CarIdentity)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.CarModel)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Goal)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.ImgUrl)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<CarPrice>(entity =>
+        {
+            entity.HasIndex(e => new { e.LowDistance, e.HighDistance }, "UC_Distance").IsUnique();
+
+            entity.Property(e => e.HighDistance)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.LowDistance)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
+        });
+
+        modelBuilder.Entity<CarRentCartItem>(entity =>
+        {
+            entity.HasIndex(e => new { e.CarId, e.StartTime, e.EndTime, e.MemberId }, "UC_Member_StartEnd_CarId").IsUnique();
+
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarRentCartItems)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarRentCartItems_CarManagements");
+
+            entity.HasOne(d => d.Emp).WithMany(p => p.CarRentCartItems)
+                .HasForeignKey(d => d.EmpId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarRentCartItems_Employee");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.CarRentCartItems)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarRentCartItems_Members");
+        });
+
+        modelBuilder.Entity<CarRentOrder>(entity =>
+        {
+            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
+        });
+
+        modelBuilder.Entity<CarRentOrderItem>(entity =>
+        {
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarRentOrderItems)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarRentOrderItems_CarManagements");
+
+            entity.HasOne(d => d.Emp).WithMany(p => p.CarRentOrderItems)
+                .HasForeignKey(d => d.EmpId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarRentOrderItems_Employee");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.CarRentOrderItems)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarRentOrderItems_Members");
+        });
+
+        modelBuilder.Entity<CarResponsible>(entity =>
+        {
+            entity.ToTable("CarResponsible");
+
+            entity.HasIndex(e => new { e.CarId, e.EmpId }, "UC_EmpCar").IsUnique();
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarResponsibles)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarResponsible_CarId");
+
+            entity.HasOne(d => d.Emp).WithMany(p => p.CarResponsibles)
+                .HasForeignKey(d => d.EmpId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarResponsible_EmpId");
+        });
+
+        modelBuilder.Entity<CarTaxiCartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_CarCartItems");
+
+            entity.Property(e => e.DestinationLatitude)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DestinationLongtitude)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.PickUpLatitude)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.PickUpLongtitude)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarTaxiCartItems)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiCartItems_CarManagements");
+
+            entity.HasOne(d => d.Emp).WithMany(p => p.CarTaxiCartItems)
+                .HasForeignKey(d => d.EmpId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiCartItems_Employee");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.CarTaxiCartItems)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiCartItems_Members");
+        });
+
+        modelBuilder.Entity<CarTaxiOrder>(entity =>
+        {
+            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
+        });
+
+        modelBuilder.Entity<CarTaxiOrderItem>(entity =>
+        {
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarTaxiOrderItems)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiOrderItems_CarManagements");
+
+            entity.HasOne(d => d.Emp).WithMany(p => p.CarTaxiOrderItems)
+                .HasForeignKey(d => d.EmpId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiOrderItems_Employee");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.CarTaxiOrderItems)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiOrderItems_Members");
+        });
+
+        modelBuilder.Entity<CartRoomItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_RoomCarts");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Phone)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Room).WithMany(p => p.CartRoomItems)
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoomCarts_RoomId");
+        });
+
+        modelBuilder.Entity<Employee>(entity =>
+        {
+            entity.ToTable("Employee");
+
+            entity.Property(e => e.Address)
+                .IsRequired()
+                .HasMaxLength(1024);
+            entity.Property(e => e.BloodType)
+                .IsRequired()
+                .HasMaxLength(8)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasMaxLength(128);
+            entity.Property(e => e.IdentityNumber)
+                .IsRequired()
+                .HasMaxLength(16)
+                .IsUnicode(false);
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(32);
+            entity.Property(e => e.Password)
+                .IsRequired()
+                .HasMaxLength(256)
+                .IsUnicode(false);
+            entity.Property(e => e.Phone)
+                .IsRequired()
+                .HasMaxLength(16)
+                .IsUnicode(false);
+            entity.Property(e => e.Salt)
+                .IsRequired()
+                .HasMaxLength(64)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<EmployeeRole>(entity =>
+        {
+            entity.HasIndex(e => new { e.EmployeeId, e.RoleId }, "IX_EmployeeRoles_UK").IsUnique();
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.EmployeeRoles)
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EmployeeRoles_EmployeeId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.EmployeeRoles)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EmployeeRoles_RoleId");
+        });
+
+        modelBuilder.Entity<HallDishCategory>(entity =>
+        {
+            entity.ToTable("HallDishCategory");
+
+            entity.Property(e => e.Category)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<HallItem>(entity =>
+        {
+            entity.Property(e => e.Capacity)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(256);
+            entity.Property(e => e.HallName)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.MaxRent).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.MinRent).HasColumnType("decimal(18, 0)");
+        });
+
+        modelBuilder.Entity<HallLog>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_HallLogs_1");
+
+            entity.Property(e => e.CellPhone)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasMaxLength(256);
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Hall).WithMany(p => p.HallLogs)
+                .HasForeignKey(d => d.HallId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HallLogs_HallItems");
+        });
+
+        modelBuilder.Entity<HallMenu>(entity =>
+        {
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(256);
+            entity.Property(e => e.DishName)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.HallMenus)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HallMenus_HallDishCategory");
+        });
+
+        modelBuilder.Entity<HallMenuSchedule>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+            entity.HasOne(d => d.HallMenu).WithMany()
+                .HasForeignKey(d => d.HallMenuId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HallMenuSchedules_HallMenus1");
+
+            entity.HasOne(d => d.HallOrderItem).WithMany()
+                .HasForeignKey(d => d.HallOrderItemId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HallMenuSchedules_HallOrderItem1");
+        });
+
+        modelBuilder.Entity<HallOrderItem>(entity =>
+        {
+            entity.ToTable("HallOrderItem");
+
+            entity.Property(e => e.SubTotal).HasComputedColumnSql("([Price]*[Qty])", false);
+
+            entity.HasOne(d => d.HallLog).WithMany(p => p.HallOrderItems)
+                .HasForeignKey(d => d.HallLogId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HallOrderItem_HallLogs");
+        });
+
+        modelBuilder.Entity<HallOrderVw>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("HallOrderVw");
+
+            entity.Property(e => e.CellPhone)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasMaxLength(256);
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.ProductName)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Member>(entity =>
         {
             entity.HasIndex(e => e.IdentityNumber, "IX_Members").IsUnique();
@@ -53,6 +567,202 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(16)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.Level).WithMany(p => p.Members)
+                .HasForeignKey(d => d.LevelId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Members_LevelId");
+        });
+
+        modelBuilder.Entity<MemberLevel>(entity =>
+        {
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(16);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Notification");
+
+            entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(10);
+
+            entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Notifications_MemberLevels");
+        });
+
+        modelBuilder.Entity<Reservation>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Reservation_PK");
+
+            entity.ToTable("Reservation");
+
+            entity.Property(e => e.ClientId).HasColumnName("Client_id");
+            entity.Property(e => e.CreateTime).HasColumnType("datetime");
+            entity.Property(e => e.ReservationStatusId).HasColumnName("Reservation_Status_id");
+
+            entity.HasOne(d => d.ReservationStatus).WithMany(p => p.Reservations)
+                .HasForeignKey(d => d.ReservationStatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reservation_Reservation_Status");
+        });
+
+        modelBuilder.Entity<ReservationAppointmentTimePeriod>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Appointment_time_period_PK");
+
+            entity.ToTable("Reservation_Appointment_Time_Period");
+
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(e => e.TimePeriod)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("Time_Period");
+        });
+
+        modelBuilder.Entity<ReservationItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Reservation_Item_PK");
+
+            entity.ToTable("Reservation_Item");
+
+            entity.Property(e => e.AppointmentDate).HasColumnName("Appointment_date");
+            entity.Property(e => e.AppointmentTimePeriodId).HasColumnName("Appointment_time_period_id");
+            entity.Property(e => e.ReservationId).HasColumnName("Reservation_id");
+            entity.Property(e => e.RoomId).HasColumnName("Room_id");
+            entity.Property(e => e.RoomStatusId).HasColumnName("Room_status_id");
+            entity.Property(e => e.ServiceDetailId).HasColumnName("Service_detail_id");
+            entity.Property(e => e.TotalDuration).HasColumnName("Total_Duration");
+
+            entity.HasOne(d => d.AppointmentTimePeriod).WithMany(p => p.ReservationItems)
+                .HasForeignKey(d => d.AppointmentTimePeriodId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reservation_Item_Reservation_Appointment_Time_Period");
+
+            entity.HasOne(d => d.Reservation).WithMany(p => p.ReservationItems)
+                .HasForeignKey(d => d.ReservationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reservation_Item_Reservation");
+
+            entity.HasOne(d => d.Room).WithMany(p => p.ReservationItems)
+                .HasForeignKey(d => d.RoomId)
+                .HasConstraintName("FK_Reservation_Item_Reservation_Room");
+
+            entity.HasOne(d => d.RoomStatus).WithMany(p => p.ReservationItems)
+                .HasForeignKey(d => d.RoomStatusId)
+                .HasConstraintName("FK_Reservation_Item_Reservation_Room_Status");
+
+            entity.HasOne(d => d.ServiceDetail).WithMany(p => p.ReservationItems)
+                .HasForeignKey(d => d.ServiceDetailId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reservation_Item_Reservation_Service_detail");
+        });
+
+        modelBuilder.Entity<ReservationRoom>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Room_PK");
+
+            entity.ToTable("Reservation_Room");
+
+            entity.Property(e => e.RoomName)
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnName("Room_Name");
+            entity.Property(e => e.RoomTypeId).HasColumnName("Room_Type_id");
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.ReservationRooms)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reservation_Room_Reservation_Room_Type");
+        });
+
+        modelBuilder.Entity<ReservationRoomStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Room_Status_PK");
+
+            entity.ToTable("Reservation_Room_Status");
+
+            entity.Property(e => e.RoomStatusName)
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnName("Room_Status_Name");
+        });
+
+        modelBuilder.Entity<ReservationRoomType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Room_Type_PK");
+
+            entity.ToTable("Reservation_Room_Type");
+
+            entity.Property(e => e.RoomTypeName)
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnName("Room_Type_Name");
+        });
+
+        modelBuilder.Entity<ReservationServiceDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Service_detail_PK");
+
+            entity.ToTable("Reservation_Service_detail");
+
+            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.ServiceDetailName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("Service_detail_Name");
+            entity.Property(e => e.ServicesTypeId).HasColumnName("Services_Type_id");
+
+            entity.HasOne(d => d.ServicesType).WithMany(p => p.ReservationServiceDetails)
+                .HasForeignKey(d => d.ServicesTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reservation_Service_detail_Reservation_Services_Type");
+        });
+
+        modelBuilder.Entity<ReservationServicesType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Services_Type_PK");
+
+            entity.ToTable("Reservation_Services_Type");
+
+            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.ServicesTypeImageUrl)
+                .HasMaxLength(200)
+                .HasColumnName("Services_Type_ImageURL");
+            entity.Property(e => e.ServicesTypeName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("Services_Type_Name");
+        });
+
+        modelBuilder.Entity<ReservationStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Reservation_Status_PK");
+
+            entity.ToTable("Reservation_Status");
+
+            entity.Property(e => e.StatusName)
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnName("Status_Name");
+        });
+
+        modelBuilder.Entity<ReservationTotalPriceView>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Reservation_TotalPriceView");
+
+            entity.Property(e => e.ClientId).HasColumnName("Client_id");
+            entity.Property(e => e.CreateTime).HasColumnType("datetime");
+            entity.Property(e => e.ReservationStatusId).HasColumnName("Reservation_Status_id");
         });
 
         modelBuilder.Entity<RestaurantCustomer>(entity =>
@@ -125,6 +835,236 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(50);
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.Property(e => e.RoleName)
+                .IsRequired()
+                .HasMaxLength(16);
+        });
+
+        modelBuilder.Entity<RoleAuthorization>(entity =>
+        {
+            entity.HasIndex(e => new { e.AuthorizationId, e.RoleId }, "IX_RoleAuthorizations_UK").IsUnique();
+
+            entity.HasOne(d => d.Authorization).WithMany(p => p.RoleAuthorizations)
+                .HasForeignKey(d => d.AuthorizationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoleAuthorizations_AuthorizationId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RoleAuthorizations)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoleAuthorizations_RoleId");
+        });
+
+        modelBuilder.Entity<Room>(entity =>
+        {
+            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__328639398538E86F");
+
+            entity.Property(e => e.RoomId).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<RoomBooking>(entity =>
+        {
+            entity.HasKey(e => e.BookingId).HasName("PK__Bookings__73951AED2B45D90B");
+
+            entity.Property(e => e.BookingCancelDate).HasColumnType("datetime");
+            entity.Property(e => e.BookingDate).HasColumnType("datetime");
+            entity.Property(e => e.CheckInDate).HasColumnType("datetime");
+            entity.Property(e => e.CheckOutDate).HasColumnType("datetime");
+            entity.Property(e => e.Phone)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Remark).IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomCalendar>(entity =>
+        {
+            entity.HasKey(e => e.Date).HasName("PK__Calendar__77387D0666F3178B");
+
+            entity.ToTable("RoomCalendar");
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.IsHoliday)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Week)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomDaysPrice>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("RoomDaysPrice");
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.IsHoliday)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Price).HasColumnName("PRICE");
+            entity.Property(e => e.TypeName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Week)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomStatusSetting>(entity =>
+        {
+            entity.HasKey(e => e.StatusId).HasName("PK__StatusSe__C8EE20633ED3749B");
+
+            entity.ToTable("RoomStatusSetting");
+
+            entity.Property(e => e.StatusId).ValueGeneratedNever();
+            entity.Property(e => e.StatusName)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomType>(entity =>
+        {
+            entity.HasKey(e => e.RoomTypeId).HasName("PK__RoomType__BCC8963138C8FFE4");
+
+            entity.Property(e => e.BedType)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .IsUnicode(false);
+            entity.Property(e => e.ImageUrl)
+                .IsRequired()
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ImageURL");
+            entity.Property(e => e.TypeName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<ScdsOq>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_OQ");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.Discount).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ScdsPe>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_PE");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.MainProductId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("MainProductID");
+            entity.Property(e => e.MatchProductId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("MatchProductID");
+        });
+
+        modelBuilder.Entity<ScdsPr>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_PR");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ScdsTq>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_TQ");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.Discount).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ShoppingCartDiscount>(entity =>
+        {
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ShoppingCartDiscountsPriceEqual>(entity =>
+        {
+            entity.ToTable("ShoppingCartDiscounts_PriceEquals");
+
+            entity.Property(e => e.MainProductId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("MainProductID");
+            entity.Property(e => e.MatchProductId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("MatchProductID");
+        });
+
+        modelBuilder.Entity<ShoppingCartDiscountsPriceReduce>(entity =>
+        {
+            entity.ToTable("ShoppingCartDiscounts_PriceReduce");
+        });
+
+        modelBuilder.Entity<ShoppingCartDiscountsTheQuantity>(entity =>
+        {
+            entity.ToTable("ShoppingCartDiscounts_TheQuantities");
+
+            entity.Property(e => e.Discount).HasColumnType("decimal(3, 2)");
+        });
+
+        modelBuilder.Entity<ShoppingCartDiscountsTotalQuantity>(entity =>
+        {
+            entity.ToTable("ShoppingCartDiscounts_TotalQuantities");
+
+            entity.Property(e => e.Discount).HasColumnType("decimal(3, 2)");
+        });
+
+        modelBuilder.Entity<ShoppingCartOrder>(entity =>
+        {
+            entity.Property(e => e.Id).HasMaxLength(50);
+            entity.Property(e => e.MemberId).HasMaxLength(50);
+            entity.Property(e => e.OrderId)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.States).HasColumnName("states");
+        });
+
+        OnModelCreatingGeneratedProcedures(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 

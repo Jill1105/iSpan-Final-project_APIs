@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class Member
+public partial class Employee
 {
     public int Id { get; set; }
 
@@ -15,15 +15,17 @@ public partial class Member
 
     public string Password { get; set; }
 
-    public bool IsConfirmed { get; set; }
+    public string Salt { get; set; }
 
-    public string ConfirmCode { get; set; }
+    public DateTime HireDate { get; set; }
 
-    public DateTime RegistrationDate { get; set; }
+    public DateTime? LeaveDate { get; set; }
+
+    public string BloodType { get; set; }
 
     public string IdentityNumber { get; set; }
 
-    public DateTime? BirthDay { get; set; }
+    public DateTime Birthday { get; set; }
 
     public bool Gender { get; set; }
 
@@ -31,17 +33,17 @@ public partial class Member
 
     public string Address { get; set; }
 
-    public bool Ban { get; set; }
-
-    public int LevelId { get; set; }
+    public virtual ICollection<CarMaintenance> CarMaintenances { get; set; } = new List<CarMaintenance>();
 
     public virtual ICollection<CarRentCartItem> CarRentCartItems { get; set; } = new List<CarRentCartItem>();
 
     public virtual ICollection<CarRentOrderItem> CarRentOrderItems { get; set; } = new List<CarRentOrderItem>();
 
+    public virtual ICollection<CarResponsible> CarResponsibles { get; set; } = new List<CarResponsible>();
+
     public virtual ICollection<CarTaxiCartItem> CarTaxiCartItems { get; set; } = new List<CarTaxiCartItem>();
 
     public virtual ICollection<CarTaxiOrderItem> CarTaxiOrderItems { get; set; } = new List<CarTaxiOrderItem>();
 
-    public virtual MemberLevel Level { get; set; }
+    public virtual ICollection<EmployeeRole> EmployeeRoles { get; set; } = new List<EmployeeRole>();
 }
