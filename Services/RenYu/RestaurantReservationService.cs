@@ -1,5 +1,5 @@
-﻿using HotelFuen31.APIs.Models;
-using HotelFuen31.APIs.Models.Dtos;
+﻿using HotelFuen31.APIs.Dtos.RenYu;
+using HotelFuen31.APIs.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelFuen31.APIs.Services.RenYu

@@ -1,6 +1,6 @@
 ﻿using HotelFuen31.APIs.Dto.Jill;
 using HotelFuen31.APIs.Models;
-using HotelFuen31.APIs.Models.Dtos;
+using HotelFuen31.APIs.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelFuen31.APIs.Services.Jill
