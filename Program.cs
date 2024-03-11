@@ -18,6 +18,8 @@ namespace HotelFuen31.APIs
             });
 
 
+            builder.Services.AddScoped<SendEmailService>();
+
             builder.Services.AddScoped<HallItemService>();
 
             builder.Services.AddScoped<RestaurantReservationService>();
