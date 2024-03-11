@@ -1,4 +1,5 @@
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,8 @@ namespace HotelFuen31.APIs
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
             });
 
-            
+
+            builder.Services.AddScoped<HallItemService>();
 
             builder.Services.AddScoped<RestaurantReservationService>();
             builder.Services.AddScoped<RestaurantSeatService>();
