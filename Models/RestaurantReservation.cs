@@ -11,7 +11,7 @@ public partial class RestaurantReservation
 
     public int CustomerId { get; set; }
 
-    public DateOnly Date { get; set; }
+    public DateTime Date { get; set; }
 
     public int Counts { get; set; }
 
