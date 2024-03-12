@@ -1,7 +1,9 @@
+using HotelFuen31.APIs.Controllers.RenYu;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HotelFuen31.APIs
 {
@@ -17,8 +19,11 @@ namespace HotelFuen31.APIs
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
             });
 
+            builder.Services.AddSingleton<WebSocketController>();
 
             builder.Services.AddScoped<SendEmailService>();
+            builder.Services.AddScoped<NotificationService>();
+
 
             builder.Services.AddScoped<HallItemService>();
 
@@ -48,6 +53,11 @@ namespace HotelFuen31.APIs
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseWebSockets(new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(60)
+            });
 
 
             app.MapControllers();

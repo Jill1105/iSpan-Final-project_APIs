@@ -36,7 +36,7 @@ namespace HotelFuen31.APIs.Services.RenYu
             }
             catch (Exception ex) 
             {
-                
+               
             }
            
         }
