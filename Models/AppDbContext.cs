@@ -8,10 +8,6 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class AppDbContext : DbContext
 {
-    public AppDbContext()
-    {
-    }
-
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -134,10 +130,6 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<ShoppingCartDiscountsTotalQuantity> ShoppingCartDiscountsTotalQuantities { get; set; }
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -556,6 +548,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Key).HasMaxLength(256);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(32);
@@ -592,7 +585,6 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.LevelId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_MemberLevels");
         });
 
@@ -633,7 +625,9 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Reservation_Item");
 
-            entity.Property(e => e.AppointmentDate).HasColumnName("Appointment_date");
+            entity.Property(e => e.AppointmentDate)
+                .HasColumnType("date")
+                .HasColumnName("Appointment_date");
             entity.Property(e => e.AppointmentTimePeriodId).HasColumnName("Appointment_time_period_id");
             entity.Property(e => e.ReservationId).HasColumnName("Reservation_id");
             entity.Property(e => e.RoomId).HasColumnName("Room_id");
@@ -792,6 +786,7 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK_Reservations");
 
             entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.PeriodId).HasColumnName("Period_id");
             entity.Property(e => e.SeatId).HasColumnName("Seat_Id");
             entity.Property(e => e.StatusId).HasColumnName("Status_Id");
@@ -885,6 +880,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("RoomCalendar");
 
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(30)
                 .IsUnicode(false);
@@ -903,6 +899,7 @@ public partial class AppDbContext : DbContext
                 .HasNoKey()
                 .ToView("RoomDaysPrice");
 
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(30)
                 .IsUnicode(false);

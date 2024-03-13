@@ -7,7 +7,7 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class RoomCalendar
 {
-    public DateOnly Date { get; set; }
+    public DateTime Date { get; set; }
 
     public string Week { get; set; }
 
