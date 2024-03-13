@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -16,6 +17,17 @@ namespace HotelFuen31.APIs
 
             // Add services to the container.
             builder.Services.AddSignalR();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.SetIsOriginAllowed(origin => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
@@ -46,16 +58,15 @@ namespace HotelFuen31.APIs
                 app.UseSwaggerUI();
             }
 
-            app.UseCors(option => 
-                option.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader());
+            app.UseCors();
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseFileServer();
 
             app.MapHub<MessageHub>("/messageHub");
 
