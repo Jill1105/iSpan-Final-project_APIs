@@ -1,4 +1,5 @@
 using HotelFuen31.APIs.Controllers.RenYu;
+using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
@@ -14,12 +15,12 @@ namespace HotelFuen31.APIs
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSignalR();
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
             });
-
-            builder.Services.AddSingleton<WebSocketController>();
 
             builder.Services.AddScoped<SendEmailService>();
             builder.Services.AddScoped<NotificationService>();
@@ -54,13 +55,9 @@ namespace HotelFuen31.APIs
 
             app.UseAuthorization();
 
-            app.UseWebSockets(new WebSocketOptions
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(60)
-            });
-
-
             app.MapControllers();
+
+            app.MapHub<MessageHub>("/messageHub");
 
             app.Run();
         }

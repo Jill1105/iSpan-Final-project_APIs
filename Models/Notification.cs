@@ -17,9 +17,7 @@ public partial class Notification
 
     public string Image { get; set; }
 
-    public DateTime PushDate { get; set; }
-
-    public int LevelId { get; set; }
+    public int? LevelId { get; set; }
 
     public virtual MemberLevel Level { get; set; }
 }

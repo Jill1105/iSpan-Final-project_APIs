@@ -57,6 +57,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<HallOrderItem> HallOrderItems { get; set; }
 
+    public virtual DbSet<HallOrderVw> HallOrderVws { get; set; }
+
     public virtual DbSet<Member> Members { get; set; }
 
     public virtual DbSet<MemberLevel> MemberLevels { get; set; }
@@ -81,6 +83,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ReservationStatus> ReservationStatuses { get; set; }
 
+    public virtual DbSet<ReservationTotalPriceView> ReservationTotalPriceViews { get; set; }
+
     public virtual DbSet<RestaurantCustomer> RestaurantCustomers { get; set; }
 
     public virtual DbSet<RestaurantPeriod> RestaurantPeriods { get; set; }
@@ -101,9 +105,19 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<RoomCalendar> RoomCalendars { get; set; }
 
+    public virtual DbSet<RoomDaysPrice> RoomDaysPrices { get; set; }
+
     public virtual DbSet<RoomStatusSetting> RoomStatusSettings { get; set; }
 
     public virtual DbSet<RoomType> RoomTypes { get; set; }
+
+    public virtual DbSet<ScdsOq> ScdsOqs { get; set; }
+
+    public virtual DbSet<ScdsPe> ScdsPes { get; set; }
+
+    public virtual DbSet<ScdsPr> ScdsPrs { get; set; }
+
+    public virtual DbSet<ScdsTq> ScdsTqs { get; set; }
 
     public virtual DbSet<ShoppingCartDiscount> ShoppingCartDiscounts { get; set; }
 
@@ -496,6 +510,29 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("FK_HallOrderItem_HallLogs");
         });
 
+        modelBuilder.Entity<HallOrderVw>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("HallOrderVw");
+
+            entity.Property(e => e.CellPhone)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasMaxLength(256);
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.ProductName)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Member>(entity =>
         {
             entity.HasIndex(e => e.IdentityNumber, "IX_Members").IsUnique();
@@ -511,6 +548,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Key).HasMaxLength(256);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(32);
@@ -544,11 +582,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(10);
-            entity.Property(e => e.PushDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.LevelId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_MemberLevels");
         });
 
@@ -589,7 +625,9 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Reservation_Item");
 
-            entity.Property(e => e.AppointmentDate).HasColumnName("Appointment_date");
+            entity.Property(e => e.AppointmentDate)
+                .HasColumnType("date")
+                .HasColumnName("Appointment_date");
             entity.Property(e => e.AppointmentTimePeriodId).HasColumnName("Appointment_time_period_id");
             entity.Property(e => e.ReservationId).HasColumnName("Reservation_id");
             entity.Property(e => e.RoomId).HasColumnName("Room_id");
@@ -710,6 +748,17 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("Status_Name");
         });
 
+        modelBuilder.Entity<ReservationTotalPriceView>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Reservation_TotalPriceView");
+
+            entity.Property(e => e.ClientId).HasColumnName("Client_id");
+            entity.Property(e => e.CreateTime).HasColumnType("datetime");
+            entity.Property(e => e.ReservationStatusId).HasColumnName("Reservation_Status_id");
+        });
+
         modelBuilder.Entity<RestaurantCustomer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_Customers");
@@ -737,6 +786,7 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK_Reservations");
 
             entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.PeriodId).HasColumnName("Period_id");
             entity.Property(e => e.SeatId).HasColumnName("Seat_Id");
             entity.Property(e => e.StatusId).HasColumnName("Status_Id");
@@ -830,11 +880,36 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("RoomCalendar");
 
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.IsHoliday)
                 .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Week)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomDaysPrice>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("RoomDaysPrice");
+
+            entity.Property(e => e.Date).HasColumnType("date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.IsHoliday)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Price).HasColumnName("PRICE");
+            entity.Property(e => e.TypeName)
+                .IsRequired()
+                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Week)
                 .IsRequired()
@@ -875,6 +950,64 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<ScdsOq>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_OQ");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.Discount).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ScdsPe>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_PE");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.MainProductId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("MainProductID");
+            entity.Property(e => e.MatchProductId)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("MatchProductID");
+        });
+
+        modelBuilder.Entity<ScdsPr>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_PR");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ScdsTq>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("SCDs_TQ");
+
+            entity.Property(e => e.ActivityName).IsRequired();
+            entity.Property(e => e.Discount).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.FormName)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<ShoppingCartDiscount>(entity =>
@@ -928,6 +1061,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.States).HasColumnName("states");
         });
 
+        OnModelCreatingGeneratedProcedures(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 

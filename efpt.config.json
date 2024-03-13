@@ -222,13 +222,49 @@
       {
          "Name": "[dbo].[ShoppingCartOrders]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HallOrderVw]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[Reservation_TotalPriceView]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[RoomDaysPrice]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[SCDs_OQ]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[SCDs_PE]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[SCDs_PR]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[SCDs_TQ]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[usp_房間查詢]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[usp_計算訂房價格]",
+         "ObjectType": 1
       }
    ],
    "UiHint": "sparkle\\sql2024.dbHotel.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
-   "UseDateOnlyTimeOnly": true,
+   "UseDateOnlyTimeOnly": false,
    "UseDbContextSplitting": false,
    "UseDecimalDataAnnotationForSprocResult": true,
    "UseFluentApiOnly": true,

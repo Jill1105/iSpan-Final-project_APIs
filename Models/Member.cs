@@ -35,6 +35,8 @@ public partial class Member
 
     public int LevelId { get; set; }
 
+    public string Key { get; set; }
+
     public virtual ICollection<CarRentCartItem> CarRentCartItems { get; set; } = new List<CarRentCartItem>();
 
     public virtual ICollection<CarRentOrderItem> CarRentOrderItems { get; set; } = new List<CarRentOrderItem>();
