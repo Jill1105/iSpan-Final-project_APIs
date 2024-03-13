@@ -25,7 +25,7 @@ namespace HotelFuen31.APIs.Services.Jill
                     Description = h.Description,
                     Price = h.Price,
                     CategoryId = h.CategoryId,
-                    PhotoPath = "/StaticFiles/Jill" + h.PhotoPath,
+                    PhotoPath = "/StaticFiles/Jill/" + h.PhotoPath,
                     CategoryName = h.Category.Category,
                 });
 

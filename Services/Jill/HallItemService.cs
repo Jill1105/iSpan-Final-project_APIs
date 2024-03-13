@@ -25,7 +25,7 @@ namespace HotelFuen31.APIs.Services.Jill
                     Description = h.Description,
                     MinRent = h.MinRent,
                     MaxRent = h.MaxRent,
-                    PhotoPath = "/StaticFiles/Jill" + h.PhotoPath,
+                    PhotoPath =  h.PhotoPath,
                     HallStatus = h.HallStatus,
                 });
 
