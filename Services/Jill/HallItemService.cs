@@ -2,6 +2,7 @@
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace HotelFuen31.APIs.Services.Jill
 {
@@ -25,7 +26,7 @@ namespace HotelFuen31.APIs.Services.Jill
                     Description = h.Description,
                     MinRent = h.MinRent,
                     MaxRent = h.MaxRent,
-                    PhotoPath =  h.PhotoPath,
+                    PhotoPath = h.PhotoPath,
                     HallStatus = h.HallStatus,
                 });
 
