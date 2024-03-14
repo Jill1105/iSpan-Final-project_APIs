@@ -5,13 +5,11 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class RoomCalendar
+public partial class Cipher
 {
-    public DateTime Date { get; set; }
+    public int Id { get; set; }
 
-    public string Week { get; set; }
+    public int UserId { get; set; }
 
-    public string IsHoliday { get; set; }
-
-    public string Description { get; set; }
+    public string CipherString { get; set; }
 }

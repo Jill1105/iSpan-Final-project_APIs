@@ -13,7 +13,7 @@ public partial class ReservationItem
 
     public int ServiceDetailId { get; set; }
 
-    public DateOnly AppointmentDate { get; set; }
+    public DateTime AppointmentDate { get; set; }
 
     public int AppointmentTimePeriodId { get; set; }
 
