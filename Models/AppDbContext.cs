@@ -41,6 +41,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<CartRoomItem> CartRoomItems { get; set; }
 
+    public virtual DbSet<Cipher> Ciphers { get; set; }
+
     public virtual DbSet<Employee> Employees { get; set; }
 
     public virtual DbSet<EmployeeRole> EmployeeRoles { get; set; }
@@ -366,6 +368,14 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.RoomId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RoomCarts_RoomId");
+        });
+
+        modelBuilder.Entity<Cipher>(entity =>
+        {
+            entity.ToTable("cipher");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CipherString).HasColumnName("cipherString");
         });
 
         modelBuilder.Entity<Employee>(entity =>

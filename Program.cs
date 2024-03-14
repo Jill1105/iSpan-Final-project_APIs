@@ -1,11 +1,15 @@
+
 using HotelFuen31.APIs.Controllers.RenYu;
 using HotelFuen31.APIs.Hubs;
+using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 
 namespace HotelFuen31.APIs
 {
@@ -39,10 +43,16 @@ namespace HotelFuen31.APIs
 
 
             builder.Services.AddScoped<HallItemService>();
-
+            builder.Services.AddScoped<HallMenuService>();
             builder.Services.AddScoped<RestaurantReservationService>();
             builder.Services.AddScoped<RestaurantSeatService>();
             builder.Services.AddScoped<RestaurantPeriodService>();
+
+            builder.Services.AddScoped<IUser,UsersService>();
+            builder.Services.AddScoped<JwtService>();
+
+
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -63,6 +73,13 @@ namespace HotelFuen31.APIs
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            //ÀRºAÀÉ®×¦s©ñ¸ô®|
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")),
+                RequestPath = "/StaticFiles",
+            });
 
             app.MapControllers();
 
