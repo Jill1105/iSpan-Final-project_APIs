@@ -81,7 +81,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
             vms.ForEach(vm =>
             {
                 var pic = string.IsNullOrEmpty(vm.Picture) ? "noImage.png" : vm.Picture;
-                vm.Picture = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/images/chen/{pic}")}";
+                vm.Picture = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/Chen/{pic}")}";
             });
 
 

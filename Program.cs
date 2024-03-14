@@ -2,6 +2,7 @@ using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 namespace HotelFuen31.APIs
 {
@@ -49,6 +50,12 @@ namespace HotelFuen31.APIs
 
             app.UseAuthorization();
 
+            //靜態檔案存放路徑
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")),
+                RequestPath = "/StaticFiles",
+            });
 
             app.MapControllers();
 
