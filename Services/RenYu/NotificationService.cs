@@ -13,7 +13,7 @@ namespace HotelFuen31.APIs.Services.RenYu
             _context = context;
         }
 
-        public  IQueryable<NotificationDto> GetNotification()
+        public  IQueryable<NotificationDto> GetNotifications()
         {
             var dto = _context.Notifications
                 .AsNoTracking()

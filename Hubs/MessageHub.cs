@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using HotelFuen31.APIs.Dtos.RenYu;
+using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Services.RenYu;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
 namespace HotelFuen31.APIs.Hubs
@@ -6,10 +9,18 @@ namespace HotelFuen31.APIs.Hubs
     public class MessageHub : Hub<IMessageHub>
     {
         public static Dictionary<string, string> userInfoDict = new Dictionary<string, string>();
+        
+        private readonly NotificationService _service;
 
-        public async Task sendToAllConnection(List<string> message)
+        public MessageHub(NotificationService service)
         {
-            await Clients.All.sendToAllConnection(message);
+            _service = service;
+        }
+
+        public async Task sendToAllConnection(IEnumerable<NotificationDto> dto)
+        {
+
+            await Clients.All.sendToAllConnection(dto);
         }
 
         public async Task LoadUserInfo(dynamic message)

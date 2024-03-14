@@ -1,8 +1,10 @@
-﻿namespace HotelFuen31.APIs.Hubs
+﻿using HotelFuen31.APIs.Dtos.RenYu;
+
+namespace HotelFuen31.APIs.Hubs
 {
     public interface IMessageHub
     {
-        Task sendToAllConnection(List<string> message);
+        Task sendToAllConnection(IEnumerable<NotificationDto> dto);
         
         Task JsonDataTransfer(dynamic message);
 

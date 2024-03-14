@@ -25,17 +25,14 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         [HttpGet]
         public async Task<IEnumerable<NotificationDto>> GetNotifications()
         {
-            return await _service.GetNotification().ToListAsync();
+            return await _service.GetNotifications().ToListAsync();
         }
 
         [HttpPost]
         public string ToAll()
         {
-            List<string> messages = new List<string>();
-            messages.Add("First Notification");
-            messages.Add("Second Notification");
 
-            _hub.Clients.All.sendToAllConnection(messages);
+            _hub.Clients.All.sendToAllConnection(_service.GetNotifications().ToList());
 
             return "成功推播通知至全體";
         }
