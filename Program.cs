@@ -29,6 +29,8 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantPeriodService>();
 
             builder.Services.AddScoped<IUser,UsersService>();
+            builder.Services.AddScoped<JwtService>();
+
 
 
 

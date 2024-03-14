@@ -72,6 +72,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[cipher]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Employee]",
          "ObjectType": 0
       },

@@ -10,6 +10,7 @@ using HotelFuen31.APIs.Interface.Guanyu;
 using Microsoft.IdentityModel.JsonWebTokens;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Dtos;
+using System.Security.Cryptography;
 
 namespace HotelFuen31.APIs.Controllers.Guanyu
 {
@@ -17,40 +18,32 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
     [ApiController]
     public class MembersController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly JwtService _jwt;
+        private AppDbContext _db;
         private readonly IUser _iuser;
 
-        public MembersController(AppDbContext context,IUser iuser)
+        public MembersController(AppDbContext db, IUser iuser)
         {
-            _context = context;
+            _db = db;
             _iuser = iuser;
-            _jwt = new JwtService(context);
         }
 
-        //GET: api/Members/{str}
+        //GET: api/Members/密文
         [HttpGet("{str}")]
         public async Task<string> GetMember(string str)
         {
-            int id = 0;
-            //foreach (var item in _iuser.tokenDatas)
-            //{
-            //    if (item.cipher == str)
-            //    {
-            //        id = item.num;
-            //    }
-            //}
-            return _jwt.Decrypt(str, id);
+            int CipherId = _iuser.GetCipherId(str);
+
+            Cipher cipher = _iuser.GetCipher(str);
+
+            //return _iuser.Decrypt(str, CipherId);
+            return _iuser.Decrypt(cipher);
         }
 
-        [HttpGet("Test")]
-        public async Task<string> Test([FromQuery] string phone, [FromQuery] string pwd)
+        [HttpGet("setkey")]
+        public async Task<string> SetKey()
         {
-            var memberid = _iuser.GetMemberId(phone, pwd);
-            var memberkey = _iuser.GetMemberKey(memberid);
-            var membername = _iuser.GetMemberData(phone, pwd).Name;
-
-            return $"{memberid} , {memberkey} , {membername}";
+            // 創建一個32字節的字節數組
+            return _iuser.GetRandomKey();
         }
 
         // GET: api/Members/Login?
@@ -60,19 +53,22 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
             var memberid = _iuser.GetMemberId(phone, pwd);
             var memberkey = _iuser.GetMemberKey(memberid);
 
-            var EncryptedString = _jwt.EncryptWithJWT(memberid, memberkey);
+            var EncryptedString = _iuser.EncryptWithJWT(memberid, memberkey);
 
-            var data = new TokenData
-            {
-                num = memberid,
-                cipher = EncryptedString
-            };
-            //_iuser.tokenDatas(data);
+            Cipher cipher = new Cipher();
+            cipher.UserId = memberid;
+            cipher.CipherString = EncryptedString;
+            _iuser.NewCipher(cipher);
 
             if (EncryptedString != null) return EncryptedString;
-            else return $"{memberid}";
-
+            else return "登入失敗";
         }
 
+        //GET: api/Members?
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Member>>> GetMembers([FromQuery] int id)
+        {
+            return await _db.Members.Where(m => m.Id == id).ToListAsync();
+        }
     }
 }

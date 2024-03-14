@@ -2,28 +2,20 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace HotelFuen31.APIs.Services.Guanyu
 {
     public class JwtService
     {
-        private readonly AppDbContext _db;
-        public JwtService(AppDbContext db)
+        public JwtService()
         {
-            _db = db;
         }
 
         //加密
         public string EncryptWithJWT(int id, string str)
         {
-            //byte[] keyBytes = new byte[32];
-            //using (var rng = new RNGCryptoServiceProvider())
-            //{
-            //    rng.GetBytes(keyBytes);
-            //}
-            //string randomBase64String = Convert.ToBase64String(keyBytes);
-
             byte[] keyBytes2 = Encoding.UTF8.GetBytes(str);
 
             //建立SymmetricSecurityKey
@@ -54,10 +46,8 @@ namespace HotelFuen31.APIs.Services.Guanyu
         }
 
         //解密
-        public string Decrypt(string str, int id)
+        public string Decrypt(string str, string key)
         {
-            id = 2;
-            string key = _db.Members.Where(m => m.Id == id).FirstOrDefault().Key;
             SecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
 
             var tokenHandler = new JwtSecurityTokenHandler();
