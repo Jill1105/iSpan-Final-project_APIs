@@ -9,11 +9,9 @@ public partial class HallMenuSchedule
 {
     public int Id { get; set; }
 
-    public int HallOrderItemId { get; set; }
+    public int? HallMenuId { get; set; }
 
-    public int HallMenuId { get; set; }
+    public int? HallMorderItemId { get; set; }
 
     public virtual HallMenu HallMenu { get; set; }
-
-    public virtual HallOrderItem HallOrderItem { get; set; }
 }

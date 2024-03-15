@@ -1,4 +1,6 @@
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Repository.FC;
+using HotelFuen31.APIs.Services.FC;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +29,9 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantSeatService>();
             builder.Services.AddScoped<RestaurantPeriodService>();
 
-            builder.Services.AddControllers();
+            builder.Services.AddScoped<ReservationServEFRepo>();
+
+			builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

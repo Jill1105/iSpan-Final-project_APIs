@@ -491,19 +491,11 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<HallMenuSchedule>(entity =>
         {
-            entity.HasNoKey();
+            entity.Property(e => e.HallMorderItemId).HasColumnName("HallMOrderItemId");
 
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.HallMenu).WithMany()
+            entity.HasOne(d => d.HallMenu).WithMany(p => p.HallMenuSchedules)
                 .HasForeignKey(d => d.HallMenuId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HallMenuSchedules_HallMenus1");
-
-            entity.HasOne(d => d.HallOrderItem).WithMany()
-                .HasForeignKey(d => d.HallOrderItemId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HallMenuSchedules_HallOrderItem1");
+                .HasConstraintName("FK_HallMenuSchedules_HallMenus");
         });
 
         modelBuilder.Entity<HallOrderItem>(entity =>
@@ -556,6 +548,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Key).HasMaxLength(256);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(32);
@@ -592,7 +585,6 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.LevelId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_MemberLevels");
         });
 
@@ -633,7 +625,9 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Reservation_Item");
 
-            entity.Property(e => e.AppointmentDate).HasColumnName("Appointment_date");
+            entity.Property(e => e.AppointmentDate)
+                .HasColumnType("date")
+                .HasColumnName("Appointment_date");
             entity.Property(e => e.AppointmentTimePeriodId).HasColumnName("Appointment_time_period_id");
             entity.Property(e => e.ReservationId).HasColumnName("Reservation_id");
             entity.Property(e => e.RoomId).HasColumnName("Room_id");
@@ -714,6 +708,10 @@ public partial class AppDbContext : DbContext
             entity.ToTable("Reservation_Service_detail");
 
             entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.ImgUrl)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ImgURL");
             entity.Property(e => e.ServiceDetailName)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -792,6 +790,7 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK_Reservations");
 
             entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.PeriodId).HasColumnName("Period_id");
             entity.Property(e => e.SeatId).HasColumnName("Seat_Id");
             entity.Property(e => e.StatusId).HasColumnName("Status_Id");
@@ -885,6 +884,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("RoomCalendar");
 
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(30)
                 .IsUnicode(false);
@@ -903,6 +903,7 @@ public partial class AppDbContext : DbContext
                 .HasNoKey()
                 .ToView("RoomDaysPrice");
 
+            entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.Description)
                 .HasMaxLength(30)
                 .IsUnicode(false);
