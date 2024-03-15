@@ -14,9 +14,9 @@ namespace HotelFuen31.APIs.Controllers.RenYu
     public class NotificationController : ControllerBase
     {
         private readonly NotificationService _service;
-        private IHubContext<MessageHub, IMessageHub> _hub;
+        private IHubContext<NotificationHub, INotificationHub> _hub;
 
-        public NotificationController(NotificationService service, IHubContext<MessageHub, IMessageHub> hub)
+        public NotificationController(NotificationService service, IHubContext<NotificationHub, INotificationHub> hub)
         {
             _service = service;
             _hub = hub;
@@ -31,8 +31,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         [HttpPost]
         public string ToAll()
         {
-
-            _hub.Clients.All.sendToAllConnection(_service.GetNotifications().ToList());
+            _hub.Clients.All.SendToAllConnection(_service.GetNotifications().ToList());
 
             return "成功推播通知至全體";
         }

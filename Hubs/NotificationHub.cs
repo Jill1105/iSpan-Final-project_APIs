@@ -6,21 +6,21 @@ using Newtonsoft.Json;
 
 namespace HotelFuen31.APIs.Hubs
 {
-    public class MessageHub : Hub<IMessageHub>
+    public class NotificationHub : Hub<INotificationHub>
     {
         public static Dictionary<string, string> userInfoDict = new Dictionary<string, string>();
         
         private readonly NotificationService _service;
 
-        public MessageHub(NotificationService service)
+        public NotificationHub(NotificationService service)
         {
             _service = service;
         }
 
-        public async Task sendToAllConnection(IEnumerable<NotificationDto> dto)
+        public async Task SendToAllConnection(IEnumerable<NotificationDto> dto)
         {
 
-            await Clients.All.sendToAllConnection(dto);
+            await Clients.All.SendToAllConnection(dto);
         }
 
         public async Task LoadUserInfo(dynamic message)
