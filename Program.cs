@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Controllers.RenYu;
 using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Services;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
@@ -50,6 +51,8 @@ namespace HotelFuen31.APIs
 
             builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
+
+            builder.Services.AddScoped<RoomTypeService>();
 
 
 
