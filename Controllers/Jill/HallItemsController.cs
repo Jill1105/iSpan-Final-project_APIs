@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Dto.Jill;
+using HotelFuen31.APIs.Controllers.Yee;
 
 namespace HotelFuen31.APIs.Controllers.Jill
 {
@@ -22,11 +23,34 @@ namespace HotelFuen31.APIs.Controllers.Jill
             _service = service;
         }
 
-        // GET: api/HallItems
-        [HttpGet]
+
+        //GET: api/HallItems
+       [HttpGet]
         public async Task<IEnumerable<HallItemDto>> GetHallItems()
         {
-            return await _service.GetrAll().ToListAsync();
+            var dtos = await _service.GetrAll().ToListAsync();
+
+            var vms = dtos.Select(h => new HallItemDto
+            {
+                Id = h.Id,
+                HallName = h.HallName,
+                Capacity = h.Capacity,
+                Description = h.Description,
+                MinRent = h.MinRent,
+                MaxRent = h.MaxRent,
+                HallStatus = h.HallStatus,
+                PhotoPath = h.PhotoPath,
+            }).ToList();
+
+            vms.ForEach(h =>
+            {
+                var pic = string.IsNullOrEmpty(h.PhotoPath) ? "noImage.png" : h.PhotoPath;
+                h.PhotoPath = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/Jill/{pic}")}";
+            });
+
+
+            return vms;
         }
+
     }
 }

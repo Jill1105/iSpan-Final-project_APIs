@@ -8,7 +8,7 @@ namespace HotelFuen31.APIs.Services.Jill
 {
     public class HallItemService
     {
-        private readonly AppDbContext _context;
+        private  AppDbContext _context;
         public HallItemService(AppDbContext context)
         {
             _context = context;
@@ -29,7 +29,6 @@ namespace HotelFuen31.APIs.Services.Jill
                     PhotoPath = h.PhotoPath,
                     HallStatus = h.HallStatus,
                 });
-
             return dto;
         }
     }
