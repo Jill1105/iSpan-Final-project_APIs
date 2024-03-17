@@ -3,6 +3,8 @@ using HotelFuen31.APIs.Controllers.RenYu;
 using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Repository.FC;
+using HotelFuen31.APIs.Services.FC;
 using HotelFuen31.APIs.Services;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
@@ -49,6 +51,10 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantSeatService>();
             builder.Services.AddScoped<RestaurantPeriodService>();
 
+
+            builder.Services.AddScoped<ReservationServEFRepo>();
+
+
             builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
 
@@ -58,6 +64,7 @@ namespace HotelFuen31.APIs
 
 
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -493,19 +493,11 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<HallMenuSchedule>(entity =>
         {
-            entity.HasNoKey();
+            entity.Property(e => e.HallMorderItemId).HasColumnName("HallMOrderItemId");
 
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.HallMenu).WithMany()
+            entity.HasOne(d => d.HallMenu).WithMany(p => p.HallMenuSchedules)
                 .HasForeignKey(d => d.HallMenuId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HallMenuSchedules_HallMenus1");
-
-            entity.HasOne(d => d.HallOrderItem).WithMany()
-                .HasForeignKey(d => d.HallOrderItemId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HallMenuSchedules_HallOrderItem1");
+                .HasConstraintName("FK_HallMenuSchedules_HallMenus");
         });
 
         modelBuilder.Entity<HallOrderItem>(entity =>
@@ -718,6 +710,10 @@ public partial class AppDbContext : DbContext
             entity.ToTable("Reservation_Service_detail");
 
             entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.ImgUrl)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ImgURL");
             entity.Property(e => e.ServiceDetailName)
                 .IsRequired()
                 .HasMaxLength(50)
