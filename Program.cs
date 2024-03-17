@@ -1,9 +1,17 @@
+
+using HotelFuen31.APIs.Controllers.RenYu;
+using HotelFuen31.APIs.Hubs;
+using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Repository.FC;
 using HotelFuen31.APIs.Services.FC;
+using HotelFuen31.APIs.Services;
+using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 
 namespace HotelFuen31.APIs
@@ -15,13 +23,27 @@ namespace HotelFuen31.APIs
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSignalR();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.SetIsOriginAllowed(origin => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
             });
 
-
             builder.Services.AddScoped<SendEmailService>();
+            builder.Services.AddScoped<NotificationService>();
+
 
             builder.Services.AddScoped<HallItemService>();
             builder.Services.AddScoped<HallMenuService>();
@@ -29,9 +51,20 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantSeatService>();
             builder.Services.AddScoped<RestaurantPeriodService>();
 
+
             builder.Services.AddScoped<ReservationServEFRepo>();
 
-			builder.Services.AddControllers();
+
+            builder.Services.AddScoped<IUser,UsersService>();
+            builder.Services.AddScoped<JwtService>();
+
+            builder.Services.AddScoped<RoomTypeService>();
+
+
+
+
+            builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -45,16 +78,13 @@ namespace HotelFuen31.APIs
                 app.UseSwaggerUI();
             }
 
-            app.UseCors(option => 
-                option.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader());
+            app.UseCors();
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
-            //�R�A�ɮצs����|
+            //ÀRºAÀÉ®×¦s©ñ¸ô®|
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")),
@@ -62,6 +92,10 @@ namespace HotelFuen31.APIs
             });
 
             app.MapControllers();
+
+            app.UseFileServer();
+
+            app.MapHub<MessageHub>("/messageHub");
 
             app.Run();
         }

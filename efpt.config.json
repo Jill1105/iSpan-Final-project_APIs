@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": true,
+   "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -69,6 +69,10 @@
       },
       {
          "Name": "[dbo].[CartRoomItems]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[cipher]",
          "ObjectType": 0
       },
       {

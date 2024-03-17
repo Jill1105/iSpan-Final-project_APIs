@@ -18,6 +18,8 @@ namespace HotelFuen31.APIs.Controllers.Yee
         public int Count { get; set; }
         public bool Selected { get; set; }
         public string Phone { get; set; }
+        public string Info { get; set; } 
+
         //"id":"4023114",
         //"skuId":"300450920",
         //"name":"KJE金属色系轻量电动车骑行盔男女通用",
@@ -74,6 +76,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
                         Count = 1,
                         Selected = false,
                         Phone = cri.Phone,
+                        Info = $"入住時間: {cri.CheckInDate.ToString("yyyy-MM-dd")},退房時間: {cri.CheckOutDate.ToString("yyyy-MM-dd")}",
                     })
                 .Where(vm => vm.Phone == dto.Phone)
                 .ToList();

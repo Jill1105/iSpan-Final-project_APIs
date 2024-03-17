@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Net;
 using System.Net.Mail;
 
+
 namespace HotelFuen31.APIs.Services.RenYu
 {
     public class SendEmailService
@@ -36,7 +37,7 @@ namespace HotelFuen31.APIs.Services.RenYu
             }
             catch (Exception ex) 
             {
-                
+               
             }
            
         }
