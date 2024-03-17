@@ -18,15 +18,16 @@ namespace HotelFuen31.APIs.Controllers.FC
     public class ReservationServiceDetailsController : ControllerBase
     {
 
-		private readonly ReservationServService _service;
 
-        public ReservationServiceDetailsController()
+        private readonly ReservationServService _service;
+
+        public ReservationServiceDetailsController(ReservationServService service)
         {
-			_service = new ReservationServService(new ReservationServEFRepo());
+            _service = service;
         }
 
-		// GET: api/ReservationServiceDetails
-		[HttpGet]
+        // GET: api/ReservationServiceDetails
+        [HttpGet]
 		public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetails()
 		{
 			return await _service.Read().ToListAsync();

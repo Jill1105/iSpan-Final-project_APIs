@@ -7,7 +7,12 @@ namespace HotelFuen31.APIs.Repository.FC
 {
 	public class ReservationServEFRepo : IReservationServRepo
 	{
-		private AppDbContext _db = new AppDbContext();
+		private AppDbContext _db;
+		public ReservationServEFRepo(AppDbContext db)
+		{
+			_db = db;
+		}
+
 		public int Create(ReservationServiceDetailDto entity)
 		{
 			throw new NotImplementedException();

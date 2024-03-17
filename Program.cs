@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
+using HotelFuen31.APIs.Interfaces.FC;
 
 namespace HotelFuen31.APIs
 {
@@ -52,8 +53,8 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantPeriodService>();
 
 
-            builder.Services.AddScoped<ReservationServEFRepo>();
-
+            builder.Services.AddScoped<IReservationServRepo, ReservationServEFRepo>();
+            builder.Services.AddScoped<ReservationServService>();
 
             builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
@@ -84,8 +85,8 @@ namespace HotelFuen31.APIs
 
             app.UseAuthorization();
 
-            //ÀRºAÀÉ®×¦s©ñ¸ô®|
-            app.UseStaticFiles(new StaticFileOptions
+			//靜態檔案存放路徑
+			app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")),
                 RequestPath = "/StaticFiles",
