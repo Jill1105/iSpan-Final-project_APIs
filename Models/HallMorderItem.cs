@@ -5,19 +5,13 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class HallOrderItem
+public partial class HallMorderItem
 {
     public int Id { get; set; }
 
-    public int HallLogId { get; set; }
-
-    public int HallMenuId { get; set; }
-
     public int? Price { get; set; }
 
-    public int Qty { get; set; }
+    public int? Qty { get; set; }
 
-    public int? SubTotal { get; set; }
-
-    public virtual HallLog HallLog { get; set; }
+    public virtual ICollection<HallMenuSchedule> HallMenuSchedules { get; set; } = new List<HallMenuSchedule>();
 }

@@ -104,6 +104,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[HallMOrderItems]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[HallOrderItem]",
          "ObjectType": 0
       },

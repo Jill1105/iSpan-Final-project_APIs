@@ -19,5 +19,9 @@ public partial class HallMenu
 
     public string PhotoPath { get; set; }
 
+    public string Keywords { get; set; }
+
     public virtual HallDishCategory Category { get; set; }
+
+    public virtual ICollection<HallMenuSchedule> HallMenuSchedules { get; set; } = new List<HallMenuSchedule>();
 }

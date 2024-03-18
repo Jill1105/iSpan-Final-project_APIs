@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
+using Library;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelFuen31.APIs
@@ -30,6 +31,8 @@ namespace HotelFuen31.APIs
 
             builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
+            builder.Services.AddScoped<CryptoPwd>();
+            
 
 
 

@@ -57,6 +57,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<HallMenuSchedule> HallMenuSchedules { get; set; }
 
+    public virtual DbSet<HallMorderItem> HallMorderItems { get; set; }
+
     public virtual DbSet<HallOrderItem> HallOrderItems { get; set; }
 
     public virtual DbSet<HallOrderVw> HallOrderVws { get; set; }
@@ -375,7 +377,6 @@ public partial class AppDbContext : DbContext
             entity.ToTable("cipher");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CipherString).HasColumnName("cipherString");
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -442,6 +443,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Capacity)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Ddescription)
+                .HasMaxLength(256)
+                .HasColumnName("DDescription");
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(256);
@@ -493,19 +497,20 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<HallMenuSchedule>(entity =>
         {
-            entity.HasNoKey();
+            entity.Property(e => e.HallMorderItemId).HasColumnName("HallMOrderItemId");
 
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.HallMenu).WithMany()
+            entity.HasOne(d => d.HallMenu).WithMany(p => p.HallMenuSchedules)
                 .HasForeignKey(d => d.HallMenuId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HallMenuSchedules_HallMenus1");
+                .HasConstraintName("FK_HallMenuSchedules_HallMenus");
 
-            entity.HasOne(d => d.HallOrderItem).WithMany()
-                .HasForeignKey(d => d.HallOrderItemId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HallMenuSchedules_HallOrderItem1");
+            entity.HasOne(d => d.HallMorderItem).WithMany(p => p.HallMenuSchedules)
+                .HasForeignKey(d => d.HallMorderItemId)
+                .HasConstraintName("FK_HallMenuSchedules_HallMOrderItems");
+        });
+
+        modelBuilder.Entity<HallMorderItem>(entity =>
+        {
+            entity.ToTable("HallMOrderItems");
         });
 
         modelBuilder.Entity<HallOrderItem>(entity =>
@@ -558,7 +563,6 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Key).HasMaxLength(256);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(32);
@@ -570,6 +574,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(16)
                 .IsUnicode(false);
+            entity.Property(e => e.Salt).HasMaxLength(50);
 
             entity.HasOne(d => d.Level).WithMany(p => p.Members)
                 .HasForeignKey(d => d.LevelId)
@@ -592,10 +597,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(10);
-
-            entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.LevelId)
-                .HasConstraintName("FK_Notifications_MemberLevels");
         });
 
         modelBuilder.Entity<Reservation>(entity =>
@@ -718,6 +719,10 @@ public partial class AppDbContext : DbContext
             entity.ToTable("Reservation_Service_detail");
 
             entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.ImgUrl)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ImgURL");
             entity.Property(e => e.ServiceDetailName)
                 .IsRequired()
                 .HasMaxLength(50)
