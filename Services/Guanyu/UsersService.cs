@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-
-//使用類別庫
-using Library;
+using HotelFuen31.APIs.Library;
 
 namespace HotelFuen31.APIs.Services.Guanyu
 {
