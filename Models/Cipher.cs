@@ -12,4 +12,6 @@ public partial class Cipher
     public int UserId { get; set; }
 
     public string CipherString { get; set; }
+
+    public string CipherKey { get; set; }
 }

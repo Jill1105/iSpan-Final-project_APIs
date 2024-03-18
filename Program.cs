@@ -6,6 +6,7 @@ using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
+using HotelFuen31.APIs.Services.Yee;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -47,6 +48,9 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantReservationService>();
             builder.Services.AddScoped<RestaurantSeatService>();
             builder.Services.AddScoped<RestaurantPeriodService>();
+
+            // yee
+            builder.Services.AddScoped<RoomCartService>();
 
             builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();

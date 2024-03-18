@@ -18,6 +18,4 @@ public partial class MemberLevel
     public string Comment { get; set; }
 
     public virtual ICollection<Member> Members { get; set; } = new List<Member>();
-
-    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }

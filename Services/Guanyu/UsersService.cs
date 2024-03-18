@@ -44,7 +44,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
         public string GetMemberKey(int id)
         {
-            return _db.Members.Where(m => m.Id == id).FirstOrDefault().Key;
+            return _db.Members.Where(m => m.Id == id).FirstOrDefault().Phone;
         }
 
         public void NewCipher(Cipher cipher)
@@ -93,7 +93,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
         //回傳文字(Id)
         public string Decrypt(string str, int id)
         {
-            string key = _db.Members.Where(m => m.Id == id).FirstOrDefault().Key;
+            string key = _db.Members.Where(m => m.Id == id).FirstOrDefault().Phone;
             string original = key != null ? _jwt.Decrypt(str, key) : "";
             return original;
         }
@@ -101,7 +101,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
         public string Decrypt(Cipher cipher)
         {
-            string key = _db.Members.Where(m => m.Id == cipher.UserId).FirstOrDefault().Key;
+            string key = _db.Members.Where(m => m.Id == cipher.UserId).FirstOrDefault().Phone;
             string original = key != null ? _jwt.Decrypt(cipher.CipherString, key) : "";
             return original;
         }

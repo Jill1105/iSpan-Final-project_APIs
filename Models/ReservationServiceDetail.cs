@@ -19,6 +19,8 @@ public partial class ReservationServiceDetail
 
     public string Description { get; set; }
 
+    public string ImgUrl { get; set; }
+
     public virtual ICollection<ReservationItem> ReservationItems { get; set; } = new List<ReservationItem>();
 
     public virtual ReservationServicesType ServicesType { get; set; }

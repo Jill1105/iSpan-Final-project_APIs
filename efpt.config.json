@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": false,
+   "IncludeConnectionString": true,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -101,6 +101,10 @@
       },
       {
          "Name": "[dbo].[HallMenuSchedules]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HallMOrderItems]",
          "ObjectType": 0
       },
       {
