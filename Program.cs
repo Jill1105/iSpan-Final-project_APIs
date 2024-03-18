@@ -96,7 +96,7 @@ namespace HotelFuen31.APIs
 
             app.UseFileServer();
 
-            app.MapHub<MessageHub>("/messageHub");
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.Run();
         }
