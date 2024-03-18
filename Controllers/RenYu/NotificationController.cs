@@ -29,9 +29,10 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpPost]
-        public string ToAll()
+        public string SendNotifiction()
         {
-            _hub.Clients.All.SendToAllConnection(_service.GetNotifications().ToList());
+            var dto = _service.GetNotifications().ToList();
+            _hub.Clients.All.SendNotification(dto);
 
             return "成功推播通知至全體";
         }
