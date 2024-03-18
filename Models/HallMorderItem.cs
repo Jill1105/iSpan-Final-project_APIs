@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class Cipher
+public partial class HallMorderItem
 {
     public int Id { get; set; }
 
-    public int UserId { get; set; }
+    public int? Price { get; set; }
 
-    public string CipherString { get; set; }
+    public int? Qty { get; set; }
 
-    public string CipherKey { get; set; }
+    public virtual ICollection<HallMenuSchedule> HallMenuSchedules { get; set; } = new List<HallMenuSchedule>();
 }

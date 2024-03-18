@@ -26,4 +26,6 @@ public partial class RoomType
     public int HolidayPrice { get; set; }
 
     public string ImageUrl { get; set; }
+
+    public int? Size { get; set; }
 }

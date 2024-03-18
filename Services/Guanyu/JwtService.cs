@@ -57,9 +57,9 @@ namespace HotelFuen31.APIs.Services.Guanyu
             {
                 // 這裡設置驗證金鑰
                 IssuerSigningKey = securityKey,
-                ValidateIssuer = false, // 是否驗證Issuer
+                ValidateIssuer = true, // 是否驗證Issuer
                 ValidIssuer = "issuer", // 有效的Issuer
-                ValidateAudience = false, // 是否驗證Audience
+                ValidateAudience = true, // 是否驗證Audience
                 ValidAudience = "Audience", // 有效的Audience
                 ValidateLifetime = false, // 是否驗證Token有效期
                 ClockSkew = TimeSpan.Zero // Token有效期的允许偏移量
@@ -67,15 +67,14 @@ namespace HotelFuen31.APIs.Services.Guanyu
             try
             {
                 var principal = tokenHandler.ValidateToken(str, validationParameters, out SecurityToken validatedToken);
-
+                
                 foreach (var claim in principal.Claims) return claim.Value;
                 return "解密失敗";
             }
-            catch
+            catch (Exception ex)
             {
-                return "解密失敗";
+                return ex.Message;
             }
         }
-
     }
 }
