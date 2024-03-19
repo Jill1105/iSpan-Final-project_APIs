@@ -452,6 +452,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.HallName)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Location).HasMaxLength(50);
             entity.Property(e => e.MaxRent).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.MinRent).HasColumnType("decimal(18, 0)");
         });
@@ -872,6 +873,11 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.RoomId).HasName("PK__Rooms__328639398538E86F");
 
             entity.Property(e => e.RoomId).ValueGeneratedNever();
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.Rooms)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Rooms_RoomTypeId");
         });
 
         modelBuilder.Entity<RoomBooking>(entity =>
@@ -887,6 +893,11 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.Remark).IsUnicode(false);
+
+            entity.HasOne(d => d.Room).WithMany(p => p.RoomBookings)
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoomBookings_RoomId");
         });
 
         modelBuilder.Entity<RoomCalendar>(entity =>
