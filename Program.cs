@@ -9,6 +9,7 @@ using HotelFuen31.APIs.Services;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Services.RenYu;
+using HotelFuen31.APIs.Library;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -58,6 +59,8 @@ namespace HotelFuen31.APIs
 
             builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
+            builder.Services.AddScoped<CryptoPwd>();
+            
 
             builder.Services.AddScoped<RoomTypeService>();
 

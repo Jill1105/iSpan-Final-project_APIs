@@ -5,17 +5,13 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class Notification
+public partial class HallMorderItem
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public int? Price { get; set; }
 
-    public string Description { get; set; }
+    public int? Qty { get; set; }
 
-    public DateTime PushTime { get; set; }
-
-    public string Image { get; set; }
-
-    public int? LevelId { get; set; }
+    public virtual ICollection<HallMenuSchedule> HallMenuSchedules { get; set; } = new List<HallMenuSchedule>();
 }
