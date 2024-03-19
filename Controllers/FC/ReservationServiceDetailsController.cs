@@ -30,99 +30,123 @@ namespace HotelFuen31.APIs.Controllers.FC
         [HttpGet]
 		public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetails()
 		{
-			return await _service.Read().ToListAsync();
+			//return await _service.Read().ToListAsync();
+
+            var dtos = await _service.Read().ToListAsync();
+            var model = dtos.Select(x => new ReservationServiceDetailDto
+            {
+                Id = x.Id,
+				ServicesTypeId = x.ServicesTypeId,
+				ServiceDetailName = x.ServiceDetailName,
+				Time = x.Time,
+                Price = x.Price,
+                Description = x.Description,
+                ImgUrl = x.ImgUrl,
+
+			}).ToList();
+
+			model.ForEach(h =>
+			{
+				var pic = string.IsNullOrEmpty(h.ImgUrl) ? "noImage.png" : h.ImgUrl;
+				h.ImgUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/FC/{pic}")}";
+			});
+
+
+			return model;
+
+
 		}
 
 
 
 		//private IReservationServRepo GetRepo()
-  //      {
-  //          return new ReservationServEFRepo();
-  //      }
+		//      {
+		//          return new ReservationServEFRepo();
+		//      }
 
-  //      // GET: api/ReservationServiceDetails
-  //      [HttpGet]
-  //      public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetails()
-  //      {
-  //          var service = new ReservationServService(GetRepo());
-  //          return await service.Read().ToListAsync();
-  //      }
+		//      // GET: api/ReservationServiceDetails
+		//      [HttpGet]
+		//      public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetails()
+		//      {
+		//          var service = new ReservationServService(GetRepo());
+		//          return await service.Read().ToListAsync();
+		//      }
 
-        //// GET: api/ReservationServiceDetails/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<ReservationServiceDetail>> GetReservationServiceDetail(int id)
-        //{
-        //    var reservationServiceDetail = await _context.ReservationServiceDetails.FindAsync(id);
+		//// GET: api/ReservationServiceDetails/5
+		//[HttpGet("{id}")]
+		//public async Task<ActionResult<ReservationServiceDetail>> GetReservationServiceDetail(int id)
+		//{
+		//    var reservationServiceDetail = await _context.ReservationServiceDetails.FindAsync(id);
 
-        //    if (reservationServiceDetail == null)
-        //    {
-        //        return NotFound();
-        //    }
+		//    if (reservationServiceDetail == null)
+		//    {
+		//        return NotFound();
+		//    }
 
-        //    return reservationServiceDetail;
-        //}
+		//    return reservationServiceDetail;
+		//}
 
-        //// PUT: api/ReservationServiceDetails/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutReservationServiceDetail(int id, ReservationServiceDetail reservationServiceDetail)
-        //{
-        //    if (id != reservationServiceDetail.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+		//// PUT: api/ReservationServiceDetails/5
+		//// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		//[HttpPut("{id}")]
+		//public async Task<IActionResult> PutReservationServiceDetail(int id, ReservationServiceDetail reservationServiceDetail)
+		//{
+		//    if (id != reservationServiceDetail.Id)
+		//    {
+		//        return BadRequest();
+		//    }
 
-        //    _context.Entry(reservationServiceDetail).State = EntityState.Modified;
+		//    _context.Entry(reservationServiceDetail).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ReservationServiceDetailExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+		//    try
+		//    {
+		//        await _context.SaveChangesAsync();
+		//    }
+		//    catch (DbUpdateConcurrencyException)
+		//    {
+		//        if (!ReservationServiceDetailExists(id))
+		//        {
+		//            return NotFound();
+		//        }
+		//        else
+		//        {
+		//            throw;
+		//        }
+		//    }
 
-        //    return NoContent();
-        //}
+		//    return NoContent();
+		//}
 
-        //// POST: api/ReservationServiceDetails
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<ReservationServiceDetail>> PostReservationServiceDetail(ReservationServiceDetail reservationServiceDetail)
-        //{
-        //    _context.ReservationServiceDetails.Add(reservationServiceDetail);
-        //    await _context.SaveChangesAsync();
+		//// POST: api/ReservationServiceDetails
+		//// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		//[HttpPost]
+		//public async Task<ActionResult<ReservationServiceDetail>> PostReservationServiceDetail(ReservationServiceDetail reservationServiceDetail)
+		//{
+		//    _context.ReservationServiceDetails.Add(reservationServiceDetail);
+		//    await _context.SaveChangesAsync();
 
-        //    return CreatedAtAction("GetReservationServiceDetail", new { id = reservationServiceDetail.Id }, reservationServiceDetail);
-        //}
+		//    return CreatedAtAction("GetReservationServiceDetail", new { id = reservationServiceDetail.Id }, reservationServiceDetail);
+		//}
 
-        //// DELETE: api/ReservationServiceDetails/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteReservationServiceDetail(int id)
-        //{
-        //    var reservationServiceDetail = await _context.ReservationServiceDetails.FindAsync(id);
-        //    if (reservationServiceDetail == null)
-        //    {
-        //        return NotFound();
-        //    }
+		//// DELETE: api/ReservationServiceDetails/5
+		//[HttpDelete("{id}")]
+		//public async Task<IActionResult> DeleteReservationServiceDetail(int id)
+		//{
+		//    var reservationServiceDetail = await _context.ReservationServiceDetails.FindAsync(id);
+		//    if (reservationServiceDetail == null)
+		//    {
+		//        return NotFound();
+		//    }
 
-        //    _context.ReservationServiceDetails.Remove(reservationServiceDetail);
-        //    await _context.SaveChangesAsync();
+		//    _context.ReservationServiceDetails.Remove(reservationServiceDetail);
+		//    await _context.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
+		//    return NoContent();
+		//}
 
-        //private bool ReservationServiceDetailExists(int id)
-        //{
-        //    return _context.ReservationServiceDetails.Any(e => e.Id == id);
-        //}
-    }
+		//private bool ReservationServiceDetailExists(int id)
+		//{
+		//    return _context.ReservationServiceDetails.Any(e => e.Id == id);
+		//}
+	}
 }
