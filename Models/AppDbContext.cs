@@ -598,6 +598,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(10);
+
+            entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_Notifications_MemberLevels");
         });
 
         modelBuilder.Entity<Reservation>(entity =>
