@@ -22,12 +22,6 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             _hub = hub;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<NotificationDto>> GetNotifications()
-        {
-            return await _service.GetNotifications().ToListAsync();
-        }
-
         [HttpPost]
         public string SendNotifiction()
         {
@@ -35,6 +29,12 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             _hub.Clients.All.SendNotification(dto);
 
             return "成功推播通知至全體";
+        }
+
+        [HttpPost("Create")]
+        public async Task<string> CreateNotifiction(NotificationDto dto)
+        {
+            return await _service.Create(dto); 
         }
     }
 }

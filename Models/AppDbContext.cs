@@ -375,7 +375,6 @@ public partial class AppDbContext : DbContext
             entity.ToTable("cipher");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CipherString).HasColumnName("cipherString");
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -442,12 +441,16 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Capacity)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Ddescription)
+                .HasMaxLength(256)
+                .HasColumnName("DDescription");
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(256);
             entity.Property(e => e.HallName)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Location).HasMaxLength(50);
             entity.Property(e => e.MaxRent).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.MinRent).HasColumnType("decimal(18, 0)");
         });
@@ -550,7 +553,6 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Key).HasMaxLength(256);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(32);
@@ -562,6 +564,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(16)
                 .IsUnicode(false);
+            entity.Property(e => e.Salt).HasMaxLength(50);
 
             entity.HasOne(d => d.Level).WithMany(p => p.Members)
                 .HasForeignKey(d => d.LevelId)
@@ -863,6 +866,11 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.RoomId).HasName("PK__Rooms__328639398538E86F");
 
             entity.Property(e => e.RoomId).ValueGeneratedNever();
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.Rooms)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Rooms_RoomTypeId");
         });
 
         modelBuilder.Entity<RoomBooking>(entity =>
@@ -878,6 +886,11 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.Remark).IsUnicode(false);
+
+            entity.HasOne(d => d.Room).WithMany(p => p.RoomBookings)
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoomBookings_RoomId");
         });
 
         modelBuilder.Entity<RoomCalendar>(entity =>
