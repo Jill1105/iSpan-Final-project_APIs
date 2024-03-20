@@ -27,7 +27,7 @@ namespace HotelFuen31.APIs.Controllers.Jill
         [HttpGet("HallMenus")]
         public async Task<IEnumerable<HallMenuDto>> GetHallMenus()
         {
-            return await _service.GetrAll().ToListAsync();
+            return await _service.GetAll().ToListAsync();
         }
 
         // GET: api/HallItems/Category
@@ -37,11 +37,18 @@ namespace HotelFuen31.APIs.Controllers.Jill
             return await _service.Getrcategory().ToListAsync();
         }
 
-        // GET: api/HallItems/5
-        [HttpGet("{id}")]
-        public async Task<IEnumerable<HallMenuDto>> GetCategoryMenu(int id)
+        // GET: api/HallItems/Category/{Categoryid}
+        [HttpGet("Category/{Categoryid}")]
+        public async Task<IEnumerable<HallMenuDto>> GetCategoryMenu(int Categoryid)
         {
-            return await _service.GetCategoryMenu(id).ToListAsync();
+            return await _service.GetCategoryMenu(Categoryid).ToListAsync();
+        }
+
+        // GET: api/HallItems/Menu/{Menuid}
+        [HttpGet("Menu/{Menuid}")]
+        public async Task<IEnumerable<HallMenuDto>> GetMenu(int Menuid)
+        {
+            return await _service.GetMenu(Menuid).ToListAsync();
         }
 
     }
