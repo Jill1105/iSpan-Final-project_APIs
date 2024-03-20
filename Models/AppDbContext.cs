@@ -460,6 +460,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.HallName)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Location).HasMaxLength(50);
             entity.Property(e => e.MaxRent).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.MinRent).HasColumnType("decimal(18, 0)");
         });

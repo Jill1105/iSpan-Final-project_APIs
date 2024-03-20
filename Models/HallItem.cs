@@ -24,6 +24,8 @@ public partial class HallItem
     public bool HallStatus { get; set; }
 
     public string Ddescription { get; set; }
-
+  
+    public string Location { get; set; }
+  
     public virtual ICollection<HallLog> HallLogs { get; set; } = new List<HallLog>();
 }
