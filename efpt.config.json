@@ -208,6 +208,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[SendedNotifications]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ShoppingCartDiscounts]",
          "ObjectType": 0
       },

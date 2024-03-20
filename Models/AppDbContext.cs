@@ -127,6 +127,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ScdsTq> ScdsTqs { get; set; }
 
+    public virtual DbSet<SendedNotification> SendedNotifications { get; set; }
+
     public virtual DbSet<ShoppingCartDiscount> ShoppingCartDiscounts { get; set; }
 
     public virtual DbSet<ShoppingCartDiscountsPriceEqual> ShoppingCartDiscountsPriceEquals { get; set; }
@@ -606,6 +608,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(10);
+
+            entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_Notifications_MemberLevels");
         });
 
         modelBuilder.Entity<Reservation>(entity =>
@@ -1042,6 +1048,21 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.FormName)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<SendedNotification>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.HasOne(d => d.Member).WithMany()
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SendedNotifications_Members");
+
+            entity.HasOne(d => d.Notification).WithMany()
+                .HasForeignKey(d => d.NotificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SendedNotifications_Notifications");
         });
 
         modelBuilder.Entity<ShoppingCartDiscount>(entity =>
