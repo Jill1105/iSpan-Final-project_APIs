@@ -40,6 +40,8 @@ namespace HotelFuen31.APIs.Controllers.Jill
                 MaxRent = h.MaxRent,
                 HallStatus = h.HallStatus,
                 PhotoPath = h.PhotoPath,
+                Ddescription = h.Ddescription,
+                Location = h.Location,
             }).ToList();
 
             vms.ForEach(h =>

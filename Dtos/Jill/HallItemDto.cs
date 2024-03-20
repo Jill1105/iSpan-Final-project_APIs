@@ -20,6 +20,9 @@ namespace HotelFuen31.APIs.Dto.Jill
 
         public bool HallStatus { get; set; }
 
+        public string Ddescription { get; set; }
+        public string Location { get; set; }
+
         public virtual ICollection<HallLog> HallLogs { get; set; } = new List<HallLog>();
 
         public IFormFile? ImageFile { get; set; }

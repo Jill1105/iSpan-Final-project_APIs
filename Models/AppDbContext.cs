@@ -8,6 +8,10 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class AppDbContext : DbContext
 {
+    public AppDbContext()
+    {
+    }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -134,6 +138,10 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<ShoppingCartDiscountsTotalQuantity> ShoppingCartDiscountsTotalQuantities { get; set; }
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -452,6 +460,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.HallName)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Location).HasMaxLength(50);
             entity.Property(e => e.MaxRent).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.MinRent).HasColumnType("decimal(18, 0)");
         });
@@ -872,6 +881,11 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.RoomId).HasName("PK__Rooms__328639398538E86F");
 
             entity.Property(e => e.RoomId).ValueGeneratedNever();
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.Rooms)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Rooms_RoomTypeId");
         });
 
         modelBuilder.Entity<RoomBooking>(entity =>
@@ -887,6 +901,11 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.Remark).IsUnicode(false);
+
+            entity.HasOne(d => d.Room).WithMany(p => p.RoomBookings)
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoomBookings_RoomId");
         });
 
         modelBuilder.Entity<RoomCalendar>(entity =>

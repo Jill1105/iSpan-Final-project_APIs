@@ -28,4 +28,6 @@ public partial class RoomType
     public string ImageUrl { get; set; }
 
     public int? Size { get; set; }
+
+    public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 }
