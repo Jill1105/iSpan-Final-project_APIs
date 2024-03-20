@@ -13,10 +13,12 @@ namespace HotelFuen31.APIs.Services.RenYu
             _context = context;
         }
 
-        public  IQueryable<NotificationDto> GetNotifications()
-        {
+        public IQueryable<NotificationDto> GetNotifications()
+        {   
+            
             var dto = _context.Notifications
                 .AsNoTracking()
+                .Include(n => n.Level)
                 .Select(notification => new NotificationDto
                 {
                     Id = notification.Id,
@@ -28,6 +30,24 @@ namespace HotelFuen31.APIs.Services.RenYu
                 });
 
              return dto;
+        }
+
+        public async Task<string> Create(NotificationDto dto)
+        {
+            var model = new Notification
+            {
+               Id= dto.Id,
+               Name = dto.Name,
+               Description = dto.Description,
+               PushTime = dto.PushTime,
+               Image = dto.Image,
+               LevelId = dto.LevelId,
+            };
+
+            _context.Notifications.Add(model);
+            await _context.SaveChangesAsync();
+
+            return "新增成功";
         }
     }
 }
