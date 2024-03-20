@@ -14,7 +14,7 @@ namespace HotelFuen31.APIs.Services.Jill
             _context = context;
         }
 
-        public IQueryable<HallMenuDto> GetrAll()
+        public IQueryable<HallMenuDto> GetAll()
         {
             var dto = _context.HallMenus
                 .AsNoTracking()
@@ -50,6 +50,25 @@ namespace HotelFuen31.APIs.Services.Jill
             var query = _context.HallMenus
                 .AsNoTracking()
                 .Where(h => h.CategoryId == id)
+                .Select(h => new HallMenuDto
+                {
+                    Id = h.Id,
+                    DishName = h.DishName,
+                    Description = h.Description,
+                    Price = h.Price,
+                    CategoryId = h.CategoryId,
+                    CategoryName = h.Category.Category,
+                    Keywords = h.Keywords,
+                });
+
+            return query;
+        }
+
+        public IQueryable<HallMenuDto> GetMenu(int id)
+        {
+            var query = _context.HallMenus
+                .AsNoTracking()
+                .Where(h => h.Id == id)
                 .Select(h => new HallMenuDto
                 {
                     Id = h.Id,
