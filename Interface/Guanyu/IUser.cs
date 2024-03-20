@@ -7,7 +7,7 @@ namespace HotelFuen31.APIs.Interface.Guanyu
     {
         string GetMember(string str);
 
-        int NewMember(Member member);
+        string NewMember(Member member);
 
         string CryptoHash(string pwd, string key);
 

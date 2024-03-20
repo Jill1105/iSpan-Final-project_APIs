@@ -113,11 +113,26 @@ namespace HotelFuen31.APIs.Services.Guanyu
             return _jwt.EncryptWithJWT(id, key);
         }
 
-        public int NewMember(Member member)
+        public string NewMember(Member member)
         {
-            _db.Members.Add(member);
-            _db.SaveChanges();
-            return member.Id;
+            //產生一組新的Salt字串，並儲存到Member的Salt欄位中
+            member.Salt = _pwd.NewSalt();
+            
+            //給一組密碼&鹽進行雜湊加密，並更新密碼
+            member.Password = CryptoHash(member.Password, member.Salt);
+
+            //新增該項目到資料庫中
+
+            try
+            {
+                _db.Members.Add(member);
+                _db.SaveChanges();
+                return $"新增成功";
+            }
+            catch
+            {
+                return "新增失敗";
+            }
         }
     }
 }
