@@ -25,7 +25,6 @@ namespace HotelFuen31.APIs.Services.Jill
                     Description = h.Description,
                     Price = h.Price,
                     CategoryId = h.CategoryId,
-                    PhotoPath = "/StaticFiles/Jill/" + h.PhotoPath,
                     CategoryName = h.Category.Category,
                     Keywords = h.Keywords,
                 });
@@ -45,5 +44,25 @@ namespace HotelFuen31.APIs.Services.Jill
 
             return dto;
         }
+
+        public IQueryable<HallMenuDto> GetCategoryMenu(int id)
+        {
+            var query = _context.HallMenus
+                .AsNoTracking()
+                .Where(h => h.CategoryId == id)
+                .Select(h => new HallMenuDto
+                {
+                    Id = h.Id,
+                    DishName = h.DishName,
+                    Description = h.Description,
+                    Price = h.Price,
+                    CategoryId = h.CategoryId,
+                    CategoryName = h.Category.Category,
+                    Keywords = h.Keywords,
+                });
+
+            return query;
+        }
+
     }
 }
