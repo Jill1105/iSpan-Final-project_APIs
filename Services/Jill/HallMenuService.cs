@@ -27,6 +27,20 @@ namespace HotelFuen31.APIs.Services.Jill
                     CategoryId = h.CategoryId,
                     PhotoPath = "/StaticFiles/Jill/" + h.PhotoPath,
                     CategoryName = h.Category.Category,
+                    Keywords = h.Keywords,
+                });
+
+            return dto;
+        }
+
+        public IQueryable<HallCategoryDto> Getrcategory()
+        {
+            var dto = _context.HallDishCategories
+                .AsNoTracking()
+                .Select(h => new HallCategoryDto
+                {
+                    Id = h.Id,
+                    Category = h.Category,
                 });
 
             return dto;

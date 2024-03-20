@@ -24,10 +24,18 @@ namespace HotelFuen31.APIs.Controllers.Jill
         }
 
         // GET: api/HallItems
-        [HttpGet]
-        public async Task<IEnumerable<HallMenuDto>> GetHallItems()
+        [HttpGet("HallMenus")]
+        public async Task<IEnumerable<HallMenuDto>> GetHallMenus()
         {
             return await _service.GetrAll().ToListAsync();
         }
+
+        // GET: api/HallItems/Category
+        [HttpGet("Category")]
+        public async Task<IEnumerable<HallCategoryDto>> GetCategory()
+        {
+            return await _service.Getrcategory().ToListAsync();
+        }
+
     }
 }
