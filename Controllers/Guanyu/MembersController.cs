@@ -29,14 +29,15 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
 
         //GET: api/Members/密文
         [HttpGet("{str}")]
-        public async Task<string> GetMember(string str)
+        public IActionResult GetMember(string str)
         {
-            return _iuser.GetMember(str);
+            if(_iuser.GetMember(str) == "401") return Unauthorized();
+            return Content(_iuser.GetMember(str));
         }
 
         // GET: api/Members/Login?
         [HttpGet("Login")]
-        public async Task<string> GetMember([FromQuery] string phone, [FromQuery] string pwd)
+        public string MemberLogin([FromQuery] string phone, [FromQuery] string pwd)
         {
             return _iuser.GetCryptostring(phone, pwd);
         }
@@ -55,10 +56,10 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
         }
 
         [HttpPost]
-        public async Task<int> NewMember(Member member)
+        public async Task<string> NewMember(Member member)
         {
-            member.Password = _iuser.CryptoHash(member.Password,member.Salt);
-            return _iuser.NewMember(member);
+            string status = _iuser.NewMember(member);
+            return status;
         }
     }
 }
