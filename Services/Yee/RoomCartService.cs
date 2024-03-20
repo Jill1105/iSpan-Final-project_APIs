@@ -48,10 +48,13 @@ namespace HotelFuen31.APIs.Services.Yee
                                    HolidayPrice = rt.HolidayPrice,
                                    Picture = rt.ImageUrl,
                                    Size = rt.Size,
+                                   StartDate = startDate.ToString("yyyy-MM-dd"),
+                                   EndDate = endDate.ToString("yyyy-MM-dd"),
                                    Rooms = rt.Rooms
                                                .Where(r => !r.RoomBookings.Any(rb => (startDate < rb.CheckOutDate && endDate > rb.CheckInDate)))
                                                .Select(r => new RoomDto
                                                {
+                                                   UId = $"{startDate.ToString("yyyy-MM-dd")},{endDate.ToString("yyyy-MM-dd")},{r.RoomId},{r.RoomTypeId}",
                                                    RoomId = r.RoomId,
                                                    TypeId = r.RoomTypeId,
                                                }).ToList(),

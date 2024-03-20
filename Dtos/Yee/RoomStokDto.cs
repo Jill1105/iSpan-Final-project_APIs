@@ -12,6 +12,8 @@
         public int HolidayPrice { get; set; }
         public string Picture { get; set; }
         public int? Size { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public IEnumerable<RoomDto> Rooms { get; set; }
         public int Stock => this.Rooms.Count();
     }
