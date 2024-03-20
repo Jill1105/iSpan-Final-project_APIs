@@ -12,10 +12,11 @@ namespace HotelFuen31.APIs.Services
             _context = context;
         }
 
-        public IQueryable<RoomTypeDtos> GetAllRoomTypes()
+        public IQueryable<RoomTypeDtos> GetAllRoomTypes(int id)
         {
 
             var query = _context.RoomTypes
+                .Where(x => (x.RoomTypeId == id || id==0))
                 .Select(rr => new RoomTypeDtos
                 {
                     RoomTypeId = rr.RoomTypeId,
@@ -24,7 +25,10 @@ namespace HotelFuen31.APIs.Services
                     Capacity = rr.Capacity,
                     BedType = rr.BedType,
                     RoomCount = rr.RoomCount,
-                    ImageUrl = rr.ImageUrl
+                    ImageUrl = rr.ImageUrl,
+                    WeekdayPrice = rr.WeekdayPrice,
+                    Size = rr.Size
+
                 });
             return query;
         }
