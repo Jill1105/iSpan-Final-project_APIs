@@ -28,4 +28,6 @@ public partial class RoomBooking
     public int OrderPirce { get; set; }
 
     public string Phone { get; set; }
+
+    public virtual Room Room { get; set; }
 }

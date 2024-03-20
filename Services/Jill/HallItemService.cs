@@ -28,6 +28,9 @@ namespace HotelFuen31.APIs.Services.Jill
                     MaxRent = h.MaxRent,
                     PhotoPath = h.PhotoPath,
                     HallStatus = h.HallStatus,
+                    Ddescription= h.Ddescription,
+                    Location = h.Location,
+
                 });
             return dto;
         }

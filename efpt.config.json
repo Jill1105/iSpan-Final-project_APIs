@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": false,
+   "IncludeConnectionString": true,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -101,6 +101,10 @@
       },
       {
          "Name": "[dbo].[HallMenuSchedules]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HallMOrderItems]",
          "ObjectType": 0
       },
       {
@@ -204,6 +208,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[SendedNotifications]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ShoppingCartDiscounts]",
          "ObjectType": 0
       },
@@ -282,7 +290,6 @@
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
-   "UsePrefixNavigationNaming": false,
    "UseSchemaFolders": false,
    "UseSchemaNamespaces": false,
    "UseSpatial": false,

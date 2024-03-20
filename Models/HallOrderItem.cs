@@ -11,7 +11,7 @@ public partial class HallOrderItem
 
     public int HallLogId { get; set; }
 
-    public int SchedulesId { get; set; }
+    public int HallMenuId { get; set; }
 
     public int? Price { get; set; }
 

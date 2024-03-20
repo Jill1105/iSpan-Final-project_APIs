@@ -32,7 +32,8 @@ namespace HotelFuen31.APIs.Services.Guanyu
                 issuer: "issuer",
                 audience: "Audience",
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(5),
+                //expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddMinutes(1), //Token失效測試(1分鐘失效)
                 signingCredentials: signingCredentials
                 );
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
@@ -57,25 +58,28 @@ namespace HotelFuen31.APIs.Services.Guanyu
             {
                 // 這裡設置驗證金鑰
                 IssuerSigningKey = securityKey,
-                ValidateIssuer = false, // 是否驗證Issuer
+                ValidateIssuer = true, // 是否驗證Issuer
                 ValidIssuer = "issuer", // 有效的Issuer
-                ValidateAudience = false, // 是否驗證Audience
+                ValidateAudience = true, // 是否驗證Audience
                 ValidAudience = "Audience", // 有效的Audience
-                ValidateLifetime = false, // 是否驗證Token有效期
+                ValidateLifetime = true, // 是否驗證Token有效期
                 ClockSkew = TimeSpan.Zero // Token有效期的允许偏移量
             };
             try
             {
                 var principal = tokenHandler.ValidateToken(str, validationParameters, out SecurityToken validatedToken);
-
+                
                 foreach (var claim in principal.Claims) return claim.Value;
                 return "解密失敗";
             }
-            catch
+            catch (SecurityTokenExpiredException)
             {
-                return "解密失敗";
+                return "401"; // JWT過期時返回"401"
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
         }
-
     }
 }

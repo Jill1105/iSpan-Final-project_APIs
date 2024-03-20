@@ -29,39 +29,17 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
 
         //GET: api/Members/密文
         [HttpGet("{str}")]
-        public async Task<string> GetMember(string str)
+        public IActionResult GetMember(string str)
         {
-            int CipherId = _iuser.GetCipherId(str);
-
-            Cipher cipher = _iuser.GetCipher(str);
-
-            //return _iuser.Decrypt(str, CipherId);
-            return _iuser.Decrypt(cipher);
-        }
-
-        [HttpGet("setkey")]
-        public async Task<string> SetKey()
-        {
-            // 創建一個32字節的字節數組
-            return _iuser.GetRandomKey();
+            if(_iuser.GetMember(str) == "401") return Unauthorized();
+            return Content(_iuser.GetMember(str));
         }
 
         // GET: api/Members/Login?
         [HttpGet("Login")]
-        public async Task<string> GetMember([FromQuery] string phone, [FromQuery] string pwd)
+        public string MemberLogin([FromQuery] string phone, [FromQuery] string pwd)
         {
-            var memberid = _iuser.GetMemberId(phone, pwd);
-            var memberkey = _iuser.GetMemberKey(memberid);
-
-            var EncryptedString = _iuser.EncryptWithJWT(memberid, memberkey);
-
-            Cipher cipher = new Cipher();
-            cipher.UserId = memberid;
-            cipher.CipherString = EncryptedString;
-            _iuser.NewCipher(cipher);
-
-            if (EncryptedString != null) return EncryptedString;
-            else return "登入失敗";
+            return _iuser.GetCryptostring(phone, pwd);
         }
 
         //GET: api/Members?
@@ -69,6 +47,19 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
         public async Task<ActionResult<IEnumerable<Member>>> GetMembers([FromQuery] int id)
         {
             return await _db.Members.Where(m => m.Id == id).ToListAsync();
+        }
+
+        [HttpGet("pwd")]
+        public string GetEncryptPwd([FromQuery] string pwd, [FromQuery] string key)
+        {
+            return _iuser.CryptoHash(pwd, key);
+        }
+
+        [HttpPost]
+        public async Task<string> NewMember(Member member)
+        {
+            string status = _iuser.NewMember(member);
+            return status;
         }
     }
 }
