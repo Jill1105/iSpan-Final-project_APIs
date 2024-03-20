@@ -1,5 +1,6 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Hubs;
+using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +22,18 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         {
             _service = service;
             _hub = hub;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<NotificationDto>> GetNotification()
+        {
+            return await _service.GetNotifications().ToListAsync();
+        }
+
+        [HttpGet("GetLevels")]
+        public async Task<IEnumerable<MemberLevel>> GetLevel()
+        {
+            return await _service.GetLevels().ToListAsync();
         }
 
         [HttpPost]

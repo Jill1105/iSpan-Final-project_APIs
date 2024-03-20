@@ -13,5 +13,7 @@
         public string? Image {  get; set; }
 
         public int? LevelId { get; set; }
+
+        public string? LevelName { get; set; }
     }
 }
