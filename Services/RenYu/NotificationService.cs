@@ -1,6 +1,7 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HotelFuen31.APIs.Services.RenYu
 {
@@ -14,8 +15,17 @@ namespace HotelFuen31.APIs.Services.RenYu
         }
 
         public IQueryable<NotificationDto> GetNotifications()
-        {   
-            
+        {
+
+            var result = _context.SendedNotifications
+                   .AsNoTracking()
+                   .Where(x => !x.IsSended)
+                   .Select(sn => new SendedNotification
+                   {
+                       MemberId = sn.MemberId,
+                       NotificationId = sn.NotificationId,
+                   });
+
             var dto = _context.Notifications
                 .AsNoTracking()
                 .Include(n => n.Level)
@@ -26,10 +36,24 @@ namespace HotelFuen31.APIs.Services.RenYu
                     Description = notification.Description,
                     PushTime = notification.PushTime,
                     Image = notification.Image,
-                    LevelId = notification.LevelId,
+                    LevelId = notification.Level.Id,
+                    LevelName = notification.Level.Name
                 });
 
              return dto;
+        }
+        public IQueryable<MemberLevel> GetLevels()
+        {
+
+            var dto = _context.MemberLevels
+                .AsNoTracking()
+                .Select(level => new MemberLevel
+                {
+                    Id = level.Id,
+                    Name = level.Name,
+                });
+
+            return dto;
         }
 
         public async Task<string> Create(NotificationDto dto)
