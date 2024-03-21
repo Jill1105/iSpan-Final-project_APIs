@@ -55,7 +55,7 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<RestaurantPeriodService>();
 
             // yee
-            builder.Services.AddScoped<RoomCartService>();
+            builder.Services.AddScoped<CartRoomService>();
           
             builder.Services.AddScoped<IReservationServRepo, ReservationServEFRepo>();
             builder.Services.AddScoped<ReservationServService>();
