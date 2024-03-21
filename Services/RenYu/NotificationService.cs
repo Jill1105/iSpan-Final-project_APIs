@@ -16,14 +16,18 @@ namespace HotelFuen31.APIs.Services.RenYu
 
         public IQueryable<NotificationDto> GetNotifications()
         {
-
             var result = _context.SendedNotifications
                    .AsNoTracking()
                    .Where(x => !x.IsSended)
-                   .Select(sn => new SendedNotification
+                   .Include(x => x.Notification)
+                   .Include(x => x.Member)
+                   .Take(5)
+                   .Select(sn => new SendedNotificationDto
                    {
                        MemberId = sn.MemberId,
                        NotificationId = sn.NotificationId,
+                       NotificationTitle = sn.Notification.Name,
+
                    });
 
             var dto = _context.Notifications
@@ -42,6 +46,24 @@ namespace HotelFuen31.APIs.Services.RenYu
 
              return dto;
         }
+
+        public IQueryable<SendedNotificationDto> SendedNotifications(int id)
+        {
+            var dto = _context.SendedNotifications
+                .Where(sn => id == sn.MemberId)
+                .Include(sn => sn.Notification)
+                .Select(sn => new SendedNotificationDto
+                {
+                    MemberId = sn.MemberId,
+                    NotificationId = sn.NotificationId,
+                    NotificationTitle = sn.Notification.Name,
+                    PushTime = sn.Notification.PushTime,
+                    Image = sn.Notification.Image,
+                });
+
+            return dto;
+        }
+
         public IQueryable<MemberLevel> GetLevels()
         {
 

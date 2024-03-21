@@ -36,8 +36,14 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             return await _service.GetLevels().ToListAsync();
         }
 
+        [HttpPost("{id}")]
+        public IEnumerable<SendedNotificationDto> SendNotification(int id) 
+        { 
+            return _service.SendedNotifications(id).ToList();
+        }
+
         [HttpPost]
-        public string SendNotifiction()
+        public string SendAllNotifiction()
         {
             var dto = _service.GetNotifications().ToList();
             _hub.Clients.All.SendNotification(dto);
@@ -45,16 +51,16 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             return "成功推播通知至全體";
         }
 
-        [HttpPost]
-        [Route("toAll")]
-        public string ToAll()
-        {
-            List<string> msgs = new List<string>();
-            msgs.Add("Don't forget, the deadline for submitting your expense reports is this Friday.");
-            msgs.Add("Friendly reminder, please refrain from using the conference room for personal calls or meetings without prior approval.");
-            _hub.Clients.All.sendToAllConnections(msgs);
-            return "Msg sent successfully to all users!";
-        }
+        //[HttpPost]
+        //[Route("toAll")]
+        //public string ToAll()
+        //{
+        //    List<string> msgs = new List<string>();
+        //    msgs.Add("Don't forget, the deadline for submitting your expense reports is this Friday.");
+        //    msgs.Add("Friendly reminder, please refrain from using the conference room for personal calls or meetings without prior approval.");
+        //    _hub.Clients.All.sendToAllConnections(msgs);
+        //    return "Msg sent successfully to all users!";
+        //}
 
         [HttpPost]
         [Route("toUser")]
