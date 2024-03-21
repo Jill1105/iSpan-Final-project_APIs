@@ -1,5 +1,8 @@
 ﻿using HotelFuen31.APIs.Dtos.Chen;
+using HotelFuen31.APIs.Dtos.Yee;
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Services.Yee;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelFuen31.APIs.Services
 {
@@ -45,5 +48,14 @@ namespace HotelFuen31.APIs.Services
                 });
             return query;
         }
+
+        //public List<CheckRoomDto> GetCheckRoomData(string start, string end)
+        //{
+        //    var data = new RoomCartService(_context).GetRoomStock(start, end);
+        //    data = data.RoomStocks
+        //    List<CheckRoomDto> list = new List<CheckRoomDto>();
+        //    list.Add(data.RoomStocks.co)
+        //}
+      
     }
 }
