@@ -11,9 +11,9 @@ namespace HotelFuen31.APIs.Controllers.Yee
     [ApiController]
     public class DetailsController : ControllerBase
     {
-        private readonly RoomCartService _service;
+        private readonly CartRoomService _service;
 
-        public DetailsController(RoomCartService service)
+        public DetailsController(CartRoomService service)
         {
             _service = service;
         }
