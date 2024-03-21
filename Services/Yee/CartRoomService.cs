@@ -153,6 +153,20 @@ namespace HotelFuen31.APIs.Services.Yee
             _db.SaveChanges();
         }
 
+        public void DeleteItem(string phone, string uId)
+        {
+            if (string.IsNullOrEmpty(uId)) throw new Exception("無效 UId");
+
+            var model = _db.CartRoomItems
+                .Where(cri => cri.Phone == phone && cri.Uid == uId)
+                .FirstOrDefault();
+
+            if (model == null) throw new Exception("查無此項目");
+
+            _db.CartRoomItems.Remove(model);
+            _db.SaveChanges();
+        }
+
         public int CreateItem(string phone, CartRoomItemDto dto)
         {
             if (dto == null) return -1;
@@ -190,6 +204,31 @@ namespace HotelFuen31.APIs.Services.Yee
             }
 
             return -1;
+        }
+
+        public void SelectedItem(string phone, CartRoomItemDto dto)
+        {
+            if (dto == null) throw new Exception("無效傳入");
+
+            var model = _db.CartRoomItems
+                .Where(cri => cri.Phone == phone && cri.Uid == dto.Uid)
+                .FirstOrDefault();
+
+            if (model == null) throw new Exception("查無此項目");
+
+            model.Selected = dto.Selected;
+            _db.SaveChanges();
+        }
+
+        public void CheckAll(string phone, bool selected)
+        {
+            var list = _db.CartRoomItems
+                .Where(cri => cri.Phone == phone).ToList();
+
+            if (list == null) throw new Exception("清單為空");
+
+            list.ForEach(model => model.Selected = selected);
+            _db.SaveChanges();
         }
 
         public int GetPrice(string start, string end, int roomTypeId)

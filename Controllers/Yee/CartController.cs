@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Services.Yee;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using System.Linq;
@@ -28,17 +29,6 @@ namespace HotelFuen31.APIs.Controllers.Yee
         [Route("list")]
         public ActionResult<IEnumerable<CartRoomItemDto>> GetCartListUser()
         {
-            //// 取得 request 置於 Header 中的 token
-            //string? authorization = HttpContext.Request.Headers["Authorization"];
-            //if (string.IsNullOrWhiteSpace(authorization)) return BadRequest();
-
-            //// 將字串中的 token 拆出來
-            //string token = authorization.Split(" ")[1];
-            //if (string.IsNullOrWhiteSpace(token)) return BadRequest();
-
-            //// 驗證 token 有沒有效
-            //string phone = _userService.GetMemberPhone(token);
-
             try
             {
                 string phone = ValidateToken();
@@ -92,6 +82,77 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 string phone = ValidateToken();
                 _cartRoomService.MergeCart(phone, dtos);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // POST: api/cart/
+        [HttpPost]
+        public ActionResult PostCreate([FromBody] CartRoomItemDto dto)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                int newId = _cartRoomService.CreateItem(phone, dto);
+                if(newId > 0) return Ok();
+
+                return BadRequest("加入購物車失敗");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: api/cart/
+        [HttpDelete]
+        public ActionResult DeleteItem([FromForm] string uId)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.DeleteItem(phone, uId);
+
+                return Ok("刪除成功");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/cart/selected
+        [HttpPut]
+        [Route("selected")]
+        public ActionResult PutSelectedItem([FromBody] CartRoomItemDto dto)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.SelectedItem(phone, dto);
+
+                return Ok("選擇成功");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/cart/checkAll
+        [HttpPut]
+        [Route("checkAll")]
+        public ActionResult PutCheckAll([FromForm] bool selected)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.CheckAll(phone, selected);
+
+                return Ok("全選成功");
             }
             catch (Exception ex)
             {
