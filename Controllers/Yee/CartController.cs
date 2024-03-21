@@ -23,20 +23,26 @@ namespace HotelFuen31.APIs.Controllers.Yee
             _userService = userService;
         }
 
-        // POST: api/Cart/list
-        [HttpPost]
+        // GET: api/Cart/list
+        [HttpGet]
         [Route("list")]
-        public ActionResult<IEnumerable<CartRoomItemDto>> CartListUser([FromBody] string Phone)
+        public ActionResult<IEnumerable<CartRoomItemDto>> GetCartListUser()
         {
-            //string? token = HttpContext.Request.Headers["Authorization"];
+            //// 取得 request 置於 Header 中的 token
+            //string? authorization = HttpContext.Request.Headers["Authorization"];
+            //if (string.IsNullOrWhiteSpace(authorization)) return BadRequest();
 
-            //if(string.IsNullOrWhiteSpace(token)) return Unauthorized();
+            //// 將字串中的 token 拆出來
+            //string token = authorization.Split(" ")[1];
+            //if (string.IsNullOrWhiteSpace(token)) return BadRequest();
 
-            // todo: 驗證 token 有沒有效
+            //// 驗證 token 有沒有效
+            //string phone = _userService.GetMemberPhone(token);
 
             try
             {
-                var cartList = _cartRoomService.CartListUser(Phone).ToList();
+                string phone = ValidateToken();
+                var cartList = _cartRoomService.CartListUser(phone).ToList();
 
                 cartList.ForEach(item =>
                 {
@@ -74,6 +80,44 @@ namespace HotelFuen31.APIs.Controllers.Yee
             {
                 return Content(ex.Message);
             }
+        }
+
+        // POST: api/cart/merge
+        [HttpPost]
+        [Route("merge")]
+        public ActionResult PostMergeCart([FromBody] IEnumerable<CartRoomItemDto> dtos)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.MergeCart(phone, dtos);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private string ValidateToken()
+        {
+            // 取得 request 置於 Header 中的 token
+            string? authorization = HttpContext.Request.Headers["Authorization"];
+            if (string.IsNullOrWhiteSpace(authorization))
+            {
+                throw new ArgumentException("Authorization token is missing.");
+            }
+
+            // 將字串中的 token 拆出來
+            string token = authorization.Split(" ")[1];
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentException("Invalid Authorization token format.");
+            }
+
+            // 驗證 token 有沒有效
+            string phone = _userService.GetMemberPhone(token);
+            return phone;
         }
     }
 }

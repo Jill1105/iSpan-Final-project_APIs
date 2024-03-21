@@ -6,6 +6,7 @@
         public string? Uid { get; set; }
         public bool Selected { get; set; }
         public int TypeId { get; set; }
+        public int RoomId { get; set; }
         public string? Name { get; set; }
         public string? Picture { get; set; }
         public string? CheckInDate { get; set; }
@@ -14,5 +15,6 @@
         public int Price { get; set; }
         public int Count { get; set; }
         public string? Phone { get; set; }
+        public string? Remark { get; set; }
     }
 }
