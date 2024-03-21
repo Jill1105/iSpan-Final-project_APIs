@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Services.Yee;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using System.Linq;
@@ -23,20 +24,15 @@ namespace HotelFuen31.APIs.Controllers.Yee
             _userService = userService;
         }
 
-        // POST: api/Cart/list
-        [HttpPost]
+        // GET: api/Cart/list
+        [HttpGet]
         [Route("list")]
-        public ActionResult<IEnumerable<CartRoomItemDto>> CartListUser([FromBody] string Phone)
+        public ActionResult<IEnumerable<CartRoomItemDto>> GetCartListUser()
         {
-            //string? token = HttpContext.Request.Headers["Authorization"];
-
-            //if(string.IsNullOrWhiteSpace(token)) return Unauthorized();
-
-            // todo: 驗證 token 有沒有效
-
             try
             {
-                var cartList = _cartRoomService.CartListUser(Phone).ToList();
+                string phone = ValidateToken();
+                var cartList = _cartRoomService.CartListUser(phone).ToList();
 
                 cartList.ForEach(item =>
                 {
@@ -74,6 +70,115 @@ namespace HotelFuen31.APIs.Controllers.Yee
             {
                 return Content(ex.Message);
             }
+        }
+
+        // POST: api/cart/merge
+        [HttpPost]
+        [Route("merge")]
+        public ActionResult PostMergeCart([FromBody] IEnumerable<CartRoomItemDto> dtos)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.MergeCart(phone, dtos);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // POST: api/cart/
+        [HttpPost]
+        public ActionResult PostCreate([FromBody] CartRoomItemDto dto)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                int newId = _cartRoomService.CreateItem(phone, dto);
+                if(newId > 0) return Ok();
+
+                return BadRequest("加入購物車失敗");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: api/cart/
+        [HttpDelete]
+        public ActionResult DeleteItem([FromForm] string uId)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.DeleteItem(phone, uId);
+
+                return Ok("刪除成功");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/cart/selected
+        [HttpPut]
+        [Route("selected")]
+        public ActionResult PutSelectedItem([FromBody] CartRoomItemDto dto)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.SelectedItem(phone, dto);
+
+                return Ok("選擇成功");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/cart/checkAll
+        [HttpPut]
+        [Route("checkAll")]
+        public ActionResult PutCheckAll([FromForm] bool selected)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                _cartRoomService.CheckAll(phone, selected);
+
+                return Ok("全選成功");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private string ValidateToken()
+        {
+            // 取得 request 置於 Header 中的 token
+            string? authorization = HttpContext.Request.Headers["Authorization"];
+            if (string.IsNullOrWhiteSpace(authorization))
+            {
+                throw new ArgumentException("Authorization token is missing.");
+            }
+
+            // 將字串中的 token 拆出來
+            string token = authorization.Split(" ")[1];
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentException("Invalid Authorization token format.");
+            }
+
+            // 驗證 token 有沒有效
+            string phone = _userService.GetMemberPhone(token);
+            return phone;
         }
     }
 }

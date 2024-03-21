@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Dtos.Yee;
 using HotelFuen31.APIs.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 
 namespace HotelFuen31.APIs.Services.Yee
@@ -55,6 +56,8 @@ namespace HotelFuen31.APIs.Services.Yee
                                    CheckOutDate = endDate.ToString("yyyy-MM-dd"),
                                    Rooms = rt.Rooms
                                                .Where(r => !r.RoomBookings.Any(rb => (startDate < rb.CheckOutDate && endDate > rb.CheckInDate)))
+                                               //.Where(r => !r.RoomBookings.Any(rb => (rb.CheckInDate <= startDate && startDate < rb.CheckOutDate) ||
+                                               //                                     (rb.CheckInDate < endDate && endDate <= rb.CheckOutDate)))
                                                .Select(r => new RoomDto
                                                {
                                                    UId = $"{startDate.ToString("yyyy-MM-dd")},{endDate.ToString("yyyy-MM-dd")},{r.RoomId},{r.RoomTypeId}",
@@ -92,6 +95,7 @@ namespace HotelFuen31.APIs.Services.Yee
                     Uid = cri.Uid,
                     Selected = cri.Selected,
                     TypeId = cri.TypeId,
+                    RoomId = cri.RoomId,
                     Name = cri.Type.TypeName,
                     Picture = cri.Type.ImageUrl,
                     CheckInDate = cri.CheckInDate.ToString("yy-MM-dd"),
@@ -100,9 +104,131 @@ namespace HotelFuen31.APIs.Services.Yee
                     Price = GetPrice(cri.CheckInDate, cri.CheckOutDate, cri.TypeId),
                     Count = 1,
                     Phone = phone,
+                    Remark = cri.Remark,
                 }).ToList();
 
             return dtos;
+        }
+
+        // 合併客戶端及線上購物車
+        public void  MergeCart(string phone, IEnumerable<CartRoomItemDto> dtos)
+        {
+            if (dtos == null || !dtos.Any())
+                return;
+
+            // 取得現有的購物車項目
+            var existingItems = _db.CartRoomItems
+                                    .Where(cri => cri.Phone == phone)
+                                    .ToList();
+
+            foreach (var dto in dtos)
+            {
+                // 檢查是否已存在於購物車
+                if (!existingItems.Any(cri => cri.Uid == dto.Uid))
+                {
+                    var strArr = dto.Uid?.Split(",") ?? new string[0];
+                    if (strArr.Length >= 3 &&
+                        DateTime.TryParse(dto.CheckInDate, out DateTime checkInDate) &&
+                        DateTime.TryParse(dto.CheckOutDate, out DateTime checkOutDate) &&
+                        int.TryParse(strArr[2], out int roomId))
+                    {
+                        // 創建新的購物車項目
+                        var newItem = new CartRoomItem
+                        {
+                            Phone = phone,
+                            Uid = dto.Uid,
+                            Selected = dto.Selected,
+                            TypeId = dto.TypeId,
+                            RoomId = roomId,
+                            CheckInDate = checkInDate,
+                            CheckOutDate = checkOutDate,
+                            Remark = dto.Remark,
+                        };
+
+                        _db.CartRoomItems.Add(newItem);
+                    }
+                }
+            }
+
+            _db.SaveChanges();
+        }
+
+        public void DeleteItem(string phone, string uId)
+        {
+            if (string.IsNullOrEmpty(uId)) throw new Exception("無效 UId");
+
+            var model = _db.CartRoomItems
+                .Where(cri => cri.Phone == phone && cri.Uid == uId)
+                .FirstOrDefault();
+
+            if (model == null) throw new Exception("查無此項目");
+
+            _db.CartRoomItems.Remove(model);
+            _db.SaveChanges();
+        }
+
+        public int CreateItem(string phone, CartRoomItemDto dto)
+        {
+            if (dto == null) return -1;
+
+            var existingItems = _db.CartRoomItems
+                                    .Where(cri => cri.Phone == phone)
+                                    .ToList();
+
+            if (!existingItems.Any(cri => cri.Uid == dto.Uid))
+            {
+                var strArr = dto.Uid?.Split(",") ?? new string[0];
+                if (strArr.Length >= 3 &&
+                    DateTime.TryParse(dto.CheckInDate, out DateTime checkInDate) &&
+                    DateTime.TryParse(dto.CheckOutDate, out DateTime checkOutDate) &&
+                    int.TryParse(strArr[2], out int roomId))
+                {
+                    // 創建新的購物車項目
+                    var newItem = new CartRoomItem
+                    {
+                        Phone = phone,
+                        Uid = dto.Uid,
+                        Selected = dto.Selected,
+                        TypeId = dto.TypeId,
+                        RoomId = roomId,
+                        CheckInDate = checkInDate,
+                        CheckOutDate = checkOutDate,
+                        Remark = dto.Remark,
+                    };
+
+                    _db.CartRoomItems.Add(newItem);
+                    _db.SaveChanges();
+
+                    return newItem.Id;
+                }
+            }
+
+            return -1;
+        }
+
+        public void SelectedItem(string phone, CartRoomItemDto dto)
+        {
+            if (dto == null) throw new Exception("無效傳入");
+
+            var model = _db.CartRoomItems
+                .Where(cri => cri.Phone == phone && cri.Uid == dto.Uid)
+                .FirstOrDefault();
+
+            if (model == null) throw new Exception("查無此項目");
+
+            model.Selected = dto.Selected;
+            _db.SaveChanges();
+        }
+
+        public void CheckAll(string phone, bool selected)
+        {
+            var list = _db.CartRoomItems
+                .Where(cri => cri.Phone == phone).ToList();
+
+            if (list == null) throw new Exception("清單為空");
+
+            list.ForEach(model => model.Selected = selected);
+            _db.SaveChanges();
         }
 
         public int GetPrice(string start, string end, int roomTypeId)
