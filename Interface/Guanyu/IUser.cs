@@ -13,5 +13,8 @@ namespace HotelFuen31.APIs.Interface.Guanyu
 
         string GetCryptostring(string phone, string pwd);
 
+        string GetMemberPhone(string str);
+
+        string TestCheck();
     }
 }

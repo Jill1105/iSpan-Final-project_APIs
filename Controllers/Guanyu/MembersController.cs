@@ -56,10 +56,15 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
         }
 
         [HttpPost]
-        public async Task<string> NewMember(Member member)
+        public string NewMember(Member member)
         {
             string status = _iuser.NewMember(member);
             return status;
+        }
+        [HttpGet("check")]
+        public string Check()
+        {
+            return _iuser.TestCheck();
         }
     }
 }
