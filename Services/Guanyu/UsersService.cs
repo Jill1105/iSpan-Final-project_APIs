@@ -32,24 +32,38 @@ namespace HotelFuen31.APIs.Services.Guanyu
             return Decrypt(cipher);
         }
 
+        public string GetMemberPhone(string str)
+        {
+            int? id = _db.Ciphers.Where(c => c.CipherString == str).FirstOrDefault().UserId;
+
+            string phone = _db.Members.Find(id).Phone;
+
+            return phone;
+        }
 
         //登入後，回傳Token密文
         public string GetCryptostring(string phone,string pwd)
         {
-            var memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
+            try
+            {
+                var memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
                                       .FirstOrDefault().Id;
-            var memberkey = _db.Ciphers.Where(m => m.UserId == memberid)
-                                       .FirstOrDefault().CipherKey;
+                var memberkey = _db.Ciphers.Where(m => m.UserId == memberid)
+                                           .FirstOrDefault().CipherKey;
 
-            var EncryptedString = EncryptWithJWT(memberid, memberkey);
+                var EncryptedString = EncryptWithJWT(memberid, memberkey);
 
-            Cipher cipher = new Cipher();
-            cipher.UserId = memberid;
-            cipher.CipherString = EncryptedString;
-            NewCipher(cipher);
+                Cipher cipher = new Cipher();
+                cipher.UserId = memberid;
+                cipher.CipherString = EncryptedString;
+                NewCipher(cipher);
 
-            if (EncryptedString != null) return EncryptedString;
-            else return "登入失敗";
+                return EncryptedString;
+            }
+            catch
+            {
+                return "登入失敗";
+            }
         }
 
         //新增資料庫內Cipher Table的資料
@@ -115,6 +129,12 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
         public string NewMember(Member member)
         {
+            member.IsConfirmed = false;
+            member.ConfirmCode = _pwd.NewConfirmCode();
+            member.RegistrationDate = DateTime.Now;
+            member.Ban = false;
+            member.LevelId = 13;
+
             //產生一組新的Salt字串，並儲存到Member的Salt欄位中
             member.Salt = _pwd.NewSalt();
             
@@ -133,6 +153,11 @@ namespace HotelFuen31.APIs.Services.Guanyu
             {
                 return "新增失敗";
             }
+        }
+
+        public string TestCheck()
+        {
+            return _pwd.NewConfirmCode();
         }
     }
 }

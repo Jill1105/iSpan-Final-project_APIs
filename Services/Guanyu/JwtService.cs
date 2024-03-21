@@ -32,8 +32,8 @@ namespace HotelFuen31.APIs.Services.Guanyu
                 issuer: "issuer",
                 audience: "Audience",
                 claims: claims,
-                //expires: DateTime.UtcNow.AddHours(1),
-                expires: DateTime.UtcNow.AddMinutes(1), //Token失效測試(1分鐘失效)
+                expires: DateTime.UtcNow.AddHours(1),
+                //expires: DateTime.UtcNow.AddMinutes(1), //Token失效測試(1分鐘失效)
                 signingCredentials: signingCredentials
                 );
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
