@@ -54,11 +54,11 @@ namespace HotelFuen31.APIs.Controllers.Yee
         // GET: api/cart/roomStock?start=2024-01-01?end=2024-01-03
         [HttpGet]
         [Route("roomStock")]
-        public ActionResult<RoomStockInfo>? GetRoomStock([FromQuery] string start, string end)
+        public ActionResult<RoomStockInfo>? GetRoomStock([FromQuery] string checkInDate, string checkOutDate)
         {
             try
             {
-                var info = _cartRoomService.GetRoomStock(start, end);
+                var info = _cartRoomService.GetRoomStock(checkInDate, checkOutDate);
                 if (info == null) return null;
 
                 info.RoomStocks?.ToList().ForEach(ele =>

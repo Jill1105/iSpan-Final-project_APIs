@@ -15,12 +15,12 @@ namespace HotelFuen31.APIs.Services.Yee
             _db = db;
         }
 
-        public RoomStockInfo GetRoomStock(string start, string end)
+        public RoomStockInfo GetRoomStock(string checkInDate, string checkOutDate)
         {
             DateTime startDate;
             DateTime endDate;
 
-            if(!DateTime.TryParse(start, out startDate) || !DateTime.TryParse(end, out endDate)) {
+            if(!DateTime.TryParse(checkInDate, out startDate) || !DateTime.TryParse(checkOutDate, out endDate)) {
                 throw new Exception("日期格式異常");
             }
 
@@ -37,6 +37,7 @@ namespace HotelFuen31.APIs.Services.Yee
                                .AsNoTracking()
                                .Include(rt => rt.Rooms)
                                //.ThenInclude(r => r.RoomBookings)
+                               .ToList()
                                .Select(rt => new RoomStokDto
                                {
                                    Id = rt.RoomTypeId,
@@ -44,13 +45,14 @@ namespace HotelFuen31.APIs.Services.Yee
                                    Desc = rt.Description,
                                    Capacity = rt.Capacity,
                                    BedType = rt.BedType,
+                                   Price = GetPrice(startDate, endDate, rt.RoomTypeId),
                                    WeekdayPrice = rt.WeekdayPrice,
                                    WeekendPrice = rt.WeekendPrice,
                                    HolidayPrice = rt.HolidayPrice,
                                    Picture = rt.ImageUrl,
                                    Size = rt.Size,
-                                   StartDate = startDate.ToString("yyyy-MM-dd"),
-                                   EndDate = endDate.ToString("yyyy-MM-dd"),
+                                   CheckInDate = startDate.ToString("yyyy-MM-dd"),
+                                   CheckOutDate = endDate.ToString("yyyy-MM-dd"),
                                    Rooms = rt.Rooms
                                                .Where(r => !r.RoomBookings.Any(rb => (startDate < rb.CheckOutDate && endDate > rb.CheckInDate)))
                                                .Select(r => new RoomDto
@@ -65,7 +67,7 @@ namespace HotelFuen31.APIs.Services.Yee
             var info = new RoomStockInfo
             {
                 RequestTime = DateTime.Now,
-                CheckinDate = startDate.ToString("yyyy-MM-dd"),
+                CheckInDate = startDate.ToString("yyyy-MM-dd"),
                 CheckOutDate = endDate.ToString("yyyy-MM-dd"),
                 RoomStocks = lsit
             };
