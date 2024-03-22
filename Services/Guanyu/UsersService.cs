@@ -47,15 +47,15 @@ namespace HotelFuen31.APIs.Services.Guanyu
             try
             {
                 var memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
-                                      .FirstOrDefault().Id;
-                var memberkey = _db.Ciphers.Where(m => m.UserId == memberid)
-                                           .FirstOrDefault().CipherKey;
+                                    .FirstOrDefault().Id;
 
+                var memberkey = _pwd.NewKey();
                 var EncryptedString = EncryptWithJWT(memberid, memberkey);
 
                 Cipher cipher = new Cipher();
                 cipher.UserId = memberid;
                 cipher.CipherString = EncryptedString;
+                cipher.CipherKey = memberkey;
                 NewCipher(cipher);
 
                 return EncryptedString;
@@ -75,6 +75,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
             if (check != null)
             {
                 check.CipherString = cipher.CipherString;
+                check.CipherKey = cipher.CipherKey;
             }
             else
             {
