@@ -62,9 +62,9 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
             return status;
         }
         [HttpGet("check")]
-        public string Check()
+        public string Check([FromQuery] string str)
         {
-            return _iuser.TestCheck();
+            return _iuser.GetMemberPhone(str);
         }
     }
 }

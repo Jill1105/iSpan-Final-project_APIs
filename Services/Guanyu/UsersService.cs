@@ -36,11 +36,12 @@ namespace HotelFuen31.APIs.Services.Guanyu
         {
             if (string.IsNullOrEmpty(str)) throw new Exception("請重新登入");
 
-            int? id = _db.Ciphers.Where(c => c.CipherString == str).FirstOrDefault().UserId;
-
+            string key = _db.Ciphers.Where(c => c.CipherString == str).FirstOrDefault().CipherKey;
+            string id = _jwt.Decrypt(str,key);
+            
             if (id == null) throw new Exception("請重新登入");
-
-            string phone = _db.Members.Find(id).Phone;
+            
+            string phone = _db.Members.Find(int.Parse(id)).Phone;
 
             return phone;
         }
