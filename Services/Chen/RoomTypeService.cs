@@ -49,13 +49,35 @@ namespace HotelFuen31.APIs.Services
             return query;
         }
 
-        //public List<CheckRoomDto> GetCheckRoomData(string start, string end)
-        //{
-        //    var data = new RoomCartService(_context).GetRoomStock(start, end);
-        //    data = data.RoomStocks
-        //    List<CheckRoomDto> list = new List<CheckRoomDto>();
-        //    list.Add(data.RoomStocks.co)
-        //}
-      
+        public List<CheckRoomDto> GetCheckRoomData(string start, string end)
+        {
+            var data = new CartRoomService(_context).GetRoomStock(start, end);
+            List<CheckRoomDto> list = new List<CheckRoomDto>();
+            if (data.RoomStocks != null)
+            {
+                foreach (var item in data.RoomStocks)
+                {
+                    int totalPrice = _context.RoomDaysPrices
+                                        .Where(x => x.Date >= Convert.ToDateTime(data.CheckInDate) &&
+                                                    x.Date < Convert.ToDateTime(data.CheckOutDate) &&
+                                                    x.RoomTypeId == item.Id)
+                                        .Sum(x => x.Price);
+                    var checkRoomDto = new CheckRoomDto
+                    {
+                        RoomTypeId = item.Id,
+                        TypeName = item.Name,
+                        Capacity = item.Capacity,
+                        BedType = item.BedType,
+                        Description = item.Desc,
+                        Size = item.Size,
+                        SumPrice = totalPrice
+                    };
+                    list.Add(checkRoomDto);
+                }
+            }
+            return list;
+
+        }
+
     }
 }

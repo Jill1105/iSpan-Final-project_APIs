@@ -39,9 +39,9 @@ namespace HotelFuen31.APIs.Controllers.Chen
 
         [HttpGet]
         [Route("GetCheckRoomDetail")]
-        public async Task<ActionResult<IEnumerable<RoomDetailDtos>>> GetCheckRoomDetail(int id)
+        public async Task<ActionResult<IEnumerable<CheckRoomDto>>> GetCheckRoomDetail(string b_date,string e_date)
         {
-            return await _service.GetRoomDetail(id).ToListAsync();
+            return  _service.GetCheckRoomData(b_date, e_date);
         }
 
         //// GET: api/RoomTypes/5
