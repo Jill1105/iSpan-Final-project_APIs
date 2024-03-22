@@ -31,7 +31,5 @@ public partial class RoomType
 
     public virtual ICollection<CartRoomItem> CartRoomItems { get; set; } = new List<CartRoomItem>();
 
-    public virtual ICollection<CartRoomItem> CartRoomItems { get; set; } = new List<CartRoomItem>();
-
     public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 }
