@@ -3,8 +3,8 @@
     public class RoomStockInfo
     {
         public DateTime RequestTime { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
-        public IEnumerable<RoomStokDto> RoomStocks { get; set; }
+        public string? CheckInDate { get; set; }
+        public string? CheckOutDate { get; set; }
+        public IEnumerable<RoomStokDto>? RoomStocks { get; set; }
     }
 }

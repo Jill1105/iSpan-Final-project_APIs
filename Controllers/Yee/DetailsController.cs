@@ -11,9 +11,9 @@ namespace HotelFuen31.APIs.Controllers.Yee
     [ApiController]
     public class DetailsController : ControllerBase
     {
-        private readonly RoomCartService _service;
+        private readonly CartRoomService _service;
 
-        public DetailsController(RoomCartService service)
+        public DetailsController(CartRoomService service)
         {
             _service = service;
         }
@@ -21,7 +21,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
         // GET: api/details/roomStock?start=2024-01-01?end=2024-01-03
         [HttpGet]
         [Route("roomStock")]
-        public ActionResult<RoomStockInfo> GetRoomStock([FromQuery] string start, string end)
+        public ActionResult<RoomStockInfo>? GetRoomStock([FromQuery] string start, string end)
         {
             try
             {

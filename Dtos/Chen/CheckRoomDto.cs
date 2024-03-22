@@ -1,6 +1,6 @@
 ﻿namespace HotelFuen31.APIs.Dtos.Chen
 {
-    public class RoomTypeDtos
+    public class CheckRoomDto
     {
         public int RoomTypeId { get; set; }
 
@@ -12,11 +12,10 @@
 
         public string BedType { get; set; }
 
-        public int RoomCount { get; set; }
+        public int SumPrice { get; set; }
 
 
         public string ImageUrl { get; set; }
-        public int WeekdayPrice { get; set; }
-        public int Size { get; set; }
+        public int? Size { get; set; }
     }
 }

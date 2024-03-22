@@ -5,10 +5,24 @@ namespace HotelFuen31.APIs.Library
 {
     public class CryptoPwd
     {
+        public string NewConfirmCode()
+        {
+            Random rand = new Random();
+
+            string ConfirmCode = "";
+
+            for(int i = 0; i < 4; i++)
+            {
+                ConfirmCode += rand.Next(0, 10).ToString();
+            }
+
+            return ConfirmCode;
+        }
+
         //產生一組由16個字組成的金鑰
         public string NewKey()
         {
-            byte[] data = new byte[8];
+            byte[] data = new byte[32];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(data);

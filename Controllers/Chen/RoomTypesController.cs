@@ -22,22 +22,27 @@ namespace HotelFuen31.APIs.Controllers.Chen
             _service = service;
         }
         [HttpGet]
-        [Route("api/GetRoomTypes")]
-        public async Task<ActionResult<IEnumerable<RoomTypeDtos>>> GetRoomTypes()
+        [Route("GetRoomTypes")]
+        public async Task<ActionResult<IEnumerable<RoomTypeDtos>>> GetRoomTypes(int id)
         {
 
-            return await _service.GetAllRoomTypes().ToListAsync();
+            return await _service.GetAllRoomTypes(id).ToListAsync();
         }
 
         
         [HttpGet]
-        [Route("api/GetRoomDetail")]
+        [Route("GetRoomDetail")]
         public async Task<ActionResult<IEnumerable<RoomDetailDtos>>> GetRoomDetail(int id)
         {
             return await _service.GetRoomDetail(id).ToListAsync();
         }
 
-
+        [HttpGet]
+        [Route("GetCheckRoomDetail")]
+        public async Task<ActionResult<IEnumerable<CheckRoomDto>>> GetCheckRoomDetail(string b_date,string e_date)
+        {
+            return  _service.GetCheckRoomData(b_date, e_date);
+        }
 
         //// GET: api/RoomTypes/5
         //[HttpGet("{id}")]

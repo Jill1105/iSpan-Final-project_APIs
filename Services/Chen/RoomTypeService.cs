@@ -1,5 +1,8 @@
 ﻿using HotelFuen31.APIs.Dtos.Chen;
+using HotelFuen31.APIs.Dtos.Yee;
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Services.Yee;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelFuen31.APIs.Services
 {
@@ -12,10 +15,11 @@ namespace HotelFuen31.APIs.Services
             _context = context;
         }
 
-        public IQueryable<RoomTypeDtos> GetAllRoomTypes()
+        public IQueryable<RoomTypeDtos> GetAllRoomTypes(int id)
         {
 
             var query = _context.RoomTypes
+                .Where(x => (x.RoomTypeId == id || id==0))
                 .Select(rr => new RoomTypeDtos
                 {
                     RoomTypeId = rr.RoomTypeId,
@@ -24,7 +28,10 @@ namespace HotelFuen31.APIs.Services
                     Capacity = rr.Capacity,
                     BedType = rr.BedType,
                     RoomCount = rr.RoomCount,
-                    ImageUrl = rr.ImageUrl
+                    ImageUrl = rr.ImageUrl,
+                    WeekdayPrice = rr.WeekdayPrice,
+                    Size = rr.Size
+
                 });
             return query;
         }
@@ -41,5 +48,36 @@ namespace HotelFuen31.APIs.Services
                 });
             return query;
         }
+
+        public List<CheckRoomDto> GetCheckRoomData(string start, string end)
+        {
+            var data = new CartRoomService(_context).GetRoomStock(start, end);
+            List<CheckRoomDto> list = new List<CheckRoomDto>();
+            if (data.RoomStocks != null)
+            {
+                foreach (var item in data.RoomStocks)
+                {
+                    int totalPrice = _context.RoomDaysPrices
+                                        .Where(x => x.Date >= Convert.ToDateTime(data.CheckInDate) &&
+                                                    x.Date < Convert.ToDateTime(data.CheckOutDate) &&
+                                                    x.RoomTypeId == item.Id)
+                                        .Sum(x => x.Price);
+                    var checkRoomDto = new CheckRoomDto
+                    {
+                        RoomTypeId = item.Id,
+                        TypeName = item.Name,
+                        Capacity = item.Capacity,
+                        BedType = item.BedType,
+                        Description = item.Desc,
+                        Size = item.Size,
+                        SumPrice = totalPrice
+                    };
+                    list.Add(checkRoomDto);
+                }
+            }
+            return list;
+
+        }
+
     }
 }
