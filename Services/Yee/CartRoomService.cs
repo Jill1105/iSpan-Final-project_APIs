@@ -54,6 +54,7 @@ namespace HotelFuen31.APIs.Services.Yee
                                    Size = rt.Size,
                                    CheckInDate = startDate.ToString("yyyy-MM-dd"),
                                    CheckOutDate = endDate.ToString("yyyy-MM-dd"),
+                                   Info = $"入住時間: {startDate.ToString("yyyy-MM-dd")}, 退房時間: {endDate.ToString("yyyy-MM-dd")}, 備註: 共計 {(endDate- startDate).Days} 日",
                                    Rooms = rt.Rooms
                                                .Where(r => !r.RoomBookings.Any(rb => (startDate < rb.CheckOutDate && endDate > rb.CheckInDate)))
                                                //.Where(r => !r.RoomBookings.Any(rb => (rb.CheckInDate <= startDate && startDate < rb.CheckOutDate) ||
@@ -100,11 +101,10 @@ namespace HotelFuen31.APIs.Services.Yee
                     Picture = cri.Type.ImageUrl,
                     CheckInDate = cri.CheckInDate.ToString("yy-MM-dd"),
                     CheckOutDate = cri.CheckOutDate.ToString("yy-MM-dd"),
-                    Info = $"入住時間: {cri.CheckInDate}, 退房時間: {cri.CheckOutDate}, 備註: {cri.Remark}",
                     Price = GetPrice(cri.CheckInDate, cri.CheckOutDate, cri.TypeId),
                     Count = 1,
                     Phone = phone,
-                    Remark = cri.Remark,
+                    Remark = $"共計 {(cri.CheckOutDate - cri.CheckInDate).Days} 日" + cri.Remark,
                 }).ToList();
 
             return dtos;

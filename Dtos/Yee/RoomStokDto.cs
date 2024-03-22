@@ -15,6 +15,7 @@
         public int? Size { get; set; }
         public string? CheckInDate { get; set; }
         public string? CheckOutDate { get; set; }
+        public string? Info { get; set; }
         public IEnumerable<RoomDto>? Rooms { get; set; }
         public int? Stock => this.Rooms?.Count();
     }
