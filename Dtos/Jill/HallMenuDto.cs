@@ -18,6 +18,8 @@ namespace HotelFuen31.APIs.Dtos.Jill
 
         public string CategoryName { get; set; }
 
+        public string Keywords { get; set; }
+
         public virtual HallDishCategory Category { get; set; }
     }
 }

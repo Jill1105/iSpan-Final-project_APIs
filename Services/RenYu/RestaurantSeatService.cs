@@ -15,7 +15,6 @@ namespace HotelFuen31.APIs.Services.RenYu
 
         public IQueryable<RestaurantSeatDto> GetAll()
         {
-          // AAAAA
             var dto = _context.RestaurantSeats
                 .AsNoTracking()
                 .Select(rs => new RestaurantSeatDto

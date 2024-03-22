@@ -9,13 +9,15 @@ public partial class RoomBooking
 {
     public int BookingId { get; set; }
 
+    public int? OrderId { get; set; }
+
     public int RoomId { get; set; }
 
     public DateTime CheckInDate { get; set; }
 
     public DateTime CheckOutDate { get; set; }
 
-    public int MemberId { get; set; }
+    public int? MemberId { get; set; }
 
     public string Remark { get; set; }
 
@@ -28,4 +30,8 @@ public partial class RoomBooking
     public int OrderPirce { get; set; }
 
     public string Phone { get; set; }
+
+    public virtual Order Order { get; set; }
+
+    public virtual Room Room { get; set; }
 }

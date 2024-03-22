@@ -1,11 +1,13 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Hubs;
+using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace HotelFuen31.APIs.Controllers.RenYu
 {
@@ -23,9 +25,15 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpGet]
-        public async Task<IEnumerable<NotificationDto>> GetNotifications()
+        public async Task<IEnumerable<NotificationDto>> GetNotification()
         {
             return await _service.GetNotifications().ToListAsync();
+        }
+
+        [HttpGet("GetLevels")]
+        public async Task<IEnumerable<MemberLevel>> GetLevel()
+        {
+            return await _service.GetLevels().ToListAsync();
         }
 
         [HttpPost]
@@ -35,6 +43,40 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             _hub.Clients.All.SendNotification(dto);
 
             return "成功推播通知至全體";
+        }
+
+        [HttpPost]
+        [Route("toAll")]
+        public string ToAll()
+        {
+            List<string> msgs = new List<string>();
+            msgs.Add("Don't forget, the deadline for submitting your expense reports is this Friday.");
+            msgs.Add("Friendly reminder, please refrain from using the conference room for personal calls or meetings without prior approval.");
+            _hub.Clients.All.sendToAllConnections(msgs);
+            return "Msg sent successfully to all users!";
+        }
+
+        [HttpPost]
+        [Route("toUser")]
+        public string toUser([FromBody] JsonElement jobJ)
+        {
+            var userId = jobJ.GetProperty("userId").GetString();
+            var msg = jobJ.GetProperty("msg").GetString();
+            if(NotificationHub.userInfoDict.ContainsKey(userId))
+            {
+                _hub.Clients.Client(NotificationHub.userInfoDict[userId]).StringDataTransfer(msg);
+                return "Msg sent succefully to user!";
+            }
+            else
+            {
+                return "Msg sent failed to user!";
+            }
+        }
+
+        [HttpPost("Create")]
+        public async Task<string> CreateNotifiction(NotificationDto dto)
+        {
+            return await _service.Create(dto); 
         }
     }
 }

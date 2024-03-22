@@ -14,6 +14,6 @@ public partial class HallMenuSchedule
     public int? HallMorderItemId { get; set; }
 
     public virtual HallMenu HallMenu { get; set; }
-  
+
     public virtual HallMorderItem HallMorderItem { get; set; }
 }

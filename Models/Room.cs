@@ -11,5 +11,7 @@ public partial class Room
 
     public int RoomTypeId { get; set; }
 
-    public virtual ICollection<CartRoomItem> CartRoomItems { get; set; } = new List<CartRoomItem>();
+    public virtual ICollection<RoomBooking> RoomBookings { get; set; } = new List<RoomBooking>();
+
+    public virtual RoomType RoomType { get; set; }
 }
