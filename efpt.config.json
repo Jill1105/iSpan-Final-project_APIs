@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": false,
+   "IncludeConnectionString": true,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -124,6 +124,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Orders]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Reservation]",
          "ObjectType": 0
       },
@@ -205,6 +209,10 @@
       },
       {
          "Name": "[dbo].[RoomTypes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SendedNotifications]",
          "ObjectType": 0
       },
       {

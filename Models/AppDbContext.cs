@@ -8,6 +8,10 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class AppDbContext : DbContext
 {
+    public AppDbContext()
+    {
+    }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -69,6 +73,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
+    public virtual DbSet<Order> Orders { get; set; }
+
     public virtual DbSet<Reservation> Reservations { get; set; }
 
     public virtual DbSet<ReservationAppointmentTimePeriod> ReservationAppointmentTimePeriods { get; set; }
@@ -123,6 +129,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ScdsTq> ScdsTqs { get; set; }
 
+    public virtual DbSet<SendedNotification> SendedNotifications { get; set; }
+
     public virtual DbSet<ShoppingCartDiscount> ShoppingCartDiscounts { get; set; }
 
     public virtual DbSet<ShoppingCartDiscountsPriceEqual> ShoppingCartDiscountsPriceEquals { get; set; }
@@ -134,6 +142,10 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<ShoppingCartDiscountsTotalQuantity> ShoppingCartDiscountsTotalQuantities { get; set; }
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
+
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;Persist Security Info=True;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -360,16 +372,16 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_RoomCarts");
 
-            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Phone)
                 .IsRequired()
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.Uid).IsRequired();
 
-            entity.HasOne(d => d.Room).WithMany(p => p.CartRoomItems)
-                .HasForeignKey(d => d.RoomId)
+            entity.HasOne(d => d.Type).WithMany(p => p.CartRoomItems)
+                .HasForeignKey(d => d.TypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RoomCarts_RoomId");
+                .HasConstraintName("FK_CartRoomItems_RoomTypeId");
         });
 
         modelBuilder.Entity<Cipher>(entity =>
@@ -452,6 +464,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.HallName)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Location).HasMaxLength(50);
             entity.Property(e => e.MaxRent).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.MinRent).HasColumnType("decimal(18, 0)");
         });
@@ -597,6 +610,18 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(10);
+
+            entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_Notifications_MemberLevels");
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.Property(e => e.Phone)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsFixedLength();
         });
 
         modelBuilder.Entity<Reservation>(entity =>
@@ -872,6 +897,11 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.RoomId).HasName("PK__Rooms__328639398538E86F");
 
             entity.Property(e => e.RoomId).ValueGeneratedNever();
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.Rooms)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Rooms_RoomTypeId");
         });
 
         modelBuilder.Entity<RoomBooking>(entity =>
@@ -887,6 +917,15 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.Remark).IsUnicode(false);
+
+            entity.HasOne(d => d.Order).WithMany(p => p.RoomBookings)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_RoomBookings_OrderId");
+
+            entity.HasOne(d => d.Room).WithMany(p => p.RoomBookings)
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoomBookings_RoomId");
         });
 
         modelBuilder.Entity<RoomCalendar>(entity =>
@@ -1023,6 +1062,21 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.FormName)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<SendedNotification>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.HasOne(d => d.Member).WithMany()
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SendedNotifications_Members");
+
+            entity.HasOne(d => d.Notification).WithMany()
+                .HasForeignKey(d => d.NotificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SendedNotifications_Notifications");
         });
 
         modelBuilder.Entity<ShoppingCartDiscount>(entity =>

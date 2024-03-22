@@ -34,6 +34,8 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
         public string GetMemberPhone(string str)
         {
+            if (string.IsNullOrEmpty(str)) throw new Exception("請重新登入");
+
             string key = _db.Ciphers.Where(c => c.CipherString == str).FirstOrDefault().CipherKey;
             
             string id = _jwt.Decrypt(str,key);

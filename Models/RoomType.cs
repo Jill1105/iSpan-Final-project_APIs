@@ -27,5 +27,9 @@ public partial class RoomType
 
     public string ImageUrl { get; set; }
 
-    public int? Size { get; set; }
+    public int Size { get; set; }
+
+    public virtual ICollection<CartRoomItem> CartRoomItems { get; set; } = new List<CartRoomItem>();
+
+    public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 }
