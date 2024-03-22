@@ -63,10 +63,10 @@ namespace HotelFuen31.APIs.Controllers.Yee
 
             var vms = _context.CartRoomItems
                 .AsNoTracking()
-                .Include(cri => cri.Room)
+                .Include(cri => cri.RoomId)
                 .Join(
                     _context.RoomTypes,
-                    cri => cri.Room.RoomTypeId,
+                    cri => cri.RoomId,
                     rt => rt.RoomTypeId,
                     (cri, rt) => new CartItemVm
                     {

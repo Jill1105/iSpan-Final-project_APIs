@@ -9,17 +9,21 @@ public partial class CartRoomItem
 {
     public int Id { get; set; }
 
+    public string Phone { get; set; }
+
+    public string Uid { get; set; }
+
+    public bool Selected { get; set; }
+
+    public int TypeId { get; set; }
+
     public int RoomId { get; set; }
 
     public DateTime CheckInDate { get; set; }
 
     public DateTime CheckOutDate { get; set; }
 
-    public int? MemberId { get; set; }
-
     public string Remark { get; set; }
 
-    public string Phone { get; set; }
-
-    public virtual Room Room { get; set; }
+    public virtual RoomType Type { get; set; }
 }

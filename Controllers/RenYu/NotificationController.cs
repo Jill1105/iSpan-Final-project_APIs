@@ -1,5 +1,6 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Hubs;
+using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.RenYu;
 using Microsoft.AspNetCore.Cors;
@@ -17,11 +18,13 @@ namespace HotelFuen31.APIs.Controllers.RenYu
     {
         private readonly NotificationService _service;
         private IHubContext<NotificationHub, INotificationHub> _hub;
+        private readonly IUser _user;
 
-        public NotificationController(NotificationService service, IHubContext<NotificationHub, INotificationHub> hub)
+        public NotificationController(NotificationService service, IHubContext<NotificationHub, INotificationHub> hub, IUser user)
         {
             _service = service;
             _hub = hub;
+            _user = user;
         }
 
         [HttpGet]
@@ -42,6 +45,20 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             return _service.SendedNotifications(id).ToList();
         }
 
+        [HttpPost("GetMemberId")]
+        public IActionResult GetMemberId(string token)
+        {
+            
+            bool isAuthorized = _user.GetMember(token) != "401";
+
+            if(!isAuthorized)
+            {
+                return Unauthorized();
+            };
+
+            return Content(_user.GetMember(token));
+        }
+
         [HttpPost]
         public string SendAllNotifiction()
         {
@@ -50,17 +67,6 @@ namespace HotelFuen31.APIs.Controllers.RenYu
 
             return "成功推播通知至全體";
         }
-
-        //[HttpPost]
-        //[Route("toAll")]
-        //public string ToAll()
-        //{
-        //    List<string> msgs = new List<string>();
-        //    msgs.Add("Don't forget, the deadline for submitting your expense reports is this Friday.");
-        //    msgs.Add("Friendly reminder, please refrain from using the conference room for personal calls or meetings without prior approval.");
-        //    _hub.Clients.All.sendToAllConnections(msgs);
-        //    return "Msg sent successfully to all users!";
-        //}
 
         [HttpPost]
         [Route("toUser")]
@@ -80,7 +86,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpPost("Create")]
-        public async Task<string> CreateNotifiction(NotificationDto dto)
+        public async Task<string> CreateNotifiction(SendedNotificationDto dto)
         {
             return await _service.Create(dto); 
         }

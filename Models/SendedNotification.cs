@@ -7,6 +7,8 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class SendedNotification
 {
+    public int Id { get; set; }
+
     public int MemberId { get; set; }
 
     public int NotificationId { get; set; }
