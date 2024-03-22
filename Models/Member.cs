@@ -46,4 +46,6 @@ public partial class Member
     public virtual ICollection<CarTaxiOrderItem> CarTaxiOrderItems { get; set; } = new List<CarTaxiOrderItem>();
 
     public virtual MemberLevel Level { get; set; }
+
+    public virtual ICollection<SendedNotification> SendedNotifications { get; set; } = new List<SendedNotification>();
 }

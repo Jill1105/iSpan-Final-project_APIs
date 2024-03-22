@@ -33,11 +33,10 @@ namespace HotelFuen31.APIs.Services.RenYu
                 message.To.Add(toEmail);
 
                 smtpClient.Send(message);
-
             }
             catch (Exception ex) 
             {
-               
+                 
             }
            
         }
