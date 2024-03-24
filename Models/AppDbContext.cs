@@ -117,6 +117,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<RoomDaysPrice> RoomDaysPrices { get; set; }
 
+    public virtual DbSet<RoomDetailImg> RoomDetailImgs { get; set; }
+
     public virtual DbSet<RoomStatusSetting> RoomStatusSettings { get; set; }
 
     public virtual DbSet<RoomType> RoomTypes { get; set; }
@@ -145,7 +147,7 @@ public partial class AppDbContext : DbContext
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;Persist Security Info=True;User ID=hotel;Password=fuen31;Encrypt=False");
+//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -971,6 +973,17 @@ public partial class AppDbContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<RoomDetailImg>(entity =>
+        {
+            entity.HasKey(e => new { e.RoomTypeId, e.ImgSeq });
+
+            entity.ToTable("RoomDetailImg");
+
+            entity.Property(e => e.ImgUrl)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<RoomStatusSetting>(entity =>
         {
             entity.HasKey(e => e.StatusId).HasName("PK__StatusSe__C8EE20633ED3749B");
@@ -1066,14 +1079,12 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<SendedNotification>(entity =>
         {
-            entity.HasNoKey();
-
-            entity.HasOne(d => d.Member).WithMany()
+            entity.HasOne(d => d.Member).WithMany(p => p.SendedNotifications)
                 .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SendedNotifications_Members");
 
-            entity.HasOne(d => d.Notification).WithMany()
+            entity.HasOne(d => d.Notification).WithMany(p => p.SendedNotifications)
                 .HasForeignKey(d => d.NotificationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SendedNotifications_Notifications");

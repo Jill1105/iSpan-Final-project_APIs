@@ -200,6 +200,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[RoomDetailImg]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Rooms]",
          "ObjectType": 0
       },
