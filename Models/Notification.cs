@@ -20,4 +20,6 @@ public partial class Notification
     public int? LevelId { get; set; }
 
     public virtual MemberLevel Level { get; set; }
+
+    public virtual ICollection<SendedNotification> SendedNotifications { get; set; } = new List<SendedNotification>();
 }
