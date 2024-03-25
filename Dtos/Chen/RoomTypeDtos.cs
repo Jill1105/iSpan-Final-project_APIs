@@ -17,6 +17,6 @@
 
         public string ImageUrl { get; set; }
         public int WeekdayPrice { get; set; }
-        public int Size { get; set; }
+        public int? Size { get; set; }
     }
 }

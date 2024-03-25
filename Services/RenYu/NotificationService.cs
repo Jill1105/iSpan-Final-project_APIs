@@ -67,6 +67,19 @@ namespace HotelFuen31.APIs.Services.RenYu
             return dto;
         }
 
+        public IQueryable<NotificationType> GetTypes() 
+        {
+            var dto = _context.NotificationTypes
+                .AsNoTracking()
+                .Select(type => new NotificationType
+                {
+                    Id = type.Id,
+                    Name = type.Name,
+                });
+
+            return dto;
+        }
+
 
         public async Task<string> Create(SendedNotificationDto dto)
         {
@@ -77,6 +90,7 @@ namespace HotelFuen31.APIs.Services.RenYu
                PushTime = dto.PushTime,
                Image = dto.Image,
                LevelId = dto.LevelId,
+               TypeId = dto.TypeId,
             };
 
             _context.Notifications.Add(notiModel);

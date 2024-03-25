@@ -9,7 +9,7 @@ public partial class RoomBooking
 {
     public int BookingId { get; set; }
 
-    public int? OrderId { get; set; }
+    public int OrderId { get; set; }
 
     public int RoomId { get; set; }
 

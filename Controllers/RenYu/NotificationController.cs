@@ -13,6 +13,7 @@ using System.Text.Json;
 
 namespace HotelFuen31.APIs.Controllers.RenYu
 {
+    // https://eugenesu.me/2021/08/27/hangfire-entry/
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase
@@ -35,21 +36,29 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpGet("GetLevels")]
-        public async Task<IEnumerable<MemberLevel>> GetLevel()
+        public async Task<IEnumerable<MemberLevel>> GetLevels()
         {
             return await _service.GetLevels().ToListAsync();
         }
+        [HttpGet("GetTypes")]
+        public async Task<IEnumerable<NotificationType>> GetTypes()
+        {
+            return await _service.GetTypes().ToListAsync();
+        }
 
-        [HttpPost("{id}")]
-        public ActionResult<IEnumerable<SendedNotificationDto>> SendNotification(int id)
+        // POST: api/Notification/list
+        [HttpPost("list")]
+        public ActionResult<IEnumerable<SendedNotificationDto>> SendNotification()
         {
             try
             {
-                string phone = ValidateToken();
-                if(phone == "401")
+                string idStr = ValidateToken();
+                if(idStr == "401")
                 {
                     return Unauthorized();
                 }
+
+                int id = int.Parse(idStr);
 
                 return _service.SendedNotifications(id).ToList();
             }
@@ -59,19 +68,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             }
         }
 
-        [HttpPost("GetMemberId")]
-        public IActionResult GetMemberId(string token)
-        {
-            
-            bool isAuthorized = _user.GetMember(token) != "401";
 
-            if(!isAuthorized)
-            {
-                return Unauthorized();
-            };
-
-            return Content(_user.GetMember(token));
-        }
 
         [HttpPost]
         public string SendAllNotifiction()
@@ -121,8 +118,8 @@ namespace HotelFuen31.APIs.Controllers.RenYu
                 throw new ArgumentException("Invalid Authorization token format.");
             }
 
-            string phone = _user.GetMemberPhone(token);
-            return phone;
+            string id = _user.GetMember(token);
+            return id;
         }
     }
 }

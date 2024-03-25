@@ -33,6 +33,7 @@ namespace HotelFuen31.APIs.Services
                     Size = rr.Size
 
                 });
+
             return query;
         }
         public IQueryable<RoomDetailDtos> GetRoomDetail(int id)

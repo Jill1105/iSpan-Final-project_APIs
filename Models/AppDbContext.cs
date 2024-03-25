@@ -69,6 +69,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
+    public virtual DbSet<NotificationType> NotificationTypes { get; set; }
+
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<Reservation> Reservations { get; set; }
@@ -112,6 +114,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<RoomCalendar> RoomCalendars { get; set; }
 
     public virtual DbSet<RoomDaysPrice> RoomDaysPrices { get; set; }
+
+    public virtual DbSet<RoomDetailImg> RoomDetailImgs { get; set; }
 
     public virtual DbSet<RoomStatusSetting> RoomStatusSettings { get; set; }
 
@@ -606,6 +610,17 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.LevelId)
                 .HasConstraintName("FK_Notifications_MemberLevels");
+
+            entity.HasOne(d => d.LevelNavigation).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_Notifications_NotificationTypes");
+        });
+
+        modelBuilder.Entity<NotificationType>(entity =>
+        {
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -912,6 +927,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.RoomBookings)
                 .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RoomBookings_OrderId");
 
             entity.HasOne(d => d.Room).WithMany(p => p.RoomBookings)
@@ -960,6 +976,17 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Week)
                 .IsRequired()
                 .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomDetailImg>(entity =>
+        {
+            entity.HasKey(e => new { e.RoomTypeId, e.ImgSeq });
+
+            entity.ToTable("RoomDetailImg");
+
+            entity.Property(e => e.ImgUrl)
+                .HasMaxLength(100)
                 .IsUnicode(false);
         });
 
