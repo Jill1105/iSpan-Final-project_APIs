@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 
 namespace HotelFuen31.APIs.Controllers.RenYu
@@ -40,9 +41,22 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpPost("{id}")]
-        public IEnumerable<SendedNotificationDto> SendNotification(int id) 
-        { 
-            return _service.SendedNotifications(id).ToList();
+        public ActionResult<IEnumerable<SendedNotificationDto>> SendNotification(int id)
+        {
+            try
+            {
+                string phone = ValidateToken();
+                if(phone == "401")
+                {
+                    return Unauthorized();
+                }
+
+                return _service.SendedNotifications(id).ToList();
+            }
+            catch (Exception ex) 
+            { 
+               return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("GetMemberId")]
@@ -77,7 +91,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             if(NotificationHub.userInfoDict.ContainsKey(userId))
             {
                 _hub.Clients.Client(NotificationHub.userInfoDict[userId]).StringDataTransfer(msg);
-                return "Msg sent succefully to user!";
+                return "Msg sent succefully to usTCer!";
             }
             else
             {
@@ -89,6 +103,26 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         public async Task<string> CreateNotifiction(SendedNotificationDto dto)
         {
             return await _service.Create(dto); 
+        }
+
+        private string ValidateToken()
+        {
+            string? authoriztion = HttpContext.Request.Headers["Authorization"];
+
+            if (string.IsNullOrEmpty(authoriztion))
+            {
+                throw new ArgumentException("Authoriztion token is missing");
+            }
+
+            string token = authoriztion.Split(" ")[1];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentException("Invalid Authorization token format.");
+            }
+
+            string phone = _user.GetMemberPhone(token);
+            return phone;
         }
     }
 }
