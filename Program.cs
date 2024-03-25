@@ -57,10 +57,14 @@ namespace HotelFuen31.APIs
             // yee
             builder.Services.AddScoped<CartRoomService>();
           
+            //FC
             builder.Services.AddScoped<IReservationServRepo, ReservationServEFRepo>();
             builder.Services.AddScoped<ReservationServService>();
+			builder.Services.AddScoped<IReservationServTypeRepo, ReservationServTypeEFRepo>();
+			builder.Services.AddScoped<ReservationServTypeService>();
 
-            builder.Services.AddScoped<IUser,UsersService>();
+
+			builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
             builder.Services.AddScoped<CryptoPwd>();
             

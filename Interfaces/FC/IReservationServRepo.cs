@@ -10,6 +10,9 @@ namespace HotelFuen31.APIs.Interfaces.FC
 		ReservationServiceDetailDto Get(int id);
 		IQueryable<ReservationServiceDetailDto> Read();
 
+		IQueryable<ReservationServiceDetailDto> GetByid(int id);
+
+
 		//ReservationServiceDetailDto Get(Func<Product, bool> func);
 
 	}
