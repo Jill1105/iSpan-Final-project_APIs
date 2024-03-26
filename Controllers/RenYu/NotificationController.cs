@@ -1,14 +1,12 @@
-﻿using HotelFuen31.APIs.Dtos.RenYu;
+﻿using Hangfire;
+using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.RenYu;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 
 namespace HotelFuen31.APIs.Controllers.RenYu
@@ -30,9 +28,9 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpGet]
-        public async Task<IEnumerable<NotificationDto>> GetNotification()
+        public IEnumerable<NotificationDto> GetNotification()
         {
-            return await _service.GetNotifications().ToListAsync();
+            return _service.GetNotifications().ToList();
         }
 
         [HttpGet("GetLevels")]
@@ -68,12 +66,18 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             }
         }
 
-
+        [HttpPost("birthday")]
+        public ActionResult<IEnumerable<BirthdayDto>> SendBirthdayNotification()
+        {
+             RecurringJob.AddOrUpdate("myRecurringJob",() => _service.SendBirthdayNotification(), Cron.Monthly) ;
+            
+            return Ok();
+        }
 
         [HttpPost]
         public string SendAllNotifiction()
         {
-            var dto = _service.GetNotifications().ToList();
+            var dto = _service.GetNotifications();
             _hub.Clients.All.SendNotification(dto);
 
             return "成功推播通知至全體";
@@ -88,7 +92,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             if(NotificationHub.userInfoDict.ContainsKey(userId))
             {
                 _hub.Clients.Client(NotificationHub.userInfoDict[userId]).StringDataTransfer(msg);
-                return "Msg sent succefully to usTCer!";
+                return "Msg sent succefully to user!";
             }
             else
             {

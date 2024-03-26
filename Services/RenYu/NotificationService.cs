@@ -1,8 +1,7 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Models;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
 
 namespace HotelFuen31.APIs.Services.RenYu
 {
@@ -15,11 +14,13 @@ namespace HotelFuen31.APIs.Services.RenYu
             _context = context;
         }
 
-        public IQueryable<NotificationDto> GetNotifications()
+        public IEnumerable<NotificationDto> GetNotifications()
         {
             var dto = _context.Notifications
                 .AsNoTracking()
                 .Include(n => n.Level)
+                .OrderByDescending(n => n.Id)
+                .Take(3)
                 .Select(notification => new NotificationDto
                 {
                     Id = notification.Id,
@@ -29,7 +30,8 @@ namespace HotelFuen31.APIs.Services.RenYu
                     Image = notification.Image,
                     LevelId = notification.Level.Id,
                     LevelName = notification.Level.Name
-                });
+                })
+                .ToList();  
 
              return dto;
         }
@@ -80,6 +82,25 @@ namespace HotelFuen31.APIs.Services.RenYu
             return dto;
         }
 
+        public IQueryable<BirthdayDto> SendBirthdayNotification()
+        {
+            int birthdayNotifi = 2;
+
+            var dto = _context.SendedNotifications
+                .AsNoTracking()
+                .Include(x => x.Member)
+                .Include(x => x.Notification)
+                .Where(x => x.Notification.TypeId == birthdayNotifi)
+                .Select(x => new BirthdayDto
+                {
+                    Id = x.Id,
+                    Name = x.Notification.Name,
+                    Description = x.Notification.Description,
+                });
+               
+
+            return dto;
+        }
 
         public async Task<string> Create(SendedNotificationDto dto)
         {
@@ -110,6 +131,7 @@ namespace HotelFuen31.APIs.Services.RenYu
                     .Select(x => x.Id)
                     .ToList();
             }
+
             for (int i = 0; i < count; i++)
             {
                 var snModel = new SendedNotification
