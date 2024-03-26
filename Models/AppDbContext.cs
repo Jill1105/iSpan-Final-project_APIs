@@ -113,6 +113,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<RoomDaysPrice> RoomDaysPrices { get; set; }
 
+    public virtual DbSet<RoomDetailImg> RoomDetailImgs { get; set; }
+
     public virtual DbSet<RoomStatusSetting> RoomStatusSettings { get; set; }
 
     public virtual DbSet<RoomType> RoomTypes { get; set; }
@@ -960,6 +962,17 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Week)
                 .IsRequired()
                 .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<RoomDetailImg>(entity =>
+        {
+            entity.HasKey(e => new { e.RoomTypeId, e.ImgSeq });
+
+            entity.ToTable("RoomDetailImg");
+
+            entity.Property(e => e.ImgUrl)
+                .HasMaxLength(100)
                 .IsUnicode(false);
         });
 

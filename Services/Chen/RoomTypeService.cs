@@ -30,24 +30,38 @@ namespace HotelFuen31.APIs.Services
                     RoomCount = rr.RoomCount,
                     ImageUrl = rr.ImageUrl,
                     WeekdayPrice = rr.WeekdayPrice,
-                    Size = rr.Size
+                    Size = rr.Size,
+                    ImgList = _context.RoomDetailImgs
+                             .Where(img => img.RoomTypeId == rr.RoomTypeId)
+                              .Select(img => new RoomDetailImgDtos
+                                 {
+                                     RoomTypeId = img.RoomTypeId,
+                                       ImgSeq = img.ImgSeq,
+                              ImgUrl = img.ImgUrl
+                     })
+    .ToList()
 
-                });
+        });
             return query;
         }
-        public IQueryable<RoomDetailDtos> GetRoomDetail(int id)
+  public IQueryable<RoomDetailDtos> GetRoomDetail(int id)
+{
+    var query = _context.RoomDaysPrices
+        .Where(rr => rr.RoomTypeId == id)
+        .Select(rr => new RoomDetailDtos
         {
-            var query = _context.RoomDaysPrices
-                .Select(rr => new RoomDetailDtos
-                {
-                    RoomTypeId = rr.RoomTypeId,
-                    Date = rr.Date,
-                    Description = rr.Description,
-                    IsHoliday = rr.IsHoliday,
-                    Price = rr.Price
-                });
-            return query;
-        }
+            RoomTypeId = rr.RoomTypeId,
+            Date = rr.Date,
+            Description = rr.Description,
+            IsHoliday = rr.IsHoliday,
+            Price = rr.Price,
+
+        });
+
+    return query;
+}
+
+
 
         public List<CheckRoomDto> GetCheckRoomData(string start, string end)
         {
@@ -70,7 +84,10 @@ namespace HotelFuen31.APIs.Services
                         BedType = item.BedType,
                         Description = item.Desc,
                         Size = item.Size,
-                        SumPrice = totalPrice
+                        SumPrice = totalPrice,
+                        CanSoldQty = item.Rooms.Count(),
+                        ImageUrl = item.Picture
+
                     };
                     list.Add(checkRoomDto);
                 }
