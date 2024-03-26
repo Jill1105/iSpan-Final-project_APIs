@@ -18,10 +18,11 @@ namespace HotelFuen31.APIs.Library
 
             return ConfirmCode;
         }
+
         //產生一組由16個字組成的金鑰
         public string NewKey()
         {
-            byte[] data = new byte[8];
+            byte[] data = new byte[32];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(data);

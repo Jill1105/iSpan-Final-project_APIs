@@ -34,11 +34,22 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
         public string GetMemberPhone(string str)
         {
-            int? id = _db.Ciphers.Where(c => c.CipherString == str).FirstOrDefault().UserId;
+            if (string.IsNullOrEmpty(str)) throw new Exception("請重新登入");
 
-            string phone = _db.Members.Find(id).Phone;
+            string key = _db.Ciphers.Where(c => c.CipherString == str).FirstOrDefault().CipherKey;
+            
+            string id = _jwt.Decrypt(str,key);
 
-            return phone;
+            if(id == "401")
+            {
+                return id;
+            }
+            else
+            {
+                string phone = _db.Members.Find(int.Parse(id)).Phone;
+
+                return phone;
+            }
         }
 
         //登入後，回傳Token密文
@@ -47,15 +58,15 @@ namespace HotelFuen31.APIs.Services.Guanyu
             try
             {
                 var memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
-                                      .FirstOrDefault().Id;
-                var memberkey = _db.Ciphers.Where(m => m.UserId == memberid)
-                                           .FirstOrDefault().CipherKey;
+                                    .FirstOrDefault().Id;
 
+                var memberkey = _pwd.NewKey();
                 var EncryptedString = EncryptWithJWT(memberid, memberkey);
 
                 Cipher cipher = new Cipher();
                 cipher.UserId = memberid;
                 cipher.CipherString = EncryptedString;
+                cipher.CipherKey = memberkey;
                 NewCipher(cipher);
 
                 return EncryptedString;
@@ -75,6 +86,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
             if (check != null)
             {
                 check.CipherString = cipher.CipherString;
+                check.CipherKey = cipher.CipherKey;
             }
             else
             {
