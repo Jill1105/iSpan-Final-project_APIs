@@ -2,8 +2,14 @@
 using HotelFuen31.APIs.Models;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Configuration;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing.Text;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Xml;
+using System.Text;
 using System.Transactions;
+using System.Web;
 using static NuGet.Packaging.PackagingConstants;
 
 namespace HotelFuen31.APIs.Services.Yee
@@ -37,6 +43,20 @@ namespace HotelFuen31.APIs.Services.Yee
                 _db.Orders.Add(order);
                 _db.SaveChanges();
 
+                //EcPay
+                // order.MerchantTradeNo = MTNBulder(order.Id);    // 綠界廠商交易編號，由訂單編號和交易編號(亂數)組成
+                order.RtnCode = 0;  // 未付款
+                order.RtnMsg = "訂單已建立，尚未付款";
+                //order.TradeNo = order.MerchantTradeNo.Substring(11, 20);   // ?交易編號(亂數)
+                //order.TradeAmt = 0
+                //order.PaymentDate = order.OrderTime;
+                order.PaymentType = "aio";
+                order.PaymentTypeChargeFee = "0";
+                //order.TradeDate = EcPayDto.MerchantTradeDate;
+                //order.SimulatePaid = 0;     // 模擬付款
+                _db.SaveChanges();
+
+
                 // 逐一寫入
                 selectedItem.ToList().ForEach(item =>
                 {
@@ -59,7 +79,7 @@ namespace HotelFuen31.APIs.Services.Yee
                         Remark = item.Remark,
                         BookingStatusId = 2,
                         BookingDate = order.OrderTime,
-                        OrderPirce = _crService.GetPrice(item.CheckInDate, item.CheckOutDate, item.TypeId),
+                        OrderPrice = _crService.GetPrice(item.CheckInDate, item.CheckOutDate, item.TypeId),
                         Phone = phone,
                     };
 
@@ -76,7 +96,152 @@ namespace HotelFuen31.APIs.Services.Yee
 
                 return order.Id;
             }
-            
+        }
+
+        public OrderDto GetOrder(string phone, int orderId)
+        {
+            var order = _db.Orders
+                .Include(o => o.RoomBookings)
+                .ThenInclude(rb => rb.Room)
+                .ThenInclude(r => r.RoomType)
+                .FirstOrDefault(o => o.Phone == phone && o.Id == orderId);
+
+            if (order == null) throw new Exception("查無該筆訂單");
+
+            var dto = new OrderDto
+            {
+                Id = order.Id,
+                Phone = order.Phone,
+                Status = order.Status,
+                OrderTime = order.OrderTime,
+                MerchantTradeNo = order.MerchantTradeNo,
+                RtnCode = order.RtnCode,
+                RtnMsg = order.RtnMsg,
+                TradeNo = order.TradeNo,
+                TradeAmt = order.RoomBookings?.Select(rb => rb.OrderPrice).Aggregate((total, sub) => total + sub) ?? 0,
+                PaymentDate = order.PaymentDate,
+                PaymentType = order.PaymentType,
+                PaymentTypeChargeFee = order.PaymentTypeChargeFee,
+                TradeDate = order.TradeDate,
+                SimulatePaid = order.SimulatePaid,
+                RoomBookings = order.RoomBookings?.Select(rb => new RoomBookingDto
+                {
+                    BookingId = rb.BookingId,
+                    OrderId = rb.OrderId,
+                    RoomId = rb.RoomId,
+                    CheckInDate = rb.CheckInDate,
+                    CheckOutDate = rb.CheckOutDate,
+                    MemberId = rb.MemberId,
+                    Remark = rb.Remark,
+                    BookingStatusId = rb.BookingStatusId,
+                    BookingCancelDate = rb.BookingCancelDate,
+                    BookingDate = rb.BookingDate,
+                    OrderPrice = rb.OrderPrice,
+                    Phone = rb.Phone,
+                    RoomTypeId = rb.Room.RoomTypeId,
+                    Name = rb.Room.RoomType.TypeName,
+                }).ToList() ?? Enumerable.Empty<RoomBookingDto>(),
+            };
+
+            return dto;
+        }
+
+        public Dictionary<string, string> GetECPayDic(OrderDto orderDto, string backEnd, string frontEnd)
+        {
+            if (orderDto.Status == 1 || orderDto.RtnCode == 1) throw new Exception("該訂單已完成付款");
+
+            string merchantTradeNo = MTNBulder(orderDto.Id);
+
+            // 編寫字典以利加密(綠界要求)
+            var dicOrder = new Dictionary<string, string>
+            {
+                { "MerchantID", "3002607" },
+                { "MerchantTradeNo", merchantTradeNo },
+                { "MerchantTradeDate", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
+                { "PaymentType", "aio"},
+                { "TotalAmount", orderDto.TradeAmt?.ToString() ?? "0" },
+                { "TradeDesc", "Kalsari Hotel" },   // todo 交易描述
+                { "ItemName",  "Kalsari Hotel Booking" },
+                { "ReturnURL",  $"{backEnd}/api/Order/ECPay"},  // 綠界 POST 回後端
+                { "ChoosePayment", "ALL" },
+                { "EncryptType",  "1" },
+                { "ClientBackURL", $"{frontEnd}" },    // 僅為綠界端轉址返回按鈕，並無 POST 功能
+                { "OrderResultURL", $"{frontEnd}/Pay/result?orderId={orderDto.Id}" },   // 綠界 POST 回前端
+            };
+
+            // 透過字典(綠界要求)
+            dicOrder["CheckMacValue"] = GetCheckMacValue(dicOrder);
+
+
+            // 填入資料庫以利檢查
+            var order = _db.Orders.Find(orderDto.Id);
+
+            if (order == null) throw new Exception("訂單比對異常");
+
+            order.MerchantTradeNo = merchantTradeNo;
+            order.TradeNo = merchantTradeNo.Substring(10, 10);
+            order.TradeDate = dicOrder["MerchantTradeDate"];
+            order.SimulatePaid = 1;
+            order.CheckMacValue = dicOrder["CheckMacValue"];
+
+            _db.SaveChanges();
+
+            //var formInfo = new ECPayCreateDto
+            //{
+            //    MerchantID = "3002607",
+            //    MerchantTradeNo = merchantTradeNo,
+            //    MerchantTradeDate = DateTime.Now.ToString(),
+            //    PaymentType = "aio",
+            //    TotalAmount = ordDto.TradeAmt?.ToString() ?? "0",
+            //    TradeDesc = "Kalsari Hotel", // todo 交易描述
+            //    ItemName = "Kalsari Hotel Booking",
+            //    ReturnURL = "",
+            //    ChoosePayment = "ALL",
+            //    CheckMacValue = "",   // 不用加入雜湊計算
+            //    EncryptType = "1",
+            //    ClientBackURL = "", // 僅為綠界端轉址返回按鈕，並無 POST 功能
+            //    OrderResultURL = "",    // 綠界 POST 回前端
+            //};
+
+            return dicOrder;
+        }
+
+        // 產生綠界交易碼
+        private string MTNBulder(int orderId)
+        {
+            return $"{new String('0', 10 - orderId.ToString().Length)}{orderId}{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10)}";
+        }
+
+        private string GetCheckMacValue(Dictionary<string, string> dicOrder)
+        {
+            var param = dicOrder.Keys.OrderBy(x => x).Select(key => key + "=" + dicOrder[key]).ToList();
+            string checkValue = string.Join("&", param);
+
+            //綠界提供測試用的 HashKey 真實註冊會有另一組
+            var hashKey = "pwFHCqoQZGmho4w6";
+            //綠界提供測試用的 HashIV 真實註冊會有另一組
+            var HashIV = "EkRm7iFT261dpevs";
+
+            checkValue = $"HashKey={hashKey}&" + checkValue + $"&HashIV={HashIV}";
+            checkValue = HttpUtility.UrlEncode(checkValue).ToLower();
+            checkValue = GetSHA256(checkValue);
+
+            return checkValue.ToUpper();
+        }
+
+        private string GetSHA256(string value)
+        {
+            var result = new StringBuilder();
+            var sha256 = SHA256.Create();
+            var bts = Encoding.UTF8.GetBytes(value);
+            var hash = sha256.ComputeHash(bts);
+
+            for (int i = 0; i < hash.Length; i++)
+            {
+                result.Append(hash[i].ToString("X2"));
+            }
+
+            return result.ToString();
         }
     }
 }

@@ -30,7 +30,7 @@ namespace HotelFuen31.APIs.Services
                     RoomCount = rr.RoomCount,
                     ImageUrl = rr.ImageUrl,
                     WeekdayPrice = rr.WeekdayPrice,
-                    Size = rr.Size
+                    Size = rr.Size ?? -1,
 
                 });
             return query;
@@ -75,8 +75,8 @@ namespace HotelFuen31.APIs.Services
                     list.Add(checkRoomDto);
                 }
             }
-            return list;
 
+            return list;
         }
 
     }
