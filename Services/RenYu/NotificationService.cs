@@ -20,7 +20,7 @@ namespace HotelFuen31.APIs.Services.RenYu
                 .AsNoTracking()
                 .Where(sn => id == sn.MemberId)
                 .Include(sn => sn.Notification)
-                .OrderByDescending(n => n.Id)
+                .OrderByDescending(n => n.Notification.PushTime)
                 .Take(3)
                 .Select(sn => new SendedNotificationDto
                 {
@@ -40,7 +40,7 @@ namespace HotelFuen31.APIs.Services.RenYu
             var dto = _context.SendedNotifications
                 .Where(sn => id == sn.MemberId)
                 .Include(sn => sn.Notification)
-                .OrderByDescending (sn => sn.NotificationId)
+                .OrderByDescending (sn => sn.Notification.PushTime)
                 .Take(10)
                 .Select(sn => new SendedNotificationDto
                 {
