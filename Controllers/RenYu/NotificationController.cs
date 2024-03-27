@@ -27,12 +27,6 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             _user = user;
         }
 
-        [HttpGet]
-        public IEnumerable<NotificationDto> GetNotification()
-        {
-            return _service.GetNotifications().ToList();
-        }
-
         [HttpGet("GetLevels")]
         public async Task<IEnumerable<MemberLevel>> GetLevels()
         {
@@ -46,7 +40,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
 
         // POST: api/Notification/list
         [HttpPost("list")]
-        public ActionResult<IEnumerable<SendedNotificationDto>> SendNotification()
+        public ActionResult<IEnumerable<SendedNotificationDto>> GetAllNotification()
         {
             try
             {
@@ -58,7 +52,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
 
                 int id = int.Parse(idStr);
 
-                return _service.SendedNotifications(id).ToList();
+                return _service.GetAllNotifications(id).ToList();
             }
             catch (Exception ex) 
             { 
@@ -75,12 +69,23 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpPost]
-        public string SendAllNotifiction()
-        {
-            var dto = _service.GetNotifications();
-            _hub.Clients.All.SendNotification(dto);
+        public ActionResult<IEnumerable<SendedNotificationDto>> SendAllNotifiction()
+        {   
+            try
+            {
+                string idStr = ValidateToken();
 
-            return "成功推播通知至全體";
+                int id = int.Parse(idStr);
+
+                var dto = _service.GetLatestNotifications(id).ToList();
+                _hub.Clients.All.SendNotification(dto);
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]

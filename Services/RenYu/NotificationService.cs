@@ -14,34 +14,34 @@ namespace HotelFuen31.APIs.Services.RenYu
             _context = context;
         }
 
-        public IEnumerable<NotificationDto> GetNotifications()
+        public IQueryable<SendedNotificationDto> GetLatestNotifications(int id)
         {
-            var dto = _context.Notifications
+            var dto = _context.SendedNotifications
                 .AsNoTracking()
-                .Include(n => n.Level)
+                .Where(sn => id == sn.MemberId)
+                .Include(sn => sn.Notification)
                 .OrderByDescending(n => n.Id)
                 .Take(3)
-                .Select(notification => new NotificationDto
+                .Select(sn => new SendedNotificationDto
                 {
-                    Id = notification.Id,
-                    Name = notification.Name,
-                    Description = notification.Description,
-                    PushTime = notification.PushTime,
-                    Image = notification.Image,
-                    LevelId = notification.Level.Id,
-                    LevelName = notification.Level.Name
-                })
-                .ToList();  
+                    MemberId = sn.MemberId,
+                    NotificationId = sn.NotificationId,
+                    NotificationTitle = sn.Notification.Name,
+                    NotificationDescription = sn.Notification.Description,
+                    PushTime = sn.Notification.PushTime,
+                    Image = sn.Notification.Image,
+                });  
 
              return dto;
         }
 
-        public IQueryable<SendedNotificationDto> SendedNotifications(int id)
+        public IQueryable<SendedNotificationDto> GetAllNotifications(int id)
         {
             var dto = _context.SendedNotifications
                 .Where(sn => id == sn.MemberId)
                 .Include(sn => sn.Notification)
-                .Take(5)
+                .OrderByDescending (sn => sn.NotificationId)
+                .Take(10)
                 .Select(sn => new SendedNotificationDto
                 {
                     MemberId = sn.MemberId,
