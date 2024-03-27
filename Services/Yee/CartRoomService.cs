@@ -34,38 +34,33 @@ namespace HotelFuen31.APIs.Services.Yee
             }
 
             // 查詢日期內剩餘房間
-            var lsit = _db.RoomTypes
-                               .AsNoTracking()
-                               .Include(rt => rt.Rooms)
-                               //.ThenInclude(r => r.RoomBookings)
-                               .ToList()
-                               .Select(rt => new RoomStokDto
-                               {
-                                   Id = rt.RoomTypeId,
-                                   Name = rt.TypeName,
-                                   Desc = rt.Description,
-                                   Capacity = rt.Capacity,
-                                   BedType = rt.BedType,
-                                   Price = GetPrice(startDate, endDate, rt.RoomTypeId),
-                                   WeekdayPrice = rt.WeekdayPrice,
-                                   WeekendPrice = rt.WeekendPrice,
-                                   HolidayPrice = rt.HolidayPrice,
-                                   Picture = rt.ImageUrl,
-                                   Size = rt.Size,
-                                   CheckInDate = startDate.ToString("yyyy-MM-dd"),
-                                   CheckOutDate = endDate.ToString("yyyy-MM-dd"),
-                                   Info = $"入住時間: {startDate.ToString("yyyy-MM-dd")}, 退房時間: {endDate.ToString("yyyy-MM-dd")}, 備註: 共計 {(endDate- startDate).Days} 日",
-                                   Rooms = rt.Rooms
-                                               .Where(r => !r.RoomBookings.Any(rb => (startDate < rb.CheckOutDate && endDate > rb.CheckInDate)))
-                                               //.Where(r => !r.RoomBookings.Any(rb => (rb.CheckInDate <= startDate && startDate < rb.CheckOutDate) ||
-                                               //                                     (rb.CheckInDate < endDate && endDate <= rb.CheckOutDate)))
-                                               .Select(r => new RoomDto
-                                               {
-                                                   UId = $"{startDate.ToString("yyyy-MM-dd")},{endDate.ToString("yyyy-MM-dd")},{r.RoomId},{r.RoomTypeId}",
-                                                   RoomId = r.RoomId,
-                                                   TypeId = r.RoomTypeId,
-                                               }).ToList(),
-                               }).ToList();
+            var list = _db.RoomTypes
+                .AsNoTracking()
+                .Select(rt => new RoomStokDto
+                {
+                    Id = rt.RoomTypeId,
+                    Name = rt.TypeName,
+                    Desc = rt.Description,
+                    Capacity = rt.Capacity,
+                    BedType = rt.BedType,
+                    Price = 87,
+                    WeekdayPrice = rt.WeekdayPrice,
+                    WeekendPrice = rt.WeekendPrice,
+                    HolidayPrice = rt.HolidayPrice,
+                    Picture = rt.ImageUrl,
+                    Size = rt.Size,
+                    CheckInDate = startDate.ToString("yyyy-MM-dd"),
+                    CheckOutDate = endDate.ToString("yyyy-MM-dd"),
+                    Info = $"入住時間: {startDate.ToString("yyyy-MM-dd")}, 退房時間: {endDate.ToString("yyyy-MM-dd")}, 備註: 共計 {(endDate - startDate).Days} 日",
+                    Rooms = rt.Rooms
+                        .Where(r => !r.RoomBookings.Any(rb => (startDate < rb.CheckOutDate && endDate > rb.CheckInDate)))
+                        .Select(r => new RoomDto
+                        {
+                            UId = $"{startDate.ToString("yyyy-MM-dd")},{endDate.ToString("yyyy-MM-dd")},{r.RoomId},{r.RoomTypeId}",
+                            RoomId = r.RoomId,
+                            TypeId = r.RoomTypeId,
+                        }).ToList(),
+                }).ToList();
 
             // 封裝資炫
             var info = new RoomStockInfo
@@ -73,7 +68,7 @@ namespace HotelFuen31.APIs.Services.Yee
                 RequestTime = DateTime.Now,
                 CheckInDate = startDate.ToString("yyyy-MM-dd"),
                 CheckOutDate = endDate.ToString("yyyy-MM-dd"),
-                RoomStocks = lsit
+                RoomStocks = list,
             };
 
             return info;

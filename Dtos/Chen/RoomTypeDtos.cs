@@ -1,4 +1,6 @@
-﻿namespace HotelFuen31.APIs.Dtos.Chen
+﻿using HotelFuen31.APIs.Models;
+
+namespace HotelFuen31.APIs.Dtos.Chen
 {
     public class RoomTypeDtos
     {
@@ -18,5 +20,7 @@
         public string ImageUrl { get; set; }
         public int WeekdayPrice { get; set; }
         public int? Size { get; set; }
+
+        public List<RoomDetailImgDtos>? ImgList { get; set; }
     }
 }

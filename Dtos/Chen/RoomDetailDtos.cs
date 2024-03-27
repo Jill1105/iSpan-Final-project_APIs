@@ -1,4 +1,6 @@
-﻿namespace HotelFuen31.APIs.Dtos.Chen
+﻿using HotelFuen31.APIs.Models;
+
+namespace HotelFuen31.APIs.Dtos.Chen
 {
     public class RoomDetailDtos
     {
@@ -12,5 +14,6 @@
         public int RoomTypeId { get; set; }
 
         public int Price { get; set; }
+
     }
 }

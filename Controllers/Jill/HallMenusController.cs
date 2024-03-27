@@ -37,11 +37,11 @@ namespace HotelFuen31.APIs.Controllers.Jill
             return await _service.Getrcategory().ToListAsync();
         }
 
-        // GET: api/HallItems/Category/{Categoryid}
-        [HttpGet("Category/{Categoryid}")]
-        public async Task<IEnumerable<HallMenuDto>> GetCategoryMenu(int Categoryid)
+        //GET: api/HallItems/Category/{Categoryid}
+        [HttpGet("SearchMenu")]
+        public async Task<IEnumerable<HallMenuDto>> SearchMenu([FromQuery] HallSearchDto search)
         {
-            return await _service.GetCategoryMenu(Categoryid).ToListAsync();
+            return await _service.SearchMenu(search).ToListAsync();
         }
 
         // GET: api/HallItems/Menu/{Menuid}
