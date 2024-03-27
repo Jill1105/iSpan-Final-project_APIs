@@ -1,8 +1,7 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Models;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
 
 namespace HotelFuen31.APIs.Services.RenYu
 {
@@ -15,31 +14,34 @@ namespace HotelFuen31.APIs.Services.RenYu
             _context = context;
         }
 
-        public IQueryable<NotificationDto> GetNotifications()
+        public IQueryable<SendedNotificationDto> GetLatestNotifications(int id)
         {
-            var dto = _context.Notifications
+            var dto = _context.SendedNotifications
                 .AsNoTracking()
-                .Include(n => n.Level)
-                .Select(notification => new NotificationDto
+                .Where(sn => id == sn.MemberId)
+                .Include(sn => sn.Notification)
+                .OrderByDescending(n => n.Id)
+                .Take(3)
+                .Select(sn => new SendedNotificationDto
                 {
-                    Id = notification.Id,
-                    Name = notification.Name,
-                    Description = notification.Description,
-                    PushTime = notification.PushTime,
-                    Image = notification.Image,
-                    LevelId = notification.Level.Id,
-                    LevelName = notification.Level.Name
-                });
+                    MemberId = sn.MemberId,
+                    NotificationId = sn.NotificationId,
+                    NotificationTitle = sn.Notification.Name,
+                    NotificationDescription = sn.Notification.Description,
+                    PushTime = sn.Notification.PushTime,
+                    Image = sn.Notification.Image,
+                });  
 
              return dto;
         }
 
-        public IQueryable<SendedNotificationDto> SendedNotifications(int id)
+        public IQueryable<SendedNotificationDto> GetAllNotifications(int id)
         {
             var dto = _context.SendedNotifications
                 .Where(sn => id == sn.MemberId)
                 .Include(sn => sn.Notification)
-                .Take(5)
+                .OrderByDescending (sn => sn.NotificationId)
+                .Take(10)
                 .Select(sn => new SendedNotificationDto
                 {
                     MemberId = sn.MemberId,
@@ -67,6 +69,38 @@ namespace HotelFuen31.APIs.Services.RenYu
             return dto;
         }
 
+        public IQueryable<NotificationType> GetTypes() 
+        {
+            var dto = _context.NotificationTypes
+                .AsNoTracking()
+                .Select(type => new NotificationType
+                {
+                    Id = type.Id,
+                    Name = type.Name,
+                });
+
+            return dto;
+        }
+
+        public IQueryable<BirthdayDto> SendBirthdayNotification()
+        {
+            int birthdayNotifi = 2;
+
+            var dto = _context.SendedNotifications
+                .AsNoTracking()
+                .Include(x => x.Member)
+                .Include(x => x.Notification)
+                .Where(x => x.Notification.TypeId == birthdayNotifi)
+                .Select(x => new BirthdayDto
+                {
+                    Id = x.Id,
+                    Name = x.Notification.Name,
+                    Description = x.Notification.Description,
+                });
+               
+
+            return dto;
+        }
 
         public async Task<string> Create(SendedNotificationDto dto)
         {
@@ -77,6 +111,7 @@ namespace HotelFuen31.APIs.Services.RenYu
                PushTime = dto.PushTime,
                Image = dto.Image,
                LevelId = dto.LevelId,
+               TypeId = dto.TypeId,
             };
 
             _context.Notifications.Add(notiModel);
@@ -96,6 +131,7 @@ namespace HotelFuen31.APIs.Services.RenYu
                     .Select(x => x.Id)
                     .ToList();
             }
+
             for (int i = 0; i < count; i++)
             {
                 var snModel = new SendedNotification

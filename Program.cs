@@ -1,5 +1,4 @@
 
-using HotelFuen31.APIs.Controllers.RenYu;
 using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
@@ -16,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using HotelFuen31.APIs.Interfaces.FC;
+using Hangfire;
+using Hangfire.SqlServer;
 
 namespace HotelFuen31.APIs
 {
@@ -44,6 +45,22 @@ namespace HotelFuen31.APIs
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
             });
 
+            var connStr = builder.Configuration.GetConnectionString("AppDbContext");
+            // Hangfire Service 
+            builder.Services.AddHangfire(configuration =>
+                configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                             .UseSimpleAssemblyNameTypeSerializer()
+                             .UseRecommendedSerializerSettings()
+                             .UseSqlServerStorage(connStr, new SqlServerStorageOptions
+                             {
+                                 CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                                 SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                                 QueuePollInterval = TimeSpan.FromMinutes(5),
+                                 UseRecommendedIsolationLevel = true,
+                                 DisableGlobalLocks = true,
+                             }));
+            
+
             builder.Services.AddScoped<SendEmailService>();
             builder.Services.AddScoped<NotificationService>();
 
@@ -58,10 +75,14 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<CartRoomService>();
             builder.Services.AddScoped<OrderService>();
           
+            //FC
             builder.Services.AddScoped<IReservationServRepo, ReservationServEFRepo>();
             builder.Services.AddScoped<ReservationServService>();
+			builder.Services.AddScoped<IReservationServTypeRepo, ReservationServTypeEFRepo>();
+			builder.Services.AddScoped<ReservationServTypeService>();
 
-            builder.Services.AddScoped<IUser,UsersService>();
+
+			builder.Services.AddScoped<IUser,UsersService>();
             builder.Services.AddScoped<JwtService>();
             builder.Services.AddScoped<CryptoPwd>();
             
@@ -102,6 +123,8 @@ namespace HotelFuen31.APIs
             app.MapControllers();
 
             app.UseFileServer();
+
+            app.UseHangfireDashboard();
 
             app.MapHub<NotificationHub>("/notificationHub");
 

@@ -16,5 +16,9 @@ namespace HotelFuen31.APIs.Services.FC
 		{
             return _repo.Read();
 		}
+		public IQueryable<ReservationServiceDetailDto> GetByid(int id)
+		{
+			return _repo.GetByid(id);
+		}
 	}
 }

@@ -619,10 +619,9 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.LevelId)
                 .HasConstraintName("FK_Notifications_MemberLevels");
 
-            entity.HasOne(d => d.Type).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.TypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Notifications_NotificationTypes1");
+            entity.HasOne(d => d.LevelNavigation).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_Notifications_NotificationTypes");
         });
 
         modelBuilder.Entity<NotificationType>(entity =>

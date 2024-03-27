@@ -23,6 +23,8 @@ public partial class Notification
 
     public virtual MemberLevel Level { get; set; }
 
+    public virtual NotificationType LevelNavigation { get; set; }
+
     public virtual ICollection<SendedNotification> SendedNotifications { get; set; } = new List<SendedNotification>();
 
     public virtual NotificationType Type { get; set; }

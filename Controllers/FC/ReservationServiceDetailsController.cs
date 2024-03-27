@@ -51,11 +51,39 @@ namespace HotelFuen31.APIs.Controllers.FC
 				h.ImgUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/FC/{pic}")}";
 			});
 
+			return model;
+		}
+
+
+		// GET: api/ReservationServiceDetails/5
+		[HttpGet("{id}")]
+		public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetail(int id)
+		{
+			var dtos = await _service.GetByid(id).ToListAsync();
+			if (dtos == null) return new List<ReservationServiceDetailDto>();
+
+
+			var model = dtos.Select(x => new ReservationServiceDetailDto
+			{
+				Id = x.Id,
+				ServicesTypeId = x.ServicesTypeId,
+				ServiceDetailName = x.ServiceDetailName,
+				Time = x.Time,
+				Price = x.Price,
+				Description = x.Description,
+				ImgUrl = x.ImgUrl,
+			}).ToList();
+
+
+			model.ForEach(h =>
+			{
+				var pic = string.IsNullOrEmpty(h.ImgUrl) ? "noImage.png" : h.ImgUrl;
+				h.ImgUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/FC/{pic}")}";
+			});
 
 			return model;
-
-
 		}
+
 
 
 
