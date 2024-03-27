@@ -80,8 +80,8 @@ namespace HotelFuen31.APIs.Controllers.Yee
 
                 if (orderDto.RtnCode == 1 || orderDto.Status == 1) return BadRequest("該訂單已付款");
 
-                string backEnd = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-                //string backEnd = $"https://111.184.154.28:7245";
+                //string backEnd = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+                string backEnd = $"https://d298-114-25-166-15.ngrok-free.app";
                 string frontEnd = $"localhost:5173";
 
                 var orderDic = _orderService.GetECPayDic(orderDto, backEnd, frontEnd);
@@ -97,25 +97,24 @@ namespace HotelFuen31.APIs.Controllers.Yee
         // POST: api/Order/ECPay
         [HttpPost]
         [Route("ECPay")]
-        public Task<ActionResult> PostFromECPay([FromForm]IFormCollection col)
+        public ActionResult PostFromECPay([FromForm]IFormCollection col)
         {
             var data = new Dictionary<string, string>();
             foreach (string key in col.Keys)
             {
                 data.Add(key, col[key]);
             }
-            //var Orders = _context.EcpayOrders.ToList().Where(m => m.MerchantTradeNo == col["MerchantTradeNo"]).FirstOrDefault();
-            //Orders.RtnCode = int.Parse(col["RtnCode"]);
-            //if (col["RtnMsg"] == "Succeeded")
-            //{
-            //    Orders.RtnMsg = "已付款";
-            //    Orders.PaymentDate = Convert.ToDateTime(col["PaymentDate"]);
-            //    Orders.SimulatePaid = int.Parse(col["SimulatePaid"]);
-            //    await _context.SaveChangesAsync();
-            //}
 
-            //return View("ECpayView", data);
-            return null;
+            try
+            {
+                int rtnCod = _orderService.UpdateECpay(data);
+                if (rtnCod == 1) return Content("1|OK");
+
+                return BadRequest("交易失敗");
+            }
+            catch(Exception ex) { 
+                return BadRequest(ex.Message);
+            }
         }
 
 

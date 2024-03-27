@@ -11,6 +11,7 @@ using System.Text;
 using System.Transactions;
 using System.Web;
 using static NuGet.Packaging.PackagingConstants;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HotelFuen31.APIs.Services.Yee
 {
@@ -186,62 +187,108 @@ namespace HotelFuen31.APIs.Services.Yee
 
             _db.SaveChanges();
 
-            //var formInfo = new ECPayCreateDto
-            //{
-            //    MerchantID = "3002607",
-            //    MerchantTradeNo = merchantTradeNo,
-            //    MerchantTradeDate = DateTime.Now.ToString(),
-            //    PaymentType = "aio",
-            //    TotalAmount = ordDto.TradeAmt?.ToString() ?? "0",
-            //    TradeDesc = "Kalsari Hotel", // todo 交易描述
-            //    ItemName = "Kalsari Hotel Booking",
-            //    ReturnURL = "",
-            //    ChoosePayment = "ALL",
-            //    CheckMacValue = "",   // 不用加入雜湊計算
-            //    EncryptType = "1",
-            //    ClientBackURL = "", // 僅為綠界端轉址返回按鈕，並無 POST 功能
-            //    OrderResultURL = "",    // 綠界 POST 回前端
-            //};
-
             return dicOrder;
+        }
+
+        public int UpdateECpay(Dictionary<string, string> dictionary)
+        {
+            var checkvalue = GetCheckMacValue(dictionary);
+            var checkMacValue = dictionary["CheckMacValue"];
+
+            if (checkvalue != checkMacValue) throw new Exception("校驗錯誤");
+
+            var order = _db.Orders.Where(o => o.MerchantTradeNo == dictionary["MerchantTradeNo"]).FirstOrDefault();
+
+            if (order == null) throw new Exception("查無該筆訂單");
+           
+            int rtnCode = int.Parse(dictionary["RtnCode"]);
+            //string rtnMsg = dictionary["RtnMsg"];
+            //string tradeNo = dictionary["TradeNo"];
+            //int tradeAmt = int.Parse(dictionary["TradeAmt"]);
+            //DateTime paymentDate = Convert.ToDateTime(dictionary["PaymentDate"]);
+            //string paymentType = dictionary["PaymentType"];
+            //string paymentTypeChargeFee = dictionary["PaymentTypeChargeFee"];
+            //string tradeDate = dictionary["TradeDate"];
+            //int simulatePaid = int.Parse(dictionary["SimulatePaid"]);
+
+            if (rtnCode == 1)
+            {
+                order.RtnCode = rtnCode;
+                order.RtnMsg = "付款成功，期待您的光臨";
+                order.TradeNo = dictionary["TradeNo"];
+                order.TradeAmt = int.Parse(dictionary["TradeAmt"]);
+                order.PaymentDate = Convert.ToDateTime(dictionary["PaymentDate"]);
+                order.PaymentType = dictionary["PaymentType"];
+                order.PaymentTypeChargeFee = dictionary["PaymentTypeChargeFee"];
+                order.TradeDate = dictionary["TradeDate"];
+                order.SimulatePaid = int.Parse(dictionary["SimulatePaid"]);
+                order.CheckMacValue = checkMacValue;
+            }
+
+            _db.SaveChanges();
+
+            return order.Id;
+        }
+
+        public string GetCheckMacValue(Dictionary<string, string> dictionary)
+        {
+            string merchantKey = "pwFHCqoQZGmho4w6";
+            string merchantIv = "EkRm7iFT261dpevs";
+
+            string raw = $"HashKey={merchantKey}&" +
+                         string.Join("&", dictionary.Where(x => x.Key != "CheckMacValue")
+                                                    .OrderBy(x => x.Key)
+                                                    .Select(p => $"{p.Key}={p.Value}")) +
+                         $"&HashIV={merchantIv}";
+
+            string encoded = HttpUtility.UrlEncode(raw).ToLower();
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(encoded));
+                string checkMacValue = BitConverter.ToString(hashBytes).Replace("-", "").ToUpper();
+                return checkMacValue;
+            }
         }
 
         // 產生綠界交易碼
         private string MTNBulder(int orderId)
         {
-            return $"{new String('0', 10 - orderId.ToString().Length)}{orderId}{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10)}";
+            return $"{new string('0', 10 - orderId.ToString().Length)}{orderId}{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10)}";
         }
 
-        private string GetCheckMacValue(Dictionary<string, string> dicOrder)
-        {
-            var param = dicOrder.Keys.OrderBy(x => x).Select(key => key + "=" + dicOrder[key]).ToList();
-            string checkValue = string.Join("&", param);
 
-            //綠界提供測試用的 HashKey 真實註冊會有另一組
-            var hashKey = "pwFHCqoQZGmho4w6";
-            //綠界提供測試用的 HashIV 真實註冊會有另一組
-            var HashIV = "EkRm7iFT261dpevs";
+        //private string GetCheckMacValue(Dictionary<string, string> dicOrder)
+        //{
+        //    var param = dicOrder.Keys.OrderBy(x => x).Select(key => key + "=" + dicOrder[key]).ToList();
+        //    string checkValue = string.Join("&", param);
 
-            checkValue = $"HashKey={hashKey}&" + checkValue + $"&HashIV={HashIV}";
-            checkValue = HttpUtility.UrlEncode(checkValue).ToLower();
-            checkValue = GetSHA256(checkValue);
+        //    //綠界提供測試用的 HashKey 真實註冊會有另一組
+        //    var hashKey = "pwFHCqoQZGmho4w6";
+        //    //綠界提供測試用的 HashIV 真實註冊會有另一組
+        //    var hashIV = "EkRm7iFT261dpevs";
 
-            return checkValue.ToUpper();
-        }
+        //    checkValue = $"HashKey={hashKey}&" + checkValue + $"&HashIV={hashIV}";
+        //    checkValue = HttpUtility.UrlEncode(checkValue).ToLower();
+        //    checkValue = GetSHA256(checkValue);
+        //    checkValue = checkValue.ToUpper();
 
-        private string GetSHA256(string value)
-        {
-            var result = new StringBuilder();
-            var sha256 = SHA256.Create();
-            var bts = Encoding.UTF8.GetBytes(value);
-            var hash = sha256.ComputeHash(bts);
+        //    return checkValue;
+        //}
 
-            for (int i = 0; i < hash.Length; i++)
-            {
-                result.Append(hash[i].ToString("X2"));
-            }
+        //private string GetSHA256(string value)
+        //{
+        //    var result = new StringBuilder();
+        //    var sha256 = SHA256.Create();
+        //    var bts = Encoding.UTF8.GetBytes(value);
+        //    var hash = sha256.ComputeHash(bts);
 
-            return result.ToString();
-        }
+        //    for (int i = 0; i < hash.Length; i++)
+        //    {
+        //        result.Append(hash[i].ToString("X2"));
+        //    }
+
+        //    return result.ToString();
+        //}
     }
 }
