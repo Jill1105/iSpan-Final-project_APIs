@@ -167,7 +167,7 @@ namespace HotelFuen31.APIs.Services.Yee
                 { "ChoosePayment", "ALL" },
                 { "EncryptType",  "1" },
                 { "ClientBackURL", $"{frontEnd}" },    // 僅為綠界端轉址返回按鈕，並無 POST 功能
-                { "OrderResultURL", $"{frontEnd}/Pay/result?orderId={orderDto.Id}" },   // 綠界 POST 回前端
+                { "OrderResultURL", $"{frontEnd}/Pay?orderId={orderDto.Id}" },   // 綠界 POST 回前端
             };
 
             // 透過字典(綠界要求)
@@ -214,6 +214,7 @@ namespace HotelFuen31.APIs.Services.Yee
             if (rtnCode == 1)
             {
                 order.RtnCode = rtnCode;
+                order.Status = rtnCode;
                 order.RtnMsg = "付款成功，期待您的光臨";
                 order.TradeNo = dictionary["TradeNo"];
                 order.TradeAmt = int.Parse(dictionary["TradeAmt"]);
