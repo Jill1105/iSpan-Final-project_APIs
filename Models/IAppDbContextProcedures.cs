@@ -13,6 +13,6 @@ namespace HotelFuen31.APIs.Models
     public partial interface IAppDbContextProcedures
     {
         Task<List<usp_房間查詢Result>> usp_房間查詢Async(DateTime? B_DATE, DateTime? E_DATE, string SEARCH_TYPE, int? ROOM_ID, int? ROOM_TYPE_ID, int? CAPACITY, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
-        Task<int> usp_計算訂房價格Async(int? BookingId, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<List<usp_計算訂房價格Result>> usp_計算訂房價格Async(int? BookingId, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }
 }

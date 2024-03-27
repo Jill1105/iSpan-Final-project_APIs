@@ -35,6 +35,7 @@ namespace HotelFuen31.APIs.Models
         protected void OnModelCreatingGeneratedProcedures(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<usp_房間查詢Result>().HasNoKey().ToView(null);
+            modelBuilder.Entity<usp_計算訂房價格Result>().HasNoKey().ToView(null);
         }
     }
 
@@ -104,7 +105,7 @@ namespace HotelFuen31.APIs.Models
             return _;
         }
 
-        public virtual async Task<int> usp_計算訂房價格Async(int? BookingId, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        public virtual async Task<List<usp_計算訂房價格Result>> usp_計算訂房價格Async(int? BookingId, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
             {
@@ -123,7 +124,7 @@ namespace HotelFuen31.APIs.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[usp_計算訂房價格] @BookingId", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryAsync<usp_計算訂房價格Result>("EXEC @returnValue = [dbo].[usp_計算訂房價格] @BookingId", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
