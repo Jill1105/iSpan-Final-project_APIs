@@ -7,31 +7,45 @@ namespace HotelFuen31.APIs.Models;
 
 public partial class CarManagement
 {
+    // 車輛的編號
     public int Id { get; set; }
 
-    public int Capacity { get; set; }
+    // 車輛的容量
+    public int Capacity { get; set; } 
 
+    // 車輛的品牌
     public string Brand { get; set; }
 
+    // 車輛的用途
     public string Goal { get; set; }
 
+    // 車輛的型號
     public string CarModel { get; set; }
 
+    // 車輛的車牌號碼
     public string CarIdentity { get; set; }
 
+    // 車輛的圖片網址
     public string ImgUrl { get; set; }
 
+    // 車輛的狀態
     public bool Status { get; set; }
 
+    // 車輛的維修紀錄
     public virtual ICollection<CarMaintenance> CarMaintenances { get; set; } = new List<CarMaintenance>();
 
+    // 車輛的租車資料
     public virtual ICollection<CarRentCartItem> CarRentCartItems { get; set; } = new List<CarRentCartItem>();
 
+    // 車輛的租車訂單
     public virtual ICollection<CarRentOrderItem> CarRentOrderItems { get; set; } = new List<CarRentOrderItem>();
 
+    // 車輛的負責人
     public virtual ICollection<CarResponsible> CarResponsibles { get; set; } = new List<CarResponsible>();
 
+    // 車輛的出租資料
     public virtual ICollection<CarTaxiCartItem> CarTaxiCartItems { get; set; } = new List<CarTaxiCartItem>();
 
+    // 車輛的出租訂單
     public virtual ICollection<CarTaxiOrderItem> CarTaxiOrderItems { get; set; } = new List<CarTaxiOrderItem>();
 }
