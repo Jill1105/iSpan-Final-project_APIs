@@ -1,10 +1,9 @@
-﻿using HotelFuen31.APIs.Dtos.RenYu;
+﻿using Hangfire;
+using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Hubs;
 using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.RenYu;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +11,7 @@ using System.Text.Json;
 
 namespace HotelFuen31.APIs.Controllers.RenYu
 {
+    // https://eugenesu.me/2021/08/27/hangfire-entry/
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase
@@ -27,45 +27,65 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             _user = user;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<NotificationDto>> GetNotification()
-        {
-            return await _service.GetNotifications().ToListAsync();
-        }
-
         [HttpGet("GetLevels")]
-        public async Task<IEnumerable<MemberLevel>> GetLevel()
+        public async Task<IEnumerable<MemberLevel>> GetLevels()
         {
             return await _service.GetLevels().ToListAsync();
         }
-
-        [HttpPost("{id}")]
-        public IEnumerable<SendedNotificationDto> SendNotification(int id) 
-        { 
-            return _service.SendedNotifications(id).ToList();
+        [HttpGet("GetTypes")]
+        public async Task<IEnumerable<NotificationType>> GetTypes()
+        {
+            return await _service.GetTypes().ToListAsync();
         }
 
-        [HttpPost("GetMemberId")]
-        public IActionResult GetMemberId(string token)
+        // POST: api/Notification/list
+        [HttpPost("list")]
+        public ActionResult<IEnumerable<SendedNotificationDto>> GetAllNotification()
         {
-            
-            bool isAuthorized = _user.GetMember(token) != "401";
-
-            if(!isAuthorized)
+            try
             {
-                return Unauthorized();
-            };
+                string idStr = ValidateToken();
+                if(idStr == "401")
+                {
+                    return Unauthorized();
+                }
 
-            return Content(_user.GetMember(token));
+                int id = int.Parse(idStr);
+
+                return _service.GetAllNotifications(id).ToList();
+            }
+            catch (Exception ex) 
+            { 
+               return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("birthday")]
+        public ActionResult<IEnumerable<BirthdayDto>> SendBirthdayNotification()
+        {
+             RecurringJob.AddOrUpdate("myRecurringJob",() => _service.SendBirthdayNotification(), Cron.Monthly) ;
+            
+            return Ok();
         }
 
         [HttpPost]
-        public string SendAllNotifiction()
-        {
-            var dto = _service.GetNotifications().ToList();
-            _hub.Clients.All.SendNotification(dto);
+        public ActionResult<IEnumerable<SendedNotificationDto>> SendAllNotifiction()
+        {   
+            try
+            {
+                string idStr = ValidateToken();
 
-            return "成功推播通知至全體";
+                int id = int.Parse(idStr);
+
+                var dto = _service.GetLatestNotifications(id).ToList();
+                _hub.Clients.All.SendNotification(dto);
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -89,6 +109,26 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         public async Task<string> CreateNotifiction(SendedNotificationDto dto)
         {
             return await _service.Create(dto); 
+        }
+
+        private string ValidateToken()
+        {
+            string? authoriztion = HttpContext.Request.Headers["Authorization"];
+
+            if (string.IsNullOrEmpty(authoriztion))
+            {
+                throw new ArgumentException("Authoriztion token is missing");
+            }
+
+            string token = authoriztion.Split(" ")[1];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentException("Invalid Authorization token format.");
+            }
+
+            string id = _user.GetMember(token);
+            return id;
         }
     }
 }

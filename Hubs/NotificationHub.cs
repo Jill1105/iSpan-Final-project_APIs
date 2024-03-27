@@ -11,9 +11,8 @@ namespace HotelFuen31.APIs.Hubs
     {
         public static Dictionary<string,string> userInfoDict = new Dictionary<string,string>();
 
-        public async Task SendNotification(IEnumerable<NotificationDto> dto)
+        public async Task SendNotification(IEnumerable<SendedNotificationDto> dto)
         {
-
             await Clients.All.SendNotification(dto);
         }
 

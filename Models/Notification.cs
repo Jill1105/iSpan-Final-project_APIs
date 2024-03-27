@@ -17,9 +17,13 @@ public partial class Notification
 
     public string Image { get; set; }
 
+    public int TypeId { get; set; }
+
     public int? LevelId { get; set; }
 
     public virtual MemberLevel Level { get; set; }
+
+    public virtual NotificationType LevelNavigation { get; set; }
 
     public virtual ICollection<SendedNotification> SendedNotifications { get; set; } = new List<SendedNotification>();
 }

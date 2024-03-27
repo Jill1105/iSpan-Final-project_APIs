@@ -69,6 +69,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
+    public virtual DbSet<NotificationType> NotificationTypes { get; set; }
+
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<Reservation> Reservations { get; set; }
@@ -608,6 +610,17 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Level).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.LevelId)
                 .HasConstraintName("FK_Notifications_MemberLevels");
+
+            entity.HasOne(d => d.LevelNavigation).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_Notifications_NotificationTypes");
+        });
+
+        modelBuilder.Entity<NotificationType>(entity =>
+        {
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -914,6 +927,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.RoomBookings)
                 .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RoomBookings_OrderId");
 
             entity.HasOne(d => d.Room).WithMany(p => p.RoomBookings)

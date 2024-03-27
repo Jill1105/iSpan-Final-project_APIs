@@ -124,6 +124,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[NotificationTypes]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Orders]",
          "ObjectType": 0
       },
