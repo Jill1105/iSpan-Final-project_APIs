@@ -35,7 +35,9 @@ namespace HotelFuen31.APIs.Services.Yee
 
             // 查詢日期內剩餘房間
             var list = _db.RoomTypes
-                .AsNoTracking()
+                .Include(rt=>rt.Rooms)
+                .ThenInclude(r =>r.RoomBookings)
+                .ToList()
                 .Select(rt => new RoomStokDto
                 {
                     Id = rt.RoomTypeId,
@@ -43,7 +45,7 @@ namespace HotelFuen31.APIs.Services.Yee
                     Desc = rt.Description,
                     Capacity = rt.Capacity,
                     BedType = rt.BedType,
-                    Price = 87,
+                    Price = GetPrice(startDate, endDate, rt.RoomTypeId),
                     WeekdayPrice = rt.WeekdayPrice,
                     WeekendPrice = rt.WeekendPrice,
                     HolidayPrice = rt.HolidayPrice,
