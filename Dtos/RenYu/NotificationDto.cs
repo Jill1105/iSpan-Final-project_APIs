@@ -8,7 +8,7 @@
 
         public required string Description { get; set; }
 
-        public required DateTime PushTime { get; set; }
+        public DateTime PushTime { get; set; }
 
         public string? Image {  get; set; }
 

@@ -41,6 +41,7 @@ namespace HotelFuen31.APIs.Services
                      })
     .ToList()
 
+
         });
             return query;
         }
@@ -92,8 +93,8 @@ namespace HotelFuen31.APIs.Services
                     list.Add(checkRoomDto);
                 }
             }
-            return list;
 
+            return list;
         }
 
     }

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.8.11" />
+   </ItemGroup>
+   
+   <ItemGroup>
     <None Remove="StaticFiles\FC\gym.jpg" />
     <None Remove="StaticFiles\FC\gym2.jpg" />
     <None Remove="StaticFiles\FC\gym3.jpg" />

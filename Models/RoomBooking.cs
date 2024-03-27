@@ -9,7 +9,7 @@ public partial class RoomBooking
 {
     public int BookingId { get; set; }
 
-    public int? OrderId { get; set; }
+    public int OrderId { get; set; }
 
     public int RoomId { get; set; }
 
@@ -27,7 +27,7 @@ public partial class RoomBooking
 
     public DateTime BookingDate { get; set; }
 
-    public int OrderPirce { get; set; }
+    public int OrderPrice { get; set; }
 
     public string Phone { get; set; }
 
