@@ -7,10 +7,6 @@ namespace HotelFuen31.APIs.Hubs
        
         Task SendNotification(IEnumerable<SendedNotificationDto> dto);
 
-        Task sendToAllConnections(List<string> message);
-
-        Task JsonDataTransfer(dynamic message);
-        
-        Task StringDataTransfer(string message);
+        Task CreateNotification(SendedNotificationDto dto);
     }
 }

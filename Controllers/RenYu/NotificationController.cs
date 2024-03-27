@@ -76,11 +76,13 @@ namespace HotelFuen31.APIs.Controllers.RenYu
                 string idStr = ValidateToken();
 
                 int id = int.Parse(idStr);
-
+               
                 var dto = _service.GetLatestNotifications(id).ToList();
-                _hub.Clients.All.SendNotification(dto);
 
-                return Ok();
+                _hub.Clients.All.SendNotification(dto);
+                
+                return Ok(dto);
+
             }
             catch(Exception ex)
             {
@@ -88,26 +90,10 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             }
         }
 
-        [HttpPost]
-        [Route("toUser")]
-        public string toUser([FromBody] JsonElement jobJ)
-        {
-            var userId = jobJ.GetProperty("userId").GetString();
-            var msg = jobJ.GetProperty("msg").GetString();
-            if(NotificationHub.userInfoDict.ContainsKey(userId))
-            {
-                _hub.Clients.Client(NotificationHub.userInfoDict[userId]).StringDataTransfer(msg);
-                return "Msg sent succefully to user!";
-            }
-            else
-            {
-                return "Msg sent failed to user!";
-            }
-        }
-
         [HttpPost("Create")]
         public async Task<string> CreateNotifiction(SendedNotificationDto dto)
         {
+            await _hub.Clients.All.CreateNotification(dto);
             return await _service.Create(dto); 
         }
 
