@@ -43,6 +43,30 @@ namespace HotelFuen31.APIs.Controllers.Yee
             }
         }
 
+        // GET: api/Order/user
+        [HttpGet]
+        [Route("user")]
+        public ActionResult<Object> GetUserOrder()
+        {
+            try
+            {
+                string phone = ValidateToken();
+                if (phone == "401") return Unauthorized();
+
+                var order = _orderService.GetUserOrder(phone);
+
+                return new
+                {
+                    Success = true,
+                    result = order,
+                };
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // GET: api/Order/
         [HttpGet]
         public ActionResult<Object> GetOrder([FromQuery] int orderId)
@@ -81,7 +105,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 if (orderDto.RtnCode == 1 || orderDto.Status == 1) return BadRequest("該訂單已付款");
 
                 //string backEnd = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-                string backEnd = $"https://d298-114-25-166-15.ngrok-free.app";
+                string backEnd = $"https://dd7a-114-25-169-142.ngrok-free.app";
                 string frontEnd = $"localhost:5173";
 
                 var orderDic = _orderService.GetECPayDic(orderDto, backEnd, frontEnd);
