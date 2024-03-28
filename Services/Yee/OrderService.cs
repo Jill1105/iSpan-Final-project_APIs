@@ -1,4 +1,5 @@
-﻿using HotelFuen31.APIs.Dtos.Yee;
+﻿using Hangfire.Server;
+using HotelFuen31.APIs.Dtos.Yee;
 using HotelFuen31.APIs.Models;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,55 @@ namespace HotelFuen31.APIs.Services.Yee
         {
             _db = db;
             _crService = crService;
+        }
+
+        public IEnumerable<OrderDto> GetUserOrder(string phone)
+        {
+            var orders = _db.Orders
+                .Include(o => o.RoomBookings)
+                .ThenInclude(rb => rb.Room)
+                .ThenInclude(r => r.RoomType)
+                .Where(o => o.Phone == phone)
+                .ToList();
+
+            if (!orders.Any()) return Enumerable.Empty<OrderDto>();
+
+            var dtos = orders.Select(o => new OrderDto
+            {
+                Id = o.Id,
+                Phone = o.Phone,
+                Status = o.Status,
+                OrderTime = o.OrderTime,
+                MerchantTradeNo = o.MerchantTradeNo,
+                RtnCode = o.RtnCode,
+                RtnMsg = o.RtnMsg,
+                TradeNo = o.TradeNo,
+                TradeAmt = o.RoomBookings != null ? o.RoomBookings.Select(rb => rb.OrderPrice).Aggregate((total, sub) => total + sub) : 0,
+                PaymentDate = o.PaymentDate,
+                PaymentType = o.PaymentType,
+                PaymentTypeChargeFee = o.PaymentTypeChargeFee,
+                TradeDate = o.TradeDate,
+                SimulatePaid = o.SimulatePaid,
+                RoomBookings = o.RoomBookings != null ? o.RoomBookings.Select(rb => new RoomBookingDto
+                {
+                    BookingId = rb.BookingId,
+                    OrderId = rb.OrderId,
+                    RoomId = rb.RoomId,
+                    CheckInDate = rb.CheckInDate,
+                    CheckOutDate = rb.CheckOutDate,
+                    MemberId = rb.MemberId,
+                    Remark = rb.Remark,
+                    BookingStatusId = rb.BookingStatusId,
+                    BookingCancelDate = rb.BookingCancelDate,
+                    BookingDate = rb.BookingDate,
+                    OrderPrice = rb.OrderPrice,
+                    Phone = rb.Phone,
+                    RoomTypeId = rb.Room.RoomTypeId,
+                    Name = rb.Room.RoomType.TypeName,
+                }).ToList() : Enumerable.Empty<RoomBookingDto>(),
+            });
+
+            return dtos;
         }
 
         public int CreateOrder(string phone)
