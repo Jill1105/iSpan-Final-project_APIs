@@ -55,8 +55,24 @@ namespace HotelFuen31.APIs.Services.Guanyu
         //登入後，回傳Token密文
         public string GetCryptostring(string phone,string pwd)
         {
+            string membersalt = "";
             try
             {
+                try
+                {
+                    membersalt = _db.Members.Where(m => m.Phone.Contains(phone))
+                                    .FirstOrDefault().Salt;
+                }
+                catch
+                {
+                    return "Salt搜尋失敗";
+                }
+                
+                if(membersalt != null)
+                {
+                    pwd = _pwd.CryptoPWD(pwd, membersalt);
+                }
+                
                 var memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
                                     .FirstOrDefault().Id;
 

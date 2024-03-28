@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Dtos;
 using System.Security.Cryptography;
+using HotelFuen31.APIs.Dtos.Guanyu;
 
 namespace HotelFuen31.APIs.Controllers.Guanyu
 {
@@ -44,9 +45,24 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
 
         //GET: api/Members?
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Member>>> GetMembers([FromQuery] int id)
+        public MemberDto GetMembers([FromQuery] string token)
         {
-            return await _db.Members.Where(m => m.Id == id).ToListAsync();
+            int id = int.Parse(_iuser.GetMember(token));
+            Member member = _db.Members.Find(id);
+            var MemberData = new MemberDto();
+
+            MemberData.Name = member.Name;
+            MemberData.Phone = member.Phone;
+            MemberData.Email = member.Email;
+            MemberData.IdentityNumber = member.IdentityNumber;
+            MemberData.BirthDay = (DateTime)member.BirthDay;
+            MemberData.Gender = member.Gender == true? "男性":"女性";
+            MemberData.Address = member.Address;
+            MemberData.Ban = member.Ban;
+            MemberData.Level = _db.MemberLevels.Find(member.LevelId).Name;
+
+
+            return MemberData;
         }
 
         [HttpGet("pwd")]
@@ -56,15 +72,11 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
         }
 
         [HttpPost]
-        public string NewMember(Member member)
+        public string NewMember(MemberDto member)
         {
-            string status = _iuser.NewMember(member);
-            return status;
-        }
-        [HttpGet("check")]
-        public string Check([FromQuery] string str)
-        {
-            return _iuser.GetMemberPhone(str);
+            //string status = _iuser.NewMember(member);
+            //return status;
+            return "更新失敗";
         }
     }
 }
