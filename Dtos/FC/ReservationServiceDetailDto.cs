@@ -8,6 +8,8 @@ namespace HotelFuen31.APIs.Dtos.FC
 
 		public int ServicesTypeId { get; set; }
 
+		public string ServicesTypeName { get; set; }
+
 		public string ServiceDetailName { get; set; }
 
 		public int Time { get; set; }
