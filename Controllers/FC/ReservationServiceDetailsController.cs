@@ -26,37 +26,38 @@ namespace HotelFuen31.APIs.Controllers.FC
             _service = service;
         }
 
-        // GET: api/ReservationServiceDetails
-        [HttpGet]
-		public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetails()
-		{
-			//return await _service.Read().ToListAsync();
+		// GET: api/ReservationServiceDetails
+		//      [HttpGet]
+		//public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetails()
+		//{
+		//	//return await _service.Read().ToListAsync();
 
-            var dtos = await _service.Read().ToListAsync();
-            var model = dtos.Select(x => new ReservationServiceDetailDto
-            {
-                Id = x.Id,
-				ServicesTypeId = x.ServicesTypeId,
-				ServiceDetailName = x.ServiceDetailName,
-				Time = x.Time,
-                Price = x.Price,
-                Description = x.Description,
-                ImgUrl = x.ImgUrl,
+		//          var dtos = await _service.Read().ToListAsync();
+		//          var model = dtos.Select(x => new ReservationServiceDetailDto
+		//          {
+		//              Id = x.Id,
+		//		ServicesTypeId = x.ServicesTypeId,
+		//		ServiceDetailName = x.ServiceDetailName,
+		//		Time = x.Time,
+		//              Price = x.Price,
+		//              Description = x.Description,
+		//              ImgUrl = x.ImgUrl,
 
-			}).ToList();
+		//	}).ToList();
 
-			model.ForEach(h =>
-			{
-				var pic = string.IsNullOrEmpty(h.ImgUrl) ? "noImage.png" : h.ImgUrl;
-				h.ImgUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/FC/{pic}")}";
-			});
+		//	model.ForEach(h =>
+		//	{
+		//		var pic = string.IsNullOrEmpty(h.ImgUrl) ? "noImage.png" : h.ImgUrl;
+		//		h.ImgUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/FC/{pic}")}";
+		//	});
 
-			return model;
-		}
+		//	return model;
+		//}
 
 
 		// GET: api/ReservationServiceDetails/5
-		[HttpGet("{id}")]
+		//[HttpGet("{id}")]
+		[HttpGet]
 		public async Task<IEnumerable<ReservationServiceDetailDto>> GetReservationServiceDetail(int id)
 		{
 			var dtos = await _service.GetByid(id).ToListAsync();
@@ -67,6 +68,7 @@ namespace HotelFuen31.APIs.Controllers.FC
 			{
 				Id = x.Id,
 				ServicesTypeId = x.ServicesTypeId,
+				ServicesTypeName = x.ServicesTypeName,
 				ServiceDetailName = x.ServiceDetailName,
 				Time = x.Time,
 				Price = x.Price,

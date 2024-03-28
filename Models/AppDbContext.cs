@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using HotelFuen31.APIs.Dtos.FC;
 
 namespace HotelFuen31.APIs.Models;
 
@@ -1166,4 +1167,5 @@ public partial class AppDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
 }

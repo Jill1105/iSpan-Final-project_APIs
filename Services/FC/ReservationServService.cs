@@ -12,7 +12,7 @@ namespace HotelFuen31.APIs.Services.FC
 		{
 			_repo = repo;
 		}
-		public IQueryable<ReservationServiceDetailDto> Read()
+		public IEnumerable<ReservationServiceDetailDto> Read()
 		{
             return _repo.Read();
 		}
