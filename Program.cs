@@ -17,6 +17,7 @@ using Microsoft.Extensions.FileProviders;
 using HotelFuen31.APIs.Interfaces.FC;
 using Hangfire;
 using Hangfire.SqlServer;
+using HotelFuen31.APIs.Services.Haku;
 
 namespace HotelFuen31.APIs
 {
@@ -89,10 +90,12 @@ namespace HotelFuen31.APIs
 
             builder.Services.AddScoped<RoomTypeService>();
 
+			//Haku
+			builder.Services.AddScoped<DispatchService>();
 
 
 
-            builder.Services.AddControllers();
+			builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

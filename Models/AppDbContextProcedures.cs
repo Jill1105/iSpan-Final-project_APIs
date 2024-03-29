@@ -31,12 +31,6 @@ namespace HotelFuen31.APIs.Models
         {
             return Procedures;
         }
-
-        protected void OnModelCreatingGeneratedProcedures(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<usp_房間查詢Result>().HasNoKey().ToView(null);
-            modelBuilder.Entity<usp_計算訂房價格Result>().HasNoKey().ToView(null);
-        }
     }
 
     public partial class AppDbContextProcedures : IAppDbContextProcedures
