@@ -2,15 +2,15 @@
 using HotelFuen31.APIs.Dtos.Yee;
 using HotelFuen31.APIs.Interface.Guanyu;
 using HotelFuen31.APIs.Models;
-using HotelFuen31.APIs.Services;
 using HotelFuen31.APIs.Services.Guanyu;
+using HotelFuen31.APIs.Services.Haku;
 using HotelFuen31.APIs.Services.Yee;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelFuen31.APIs.Controllers.Haku
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class DispatchController : ControllerBase
 	{
@@ -33,8 +33,15 @@ namespace HotelFuen31.APIs.Controllers.Haku
 		{
 			try
 			{
-				string phone = ValidateToken();
-				if (phone == "401") return Unauthorized();
+				//string phone = ValidateToken();
+				//if (phone == "401") return Unauthorized();
+
+				//var orderList = _dispatchService.OrderListUser(phone).ToList();
+
+				// 測試用
+				string phone = "test";
+				//int memberId = 1;
+				// 測試用
 
 				var orderList = _dispatchService.OrderListUser(phone).ToList();
 
@@ -45,6 +52,44 @@ namespace HotelFuen31.APIs.Controllers.Haku
 				return BadRequest(ex.Message);
 			}
 		}
+
+		// POST: api/Dispatch/avaList
+		[HttpPost]
+		[Route("avaList")]
+		public ActionResult<IEnumerable<CarsDto>> searchAvailables([FromBody] CarTaxiOrderItemDto dto)
+		{
+			try
+			{
+				var carsDtos = _dispatchService.RemainingCars(dto).ToList();
+				return carsDtos;
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		// POST: api/Dispatch/
+		//[HttpPost]
+		//public ActionResult PostCreate([FromBody] CarTaxiOrderItemDto dto)
+		//{
+		//	try
+		//	{
+		//		//string phone = ValidateToken();
+		//		//if (phone == "401") return Unauthorized();
+
+		//		string phone= "test";//測試用
+
+		//		int newId = _dispatchService.CreateItem(phone, dto);
+		//		if (newId > 0) return Ok();
+
+		//		return BadRequest("加入購物車失敗");
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return BadRequest(ex.Message);
+		//	}
+		//}
 
 		private string ValidateToken()
 		{

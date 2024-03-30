@@ -36,4 +36,8 @@
     <Folder Include="StaticFiles\Jill\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="efpt.config.json.user" />
+  </ItemGroup>
+
 </Project>
