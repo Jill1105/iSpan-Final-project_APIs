@@ -1,5 +1,6 @@
 ﻿using HotelFuen31.APIs.Dtos.FC;
 using HotelFuen31.APIs.Services.FC;
+using HotelFuen31.APIs.Services.Yee;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,11 @@ namespace HotelFuen31.APIs.Controllers.FC
 	public class ReservationServiceController : ControllerBase
 	{
 		private readonly ReservationServTimePeriodService _roomService;
-		public ReservationServiceController(ReservationServTimePeriodService roomService)
+		private readonly ReservationServOrderService _orderService;
+		public ReservationServiceController(ReservationServTimePeriodService roomService, ReservationServOrderService orderService)
 		{
 			_roomService = roomService;
+			_orderService = orderService;
 		}
 
 		[HttpGet]
@@ -31,6 +34,21 @@ namespace HotelFuen31.APIs.Controllers.FC
 			});
 
 			return model;
+		}
+
+		[HttpPost]
+		public ActionResult<Object> CreateOrderAll([FromForm] ReservationVueDto dto)
+		{
+			int newId = _orderService.Create(dto);
+			if (newId > 0)
+			{
+				return Ok();
+			}
+			else
+			{
+				return BadRequest();
+			}
+
 		}
 	}
 }

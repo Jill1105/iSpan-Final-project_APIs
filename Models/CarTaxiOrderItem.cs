@@ -11,13 +11,13 @@ public partial class CarTaxiOrderItem
 
     public int CarId { get; set; }
 
-    public int PickUpLongtitude { get; set; }
+    public string PickUpLongtitude { get; set; }
 
-    public int PickUpLatitude { get; set; }
+    public string PickUpLatitude { get; set; }
 
-    public int DestinationLatitude { get; set; }
+    public string DestinationLatitude { get; set; }
 
-    public int DestinationLongtitude { get; set; }
+    public string DestinationLongtitude { get; set; }
 
     public decimal SubTotal { get; set; }
 
@@ -32,8 +32,6 @@ public partial class CarTaxiOrderItem
     public int EmpId { get; set; }
 
     public int MemberId { get; set; }
-
-    public virtual CarManagement Car { get; set; }
 
     public virtual Employee Emp { get; set; }
 

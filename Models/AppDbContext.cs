@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using HotelFuen31.APIs.Dtos.FC;
 
 namespace HotelFuen31.APIs.Models;
 
@@ -148,9 +147,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;Persist Security Info=True;User ID=hotel;Password=fuen31;Encrypt=False");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -355,12 +354,19 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<CarTaxiOrderItem>(entity =>
         {
+            entity.Property(e => e.DestinationLatitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.DestinationLongtitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.PickUpLatitude)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.PickUpLongtitude)
+                .IsRequired()
+                .HasMaxLength(50);
             entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
-
-            entity.HasOne(d => d.Car).WithMany(p => p.CarTaxiOrderItems)
-                .HasForeignKey(d => d.CarId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CarTaxiOrderItems_CarManagements");
 
             entity.HasOne(d => d.Emp).WithMany(p => p.CarTaxiOrderItems)
                 .HasForeignKey(d => d.EmpId)
@@ -620,9 +626,10 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.LevelId)
                 .HasConstraintName("FK_Notifications_MemberLevels");
 
-            entity.HasOne(d => d.LevelNavigation).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.LevelId)
-                .HasConstraintName("FK_Notifications_NotificationTypes");
+            entity.HasOne(d => d.Type).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Notifications_NotificationTypes1");
         });
 
         modelBuilder.Entity<NotificationType>(entity =>
@@ -653,6 +660,9 @@ public partial class AppDbContext : DbContext
             entity.ToTable("Reservation");
 
             entity.Property(e => e.ClientId).HasColumnName("Client_id");
+            entity.Property(e => e.ClientName)
+                .HasMaxLength(16)
+                .HasColumnName("Client_Name");
             entity.Property(e => e.CreateTime).HasColumnType("datetime");
             entity.Property(e => e.ReservationStatusId).HasColumnName("Reservation_Status_id");
 
@@ -1167,5 +1177,4 @@ public partial class AppDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
 }
