@@ -18,6 +18,7 @@ using HotelFuen31.APIs.Interfaces.FC;
 using Hangfire;
 using Hangfire.SqlServer;
 using HotelFuen31.APIs.Services.Haku;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HotelFuen31.APIs
 {
@@ -81,6 +82,14 @@ namespace HotelFuen31.APIs
             builder.Services.AddScoped<ReservationServService>();
 			builder.Services.AddScoped<IReservationServTypeRepo, ReservationServTypeEFRepo>();
 			builder.Services.AddScoped<ReservationServTypeService>();
+            builder.Services.AddScoped<IReservationServOrderRepo, ReservationServOrderEFRepo>();
+			builder.Services.AddScoped<ReservationServOrderService>();
+			builder.Services.AddScoped<IReservationServRoomRepo, ReservationCheckRoomEFRepo>();
+			builder.Services.AddScoped<ReservationServRoomService>();
+			builder.Services.AddScoped<IReservationServTimePeriodRepo, ReservationServTimePeriodEFRepo>();
+			builder.Services.AddScoped<ReservationServTimePeriodService>();
+
+
 
 
 			builder.Services.AddScoped<IUser,UsersService>();

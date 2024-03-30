@@ -32,11 +32,13 @@ namespace HotelFuen31.APIs.Repository.FC
 		{
 			var model = _db.ReservationServiceDetails
 				.AsNoTracking()
+				.Include(r => r.ServicesType)
 				.Where(r => r.ServicesTypeId == id)
 				.Select(r => new ReservationServiceDetailDto
 				{
 					Id = r.Id,
 					ServicesTypeId = r.ServicesTypeId,
+					ServicesTypeName = r.ServicesType.ServicesTypeName,
 					ServiceDetailName = r.ServiceDetailName,
 					Time = r.Time,
 					Price = r.Price,
