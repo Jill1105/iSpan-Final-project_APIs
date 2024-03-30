@@ -40,7 +40,7 @@ namespace HotelFuen31.APIs.Controllers.Haku
 
 				// 測試用
 				string phone = "test";
-				int memberId = 1;
+				//int memberId = 1;
 				// 測試用
 
 				var orderList = _dispatchService.OrderListUser(phone).ToList();

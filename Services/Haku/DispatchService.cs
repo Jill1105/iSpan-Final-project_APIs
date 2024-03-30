@@ -20,7 +20,7 @@ namespace HotelFuen31.APIs.Services.Haku
         //找到那個會員的訂單細項資料
         public IEnumerable<CarTaxiOrderItemDto> OrderListUser(string phone)
         {
-            string pattern = @"^\d{9,}$"; // 這會匹配長度大於等於 10 的數字
+            //string pattern = @"^\d{9,}$"; // 這會匹配長度大於等於 10 的數字
 
             // 使用正規表達式來驗證 phone
             //if (!Regex.IsMatch(phone, pattern)) return Enumerable.Empty<CarTaxiOrderItemDto>();
