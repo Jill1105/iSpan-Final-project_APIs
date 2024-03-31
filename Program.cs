@@ -70,6 +70,7 @@ namespace HotelFuen31.APIs
 
             builder.Services.AddScoped<HallItemService>();
             builder.Services.AddScoped<HallMenuService>();
+            builder.Services.AddScoped<HallLogService>();
             builder.Services.AddScoped<RestaurantReservationService>();
             builder.Services.AddScoped<RestaurantSeatService>();
             builder.Services.AddScoped<RestaurantPeriodService>();
