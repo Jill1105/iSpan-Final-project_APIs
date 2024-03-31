@@ -15,5 +15,9 @@ public partial class Car
 
     public string Comment { get; set; }
 
+    public string Picture { get; set; }
+
+    public string Description { get; set; }
+
     public virtual ICollection<CarTaxiOrderItem> CarTaxiOrderItems { get; set; } = new List<CarTaxiOrderItem>();
 }

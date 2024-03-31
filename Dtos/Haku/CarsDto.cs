@@ -12,6 +12,10 @@ namespace HotelFuen31.APIs.Dtos.Haku
 
 		public string Comment { get; set; }
 
+		public string Picture { get; set; }
+
+		public string Description { get; set; }
+
 		public IEnumerable<CarTaxiOrderItemDto> CarTaxiOrderItem { get; set;}
 
 		public CarTaxiOrderItemDto ASC { get; set; }

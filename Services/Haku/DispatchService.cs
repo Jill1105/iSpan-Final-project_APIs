@@ -93,6 +93,8 @@ namespace HotelFuen31.APIs.Services.Haku
 					Capacity = c.Capacity,
 					PlusPrice = c.PlusPrice,
 					Comment = c.Comment,
+					Picture= c.Picture,
+					Description= c.Description,
 					ASC = c.CarTaxiOrderItems
 						.OrderBy(ctoi => ctoi.StartTime)
 						.FirstOrDefault(ctoi => ctoi.StartTime > end) 
