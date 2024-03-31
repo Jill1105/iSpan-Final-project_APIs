@@ -15,6 +15,10 @@ public partial class Reservation
 
     public DateTime CreateTime { get; set; }
 
+    public string ClientName { get; set; }
+
+    public int? PhoneNumber { get; set; }
+
     public virtual ICollection<ReservationItem> ReservationItems { get; set; } = new List<ReservationItem>();
 
     public virtual ReservationStatus ReservationStatus { get; set; }

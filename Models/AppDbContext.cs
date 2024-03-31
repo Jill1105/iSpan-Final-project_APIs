@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using HotelFuen31.APIs.Dtos.FC;
 
 namespace HotelFuen31.APIs.Models;
 
@@ -199,6 +198,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Comment)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Picture)
+                .IsRequired()
+                .HasMaxLength(100);
         });
 
         modelBuilder.Entity<CarMaintenance>(entity =>
@@ -675,6 +678,9 @@ public partial class AppDbContext : DbContext
             entity.ToTable("Reservation");
 
             entity.Property(e => e.ClientId).HasColumnName("Client_id");
+            entity.Property(e => e.ClientName)
+                .HasMaxLength(16)
+                .HasColumnName("Client_Name");
             entity.Property(e => e.CreateTime).HasColumnType("datetime");
             entity.Property(e => e.ReservationStatusId).HasColumnName("Reservation_Status_id");
 
@@ -1188,5 +1194,4 @@ public partial class AppDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
 }
