@@ -33,6 +33,8 @@ public partial class CarTaxiOrderItem
 
     public int MemberId { get; set; }
 
+    public virtual Car Car { get; set; }
+
     public virtual Employee Emp { get; set; }
 
     public virtual Member Member { get; set; }

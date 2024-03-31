@@ -8,23 +8,23 @@ namespace HotelFuen31.APIs.Dtos.Haku
 
 		public int CarId { get; set; }
 
-		public int PickUpLongtitude { get; set; }
+		public string PickUpLongtitude { get; set; }
 
-		public int PickUpLatitude { get; set; }
+		public string PickUpLatitude { get; set; }
 
-		public int DestinationLatitude { get; set; }
+		public string DestinationLatitude { get; set; }
 
-		public int DestinationLongtitude { get; set; }
+		public string DestinationLongtitude { get; set; }
 
 		public decimal SubTotal { get; set; }
 
-		public DateTime StartTime { get; set; }
+		public string StartTime { get; set; }
 
-		public DateTime? ActualStartTime { get; set; }
+		public string? ActualStartTime { get; set; }
 
-		public DateTime EndTime { get; set; }
+		public string EndTime { get; set; }
 
-		public DateTime? ActualEndTime { get; set; }
+		public string? ActualEndTime { get; set; }
 
 		public int EmpId { get; set; }
 

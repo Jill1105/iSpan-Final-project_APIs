@@ -23,6 +23,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<BusTracker> BusTrackers { get; set; }
 
+    public virtual DbSet<Car> Cars { get; set; }
+
     public virtual DbSet<CarMaintenance> CarMaintenances { get; set; }
 
     public virtual DbSet<CarManagement> CarManagements { get; set; }
@@ -147,9 +149,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -189,6 +191,17 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Status)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Car>(entity =>
+        {
+            entity.Property(e => e.Comment)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Picture)
+                .IsRequired()
+                .HasMaxLength(100);
         });
 
         modelBuilder.Entity<CarMaintenance>(entity =>
@@ -1172,7 +1185,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.States).HasColumnName("states");
         });
 
-        OnModelCreatingGeneratedProcedures(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 
