@@ -13,6 +13,45 @@ namespace HotelFuen31.APIs.Repository.FC
 			_db = db;
 		}
 
+		public int CreateOrder(ReservationOrderDto order)
+		{
+			Reservation reservation = new Reservation
+			{
+				ClientId = order.ClientId,
+				ReservationStatusId = order.ReservationStatusId,
+				CreateTime = order.CreateTime,
+				ClientName = order.ClientName,
+				PhoneNumber = order.PhoneNumber,
+			};
+
+			_db.Reservations.Add(reservation);
+			_db.SaveChanges();
+
+			return reservation.Id;
+
+		}
+
+		public int CreateOrderItem(ReservationServiceOrderDto orderItem)
+		{
+			ReservationItem item = new ReservationItem
+			{
+				ReservationId = orderItem.ReservationId,
+				ServiceDetailId = orderItem.ServiceDetailId,
+				AppointmentDate = orderItem.AppointmentDate,
+				AppointmentTimePeriodId = orderItem.AppointmentTimePeriodId,
+				TotalDuration = orderItem.TotalDuration,
+				RoomId = orderItem.RoomId,
+				RoomStatusId = orderItem.RoomStatusId,
+				Subtotal = orderItem.Subtotal
+			
+			};
+
+			_db.ReservationItems.Add(item);
+			_db.SaveChanges();
+
+			return item.Id;
+		}
+
 		public IEnumerable<ReservationServiceOrderDto> Read()
 		{
 			var model = _db.ReservationItems
@@ -40,5 +79,15 @@ namespace HotelFuen31.APIs.Repository.FC
 				});
 			return model;
 		}
+
+		public IEnumerable<ReservationItem> ReadByDateTime(DateTime Date, int TimePeriodId)
+		{
+			var model = _db.ReservationItems
+				.AsNoTracking()
+				.Where(x => x.AppointmentDate == Date && x.AppointmentTimePeriodId == TimePeriodId);
+
+			return model;
+		}
+
 	}
 }

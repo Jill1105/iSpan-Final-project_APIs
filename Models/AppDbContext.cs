@@ -381,11 +381,6 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(50);
             entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
 
-            entity.HasOne(d => d.Car).WithMany(p => p.CarTaxiOrderItems)
-                .HasForeignKey(d => d.CarId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CarTaxiOrderItems_Cars");
-
             entity.HasOne(d => d.Emp).WithMany(p => p.CarTaxiOrderItems)
                 .HasForeignKey(d => d.EmpId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
