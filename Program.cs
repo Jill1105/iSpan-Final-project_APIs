@@ -19,6 +19,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using HotelFuen31.APIs.Services.Haku;
 using Microsoft.Extensions.DependencyInjection;
+using HotelFuen31.APIs.Uitilities;
 
 namespace HotelFuen31.APIs
 {
@@ -47,20 +48,20 @@ namespace HotelFuen31.APIs
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
             });
 
-            var connStr = builder.Configuration.GetConnectionString("AppDbContext");
-            // Hangfire Service 
-            builder.Services.AddHangfire(configuration =>
-                configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                             .UseSimpleAssemblyNameTypeSerializer()
-                             .UseRecommendedSerializerSettings()
-                             .UseSqlServerStorage(connStr, new SqlServerStorageOptions
-                             {
-                                 CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                                 SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                                 QueuePollInterval = TimeSpan.FromMinutes(5),
-                                 UseRecommendedIsolationLevel = true,
-                                 DisableGlobalLocks = true,
-                             }));
+            //var connStr = builder.Configuration.GetConnectionString("AppDbContext");
+            //// Hangfire Service 
+            //builder.Services.AddHangfire(configuration =>
+            //    configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            //                 .UseSimpleAssemblyNameTypeSerializer()
+            //                 .UseRecommendedSerializerSettings()
+            //                 .UseSqlServerStorage(connStr, new SqlServerStorageOptions
+            //                 {
+            //                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            //                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            //                     QueuePollInterval = TimeSpan.FromMinutes(5),
+            //                     UseRecommendedIsolationLevel = true,
+            //                     DisableGlobalLocks = true,
+            //                 }));
             
 
             builder.Services.AddScoped<SendEmailService>();
@@ -136,7 +137,7 @@ namespace HotelFuen31.APIs
 
             app.UseFileServer();
 
-            app.UseHangfireDashboard();
+            //app.UseHangfireDashboard();
 
             app.MapHub<NotificationHub>("/notificationHub");
 
