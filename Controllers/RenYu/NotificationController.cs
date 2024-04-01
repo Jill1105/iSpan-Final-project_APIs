@@ -40,7 +40,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
 
         // POST: api/Notification/list
         [HttpPost("list")]
-        public ActionResult<IEnumerable<SendedNotificationDto>> GetAllNotification()
+        public ActionResult<NotificationPagesDto> GetAllNotification(int page = 1)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
 
                 int id = int.Parse(idStr);
 
-                return _service.GetAllNotifications(id).ToList();
+                return _service.GetAllNotifications(id,page);
             }
             catch (Exception ex) 
             { 
@@ -69,7 +69,7 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<SendedNotificationDto>> SendAllNotifiction()
+        public ActionResult<IEnumerable<SendedNotificationDto>> SendLatestNotifiction()
         {   
             try
             {
@@ -93,7 +93,6 @@ namespace HotelFuen31.APIs.Controllers.RenYu
         [HttpPost("Create")]
         public async Task<string> CreateNotifiction(SendedNotificationDto dto)
         {
-            await _hub.Clients.All.CreateNotification(dto);
             return await _service.Create(dto); 
         }
 

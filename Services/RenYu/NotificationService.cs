@@ -35,13 +35,20 @@ namespace HotelFuen31.APIs.Services.RenYu
              return dto;
         }
 
-        public IQueryable<SendedNotificationDto> GetAllNotifications(int id)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id">會員Id</param>
+        /// <param name="page">顯示第幾頁</param>
+        /// <param name="pageSize">每頁幾筆資料</param>
+        /// <returns></returns>
+        public NotificationPagesDto GetAllNotifications(int id,int page = 1,int pageSize = 10)
         {
-            var dto = _context.SendedNotifications
+            // 選出該會員所有通知
+            var notifications = _context.SendedNotifications
                 .Where(sn => id == sn.MemberId)
                 .Include(sn => sn.Notification)
                 .OrderByDescending (sn => sn.Notification.PushTime)
-                .Take(10)
                 .Select(sn => new SendedNotificationDto
                 {
                     MemberId = sn.MemberId,
@@ -51,6 +58,20 @@ namespace HotelFuen31.APIs.Services.RenYu
                     PushTime = sn.Notification.PushTime,
                     Image = sn.Notification.Image,
                 });
+
+            // 取出總共幾筆通知
+            int totalCount = notifications.Count();
+            
+            // 總頁數
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            notifications = notifications.Skip(pageSize * (page - 1)).Take(pageSize);
+
+            NotificationPagesDto dto = new NotificationPagesDto
+            {
+                Notiftications = notifications.ToList(),
+                TotalPages = totalPages,
+            };
 
             return dto;
         }
