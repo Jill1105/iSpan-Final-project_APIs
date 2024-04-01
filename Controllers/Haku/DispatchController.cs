@@ -70,26 +70,26 @@ namespace HotelFuen31.APIs.Controllers.Haku
 		}
 
 		// POST: api/Dispatch/
-		//[HttpPost]
-		//public ActionResult PostCreate([FromBody] CarTaxiOrderItemDto dto)
-		//{
-		//	try
-		//	{
-		//		//string phone = ValidateToken();
-		//		//if (phone == "401") return Unauthorized();
+		[HttpPost]
+		public ActionResult PostCreate([FromBody] CarTaxiOrderItemDto dto)
+		{
+			try
+			{
+				string phone = ValidateToken();
+				if (phone == "401") return Unauthorized();
 
-		//		string phone= "test";//測試用
+				//string phone = "test";//測試用
 
-		//		int newId = _dispatchService.CreateItem(phone, dto);
-		//		if (newId > 0) return Ok();
+				int newId = _dispatchService.CreateItem(phone, dto);
+				if (newId > 0) return Ok();
 
-		//		return BadRequest("加入購物車失敗");
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		return BadRequest(ex.Message);
-		//	}
-		//}
+				return BadRequest("預訂搭乘失敗");
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
 		private string ValidateToken()
 		{

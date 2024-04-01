@@ -198,7 +198,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Comment)
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(500);
             entity.Property(e => e.Picture)
                 .IsRequired()
                 .HasMaxLength(100);
@@ -380,6 +382,11 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Car).WithMany(p => p.CarTaxiOrderItems)
+                .HasForeignKey(d => d.CarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CarTaxiOrderItems_Cars");
 
             entity.HasOne(d => d.Emp).WithMany(p => p.CarTaxiOrderItems)
                 .HasForeignKey(d => d.EmpId)

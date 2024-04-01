@@ -20,11 +20,7 @@ namespace HotelFuen31.APIs.Dtos.Haku
 
 		public string StartTime { get; set; }
 
-		public string? ActualStartTime { get; set; }
-
 		public string EndTime { get; set; }
-
-		public string? ActualEndTime { get; set; }
 
 		public int EmpId { get; set; }
 
