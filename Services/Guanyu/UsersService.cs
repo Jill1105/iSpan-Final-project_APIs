@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using HotelFuen31.APIs.Dtos.Guanyu;
 
 namespace HotelFuen31.APIs.Services.Guanyu
 {
@@ -28,7 +29,6 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
             Cipher cipher = GetCipher(str);
 
-            //return _iuser.Decrypt(str, CipherId);
             return Decrypt(cipher);
         }
 
@@ -56,25 +56,24 @@ namespace HotelFuen31.APIs.Services.Guanyu
         public string GetCryptostring(string phone,string pwd)
         {
             string membersalt = "";
+            int memberid;
             try
             {
                 try
                 {
                     membersalt = _db.Members.Where(m => m.Phone.Contains(phone))
                                     .FirstOrDefault().Salt;
+                    if (membersalt != null)
+                    {
+                        pwd = _pwd.CryptoPWD(pwd, membersalt);
+                    }
+                    memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
+                                .FirstOrDefault().Id;
                 }
                 catch
                 {
-                    return "Salt搜尋失敗";
+                    return "登入失敗";
                 }
-                
-                if(membersalt != null)
-                {
-                    pwd = _pwd.CryptoPWD(pwd, membersalt);
-                }
-                
-                var memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
-                                    .FirstOrDefault().Id;
 
                 var memberkey = _pwd.NewKey();
                 var EncryptedString = EncryptWithJWT(memberid, memberkey);
@@ -157,6 +156,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
         public string NewMember(Member member)
         {
+
             member.IsConfirmed = false;
             member.ConfirmCode = _pwd.NewConfirmCode();
             member.RegistrationDate = DateTime.Now;
@@ -183,9 +183,70 @@ namespace HotelFuen31.APIs.Services.Guanyu
             }
         }
 
-        public string TestCheck()
+        public string EditMember(MemberDto memberDto)
         {
-            return _pwd.NewConfirmCode();
+            try
+            {
+                Member member = _db.Members.Where(m => m.Phone == memberDto.Phone).FirstOrDefault();
+                member.Name = memberDto.Name;
+                member.BirthDay = memberDto.BirthDay;
+                member.IdentityNumber = memberDto.IdentityNumber;
+                member.Email = memberDto.Email;
+                member.Address = memberDto.Address;
+                _db.SaveChanges();
+
+                return "更新成功";
+            }
+            catch
+            {
+                return "更新失敗";
+            }
         }
+
+        public string EditPwd(EditPwdDto editpwddto)
+        {
+            Member member = new Member();
+            string salt = "";
+
+            //確認帳號是否存在
+            try
+            {
+                member = _db.Members.Where(m => m.Phone == editpwddto.Phone).First();
+            }catch
+            {
+                return "無此帳號";
+            }
+
+            //確認密碼是否正確
+            try
+            {
+                salt = _db.Members.Where(m => m.Phone == editpwddto.Phone).First().Salt;
+                string oldpwd = _pwd.CryptoPWD(editpwddto.OldPwd,salt);
+                _db.Members.Where(m => m.Password == oldpwd).First();
+            }catch
+            {
+                return "舊密碼錯誤";
+            }
+
+            //修改密碼
+            try
+            {
+                if(editpwddto.NewPwd == editpwddto.confirmPwd)
+                {
+                    member.Password = _pwd.CryptoPWD(editpwddto.NewPwd, salt);
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    return "二次密碼輸入錯誤";
+                }
+            }catch
+            {
+                return "更新失敗";
+            } 
+
+            return "更新成功";
+        }
+
     }
 }

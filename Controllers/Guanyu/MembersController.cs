@@ -12,6 +12,7 @@ using HotelFuen31.APIs.Services.Guanyu;
 using HotelFuen31.APIs.Dtos;
 using System.Security.Cryptography;
 using HotelFuen31.APIs.Dtos.Guanyu;
+using System.Net.Http;
 
 namespace HotelFuen31.APIs.Controllers.Guanyu
 {
@@ -72,11 +73,22 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
         }
 
         [HttpPost]
-        public string NewMember(MemberDto member)
+        public string NewMember(Member member)
         {
-            //string status = _iuser.NewMember(member);
-            //return status;
-            return "更新失敗";
+            return _iuser.NewMember(member);
         }
+
+        [HttpPut]
+        public string EditMember(MemberDto memberdto)
+        {
+            return _iuser.EditMember(memberdto);
+        }
+
+        [HttpPut("EditPwd")]
+        public string EditPassword(EditPwdDto editpwddto)
+        {
+            return _iuser.EditPwd(editpwddto);
+        }
+
     }
 }

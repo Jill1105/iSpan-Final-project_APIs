@@ -1,4 +1,5 @@
 ﻿using HotelFuen31.APIs.Dtos;
+using HotelFuen31.APIs.Dtos.Guanyu;
 using HotelFuen31.APIs.Models;
 
 namespace HotelFuen31.APIs.Interface.Guanyu
@@ -15,6 +16,8 @@ namespace HotelFuen31.APIs.Interface.Guanyu
 
         string GetMemberPhone(string str);
 
-        string TestCheck();
+        string EditMember(MemberDto memberDto);
+        string EditPwd(EditPwdDto editpwddto);
+
     }
 }
