@@ -9,6 +9,8 @@ public partial class Car
 {
     public int Id { get; set; }
 
+    public int EmpId { get; set; }
+
     public int Capacity { get; set; }
 
     public int PlusPrice { get; set; }

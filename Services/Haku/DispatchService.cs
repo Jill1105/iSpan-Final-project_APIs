@@ -9,57 +9,55 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace HotelFuen31.APIs.Services.Haku
 {
-    public class DispatchService
-    {
-        private readonly AppDbContext _db;
-        public DispatchService(AppDbContext db)
-        {
-            _db = db;
-        }
+	public class DispatchService
+	{
+		private readonly AppDbContext _db;
+		public DispatchService(AppDbContext db)
+		{
+			_db = db;
+		}
 
-        //找到那個會員的訂單細項資料
-        public IEnumerable<CarTaxiOrderItemDto> OrderListUser(string phone)
-        {
-            //string pattern = @"^\d{9,}$"; // 這會匹配長度大於等於 10 的數字
+		//找到那個會員的訂單細項資料
+		public IEnumerable<CarTaxiOrderItemDto> OrderListUser(string phone)
+		{
+			//string pattern = @"^\d{9,}$"; // 這會匹配長度大於等於 10 的數字
 
-            // 使用正規表達式來驗證 phone
-            //if (!Regex.IsMatch(phone, pattern)) return Enumerable.Empty<CarTaxiOrderItemDto>();
+			// 使用正規表達式來驗證 phone
+			//if (!Regex.IsMatch(phone, pattern)) return Enumerable.Empty<CarTaxiOrderItemDto>();
 
-            //int memId = _db.Members
-            //	.Where(m => m.Phone == phone)
-            //	.Select(m => m.Id)
-            //	.FirstOrDefault();
+			//int memId = _db.Members
+			//	.Where(m => m.Phone == phone)
+			//	.Select(m => m.Id)
+			//	.FirstOrDefault();
 
-            int memId = 1;// 測試用
+			int memId = 1;// 測試用
 
-            var dtos = _db.CarTaxiOrderItems
-                .Include(ctoi => ctoi.Member)
-                .Where(ctoi => ctoi.MemberId == memId)
+			var dtos = _db.CarTaxiOrderItems
+				.Include(ctoi => ctoi.Member)
+				.Where(ctoi => ctoi.MemberId == memId)
 				.ToList()
-                .Select(ctoi => new CarTaxiOrderItemDto
-                {
-                    Id = ctoi.Id,
-                    CarId = ctoi.CarId,
-                    PickUpLongtitude = ctoi.PickUpLongtitude,
-                    PickUpLatitude = ctoi.PickUpLatitude,
-                    DestinationLatitude = ctoi.DestinationLatitude,
-                    DestinationLongtitude = ctoi.DestinationLongtitude,
-                    SubTotal = ctoi.SubTotal,
-                    StartTime = ctoi.StartTime.ToString(),
-                    ActualStartTime = ctoi.ActualStartTime.ToString(),
-                    EndTime = ctoi.EndTime.ToString(),
-                    ActualEndTime = ctoi.ActualEndTime.ToString(),
-                    EmpId = ctoi.EmpId,
-                    MemberId = ctoi.MemberId,
-                }).ToList();
+				.Select(ctoi => new CarTaxiOrderItemDto
+				{
+					Id = ctoi.Id,
+					CarId = ctoi.CarId,
+					PickUpLongtitude = ctoi.PickUpLongtitude,
+					PickUpLatitude = ctoi.PickUpLatitude,
+					DestinationLatitude = ctoi.DestinationLatitude,
+					DestinationLongtitude = ctoi.DestinationLongtitude,
+					SubTotal = ctoi.SubTotal,
+					StartTime = ctoi.StartTime.ToString(),
+					EndTime = ctoi.EndTime.ToString(),
+					EmpId = ctoi.EmpId,
+					MemberId = ctoi.MemberId,
+				}).ToList();
 
-            return dtos;
-        }
+			return dtos;
+		}
 
 		//查剩下的車車有哪些
 		public IEnumerable<CarsDto> RemainingCars(CarTaxiOrderItemDto dto)
 		{
-			if(!DateTime.TryParse(dto.StartTime, out DateTime start) || !DateTime.TryParse(dto.EndTime, out DateTime end))
+			if (!DateTime.TryParse(dto.StartTime, out DateTime start) || !DateTime.TryParse(dto.EndTime, out DateTime end))
 			{
 				return Enumerable.Empty<CarsDto>();
 			}
@@ -90,16 +88,17 @@ namespace HotelFuen31.APIs.Services.Haku
 				.Select(c => new CarsDto
 				{
 					Id = c.Id,
+					EmpId = c.EmpId,
 					Capacity = c.Capacity,
 					PlusPrice = c.PlusPrice,
 					Comment = c.Comment,
-					Picture= c.Picture,
-					Description= c.Description,
+					Picture = c.Picture,
+					Description = c.Description,
 					ASC = c.CarTaxiOrderItems
 						.OrderBy(ctoi => ctoi.StartTime)
-						.FirstOrDefault(ctoi => ctoi.StartTime > end) 
+						.FirstOrDefault(ctoi => ctoi.StartTime > end)
 						?.EfToDto(),
-					DESC= c.CarTaxiOrderItems
+					DESC = c.CarTaxiOrderItems
 						.OrderByDescending(ctoi => ctoi.EndTime)
 						.FirstOrDefault(ctoi => ctoi.EndTime < start)
 						?.EfToDto(),
@@ -108,56 +107,42 @@ namespace HotelFuen31.APIs.Services.Haku
 		}
 
 		//新增搭乘訂單細項
-		//public int CreateItem(string phone, CarTaxiOrderItemDto dto)
-		//		{
-		//			if (dto == null) return -1;
+		public int CreateItem(string phone, CarTaxiOrderItemDto dto)
+		{
+			if (dto == null) return -1;
 
-		//			//int memId = _db.Members
-		//			//	.Where(m => m.Phone == phone)
-		//			//	.Select(m => m.Id)
-		//			//	.FirstOrDefault();
+			int memId = _db.Members
+				.Where(m => m.Phone == phone)
+				.Select(m => m.Id)
+				.FirstOrDefault();
 
-		//			// 測試用
-		//			int memId = 1;
-		//			// 測試用
+			// 測試用
+			//int memId = 1;
+			// 測試用
 
-		//			if (!existingItems.Any(ctoi => ctoi.Uid == dto.Uid))//先比較有沒有一樣的訂單明細
-		//			{
-		//				var strArr = dto.Uid?.Split(",") ?? new string[0];
-		//				if (strArr.Length >= 3 && 
-		//					DateTime.TryParse(dto.StartTime, out DateTime startTime) &&
-		//					DateTime.TryParse(dto.EndTime, out DateTime endTime) &&
-		//					int.TryParse(strArr[0], out int carId))
-		//				{
+			int empId = _db.Cars.Where(c => c.Id == dto.CarId).Select(c=>c.EmpId).FirstOrDefault();
 
-		//					// todo 檢查時間段內是否有車輛可供使用
-		//					// if 
+				if (DateTime.TryParse(dto.StartTime, out DateTime start) && DateTime.TryParse(dto.EndTime, out DateTime end))
+			{
+				//檢查是否有重複訂單
+				if (_db.CarTaxiOrderItems.Any(c => c.StartTime < end || c.EndTime > start)) return -1;
+				else
+				{
+					// 創建新的購物車項目
+					var newItem = dto.DtoToEf(start, end, empId, memId);
+
+						_db.CarTaxiOrderItems.Add(newItem);
+					_db.SaveChanges();
 
 
-		//					// 創建新的購物車項目
-		//					var newItem = new CartRoomItem
-		//					{
-		//						Phone = phone,
-		//						Uid = dto.Uid, //carid+starttime+endtime
-		//						Selected = dto.Selected,
-		//						TypeId = dto.TypeId,
-		//						RoomId = roomId,
-		//						CheckInDate = checkInDate,
-		//						CheckOutDate = checkOutDate,
-		//						Remark = dto.Remark,
-		//					};
+					return newItem.Id;
+				}
+			}
 
-		//					_db.CartRoomItems.Add(newItem);
-		//					_db.SaveChanges();
-
-		//					return newItem.Id;
-		//				}
-		//			}
-
-		//			return -1;
-		//		}
+			return -1;
+		}
 	}
-
+}
 	public static class CarTaxiOrderItemExts { 
 		public static CarTaxiOrderItemDto EfToDto(this CarTaxiOrderItem ctoi) {
 
@@ -171,13 +156,38 @@ namespace HotelFuen31.APIs.Services.Haku
 				DestinationLongtitude = ctoi.DestinationLongtitude,
 				SubTotal = ctoi.SubTotal,
 				StartTime = ctoi.StartTime.ToString(),
-				ActualStartTime = ctoi.ActualStartTime.ToString(),
 				EndTime = ctoi.EndTime.ToString(),
-				ActualEndTime = ctoi.ActualEndTime.ToString(),
 				EmpId = ctoi.EmpId,
 				MemberId = ctoi.MemberId,
 			};
 		}
+
+		public static CarTaxiOrderItem DtoToEf(this CarTaxiOrderItemDto dto, DateTime start, DateTime end, int empId, int memId)
+		{
+			return new CarTaxiOrderItem
+			{
+				CarId = dto.CarId,
+
+				PickUpLongtitude = dto.PickUpLongtitude,
+
+				PickUpLatitude = dto.PickUpLatitude,
+
+				DestinationLatitude = dto.DestinationLatitude,
+
+				DestinationLongtitude = dto.DestinationLongtitude,
+
+				SubTotal = dto.SubTotal,
+
+				StartTime = start,
+
+
+				EndTime = end,
+
+
+				EmpId = empId,
+
+				MemberId = memId
+			};
+		}
 	}
 
-}
