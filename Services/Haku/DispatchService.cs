@@ -125,7 +125,7 @@ namespace HotelFuen31.APIs.Services.Haku
 				if (DateTime.TryParse(dto.StartTime, out DateTime start) && DateTime.TryParse(dto.EndTime, out DateTime end))
 			{
 				//檢查是否有重複訂單
-				if (_db.CarTaxiOrderItems.Any(c => c.StartTime < end || c.EndTime > start)) return -1;
+				if (_db.CarTaxiOrderItems.Any(c => c.StartTime < end && c.EndTime > start && c.CarId==dto.CarId)) return -1;
 				else
 				{
 					// 創建新的購物車項目
