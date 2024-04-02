@@ -75,13 +75,14 @@ namespace HotelFuen31.APIs.Controllers.Haku
 		{
 			try
 			{
+				//string phone = dto.PhoneNumber;
 				string phone = ValidateToken();
 				if (phone == "401") return Unauthorized();
 
 				//string phone = "test";//測試用
 
 				int newId = _dispatchService.CreateItem(phone, dto);
-				if (newId > 0) return Ok();
+				if (newId > 0) return Content("成功");
 
 				return BadRequest("預訂搭乘失敗");
 			}
@@ -97,7 +98,7 @@ namespace HotelFuen31.APIs.Controllers.Haku
 			string? authorization = HttpContext.Request.Headers["Authorization"];
 			if (string.IsNullOrWhiteSpace(authorization))
 			{
-				throw new ArgumentException("Authorization token is missing.");
+				return "401";
 			}
 
 			// 將字串中的 token 拆出來
