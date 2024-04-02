@@ -21,45 +21,50 @@ namespace HotelFuen31.APIs.Services.FC
 
 		public int Create(ReservationVueDto dto)
 		{
+			//確認服務包廂總數
 			var checkmodel = _roomService.ReadBytypeId(1).ToList();
 			int maxRoomAmount = checkmodel.Count() - 1; //排除預設包廂
 
-			var checkedRoomCount = dto.AppointmentDate == null && dto.AppointmentTimePeriodId == 0
-				? _repo.ReadByDateTime(DateTime.Now, 1) //待確定
-				: _repo.ReadByDateTime(dto.AppointmentDate, dto.AppointmentTimePeriodId);
+			//確認相同預訂日期與時段數量
+			var checkedRoomCount = _repo.ReadByDateTime(dto.AppointmentDate, dto.AppointmentTimePeriodId);
 			int totalCount = checkedRoomCount.Count();
 
-
-			var model = new ReservationOrderDto
+			//確認是否有剩餘包廂數量
+			if (totalCount < maxRoomAmount)
 			{
-				ClientId = dto.ClientId,
-				ReservationStatusId = 1,
-				CreateTime = DateTime.Now,
-				ClientName = dto.ClientName,
-				PhoneNumber = dto.PhoneNumber,
-			};
-			int newId = _repo.CreateOrder(model);
-
-			if (newId > 0)
-			{
-				var model2 = new ReservationServiceOrderDto
+				var model = new ReservationOrderDto
 				{
-					ReservationId = newId,
-					ServiceDetailId = dto.ServiceDetailId,
-					AppointmentDate = dto.AppointmentDate,
-					AppointmentTimePeriodId = dto.AppointmentTimePeriodId,
-					TotalDuration = dto.TotalDuration,
-					RoomId = 1, //預設值:待安排
-					RoomStatusId = 1, //預設值:待安排
-					Subtotal = dto.Subtotal
+					ClientId = dto.ClientId,
+					ReservationStatusId = 1,
+					CreateTime = DateTime.Now,
+					ClientName = dto.ClientName,
+					PhoneNumber = dto.PhoneNumber,
 				};
-				return _repo.CreateOrderItem(model2);
+				int newId = _repo.CreateOrder(model);
+
+				if (newId > 0)
+				{
+					var model2 = new ReservationServiceOrderDto
+					{
+						ReservationId = newId,
+						ServiceDetailId = dto.ServiceDetailId,
+						AppointmentDate = dto.AppointmentDate,
+						AppointmentTimePeriodId = dto.AppointmentTimePeriodId,
+						TotalDuration = dto.TotalDuration,
+						RoomId = 1, //預設值:待安排
+						RoomStatusId = 1, //預設值:待安排
+						Subtotal = dto.Subtotal
+					};
+					return _repo.CreateOrderItem(model2);
+
+				}
+				return 0;
 
 			}
-
-			return 0;
-
-
+			else
+			{
+				throw new Exception("預約失敗~此時段無包廂可使用");
+			}
 		}
 	}
 }
