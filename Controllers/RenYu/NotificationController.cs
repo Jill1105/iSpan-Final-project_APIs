@@ -27,6 +27,12 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             _user = user;
         }
 
+        [HttpGet]
+        public AllNotificationPageDto GetAll(int page = 1)
+        {
+            return _service.GetAll(page);
+        }
+
         [HttpGet("GetLevels")]
         public async Task<IEnumerable<MemberLevel>> GetLevels()
         {
@@ -58,14 +64,6 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             { 
                return BadRequest(ex.Message);
             }
-        }
-
-        [HttpPost("birthday")]
-        public ActionResult<IEnumerable<BirthdayDto>> SendBirthdayNotification()
-        {
-             RecurringJob.AddOrUpdate("myRecurringJob",() => _service.SendBirthdayNotification(), Cron.Monthly) ;
-            
-            return Ok();
         }
 
         [HttpPost]
@@ -102,14 +100,14 @@ namespace HotelFuen31.APIs.Controllers.RenYu
 
             if (string.IsNullOrEmpty(authoriztion))
             {
-                throw new ArgumentException("Authoriztion token is missing");
+                return "401";
             }
 
             string token = authoriztion.Split(" ")[1];
 
             if (string.IsNullOrEmpty(token))
             {
-                throw new ArgumentException("Invalid Authorization token format.");
+                return "401";
             }
 
             string id = _user.GetMember(token);

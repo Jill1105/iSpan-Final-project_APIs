@@ -1,5 +1,6 @@
 ﻿using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Models;
+using HotelFuen31.APIs.Uitilities;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -8,10 +9,40 @@ namespace HotelFuen31.APIs.Services.RenYu
     public class NotificationService
     {
         private readonly AppDbContext _context;
-
         public NotificationService(AppDbContext context)
         {
             _context = context;
+        }
+
+        public AllNotificationPageDto GetAll(int page = 1, int pageSize = 10)
+        {
+            var notifications = _context.Notifications
+                .AsNoTracking()
+                .Include(n => n.Level)
+                .OrderByDescending(n => n.PushTime)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    Name = n.Name,
+                    Description = n.Description,
+                    PushTime = n.PushTime,
+                    LevelId = n.LevelId,
+                    LevelName = n.Level.Name
+                });
+            
+            int totalCount = notifications.Count();
+
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            notifications = notifications.Skip((page - 1) * pageSize).Take(pageSize);
+
+            var dto = new AllNotificationPageDto
+            {
+                Notifications = notifications.ToList(),
+                TotalPages = totalPages,
+            };
+            
+            return dto;
         }
 
         public IQueryable<SendedNotificationDto> GetLatestNotifications(int id)
@@ -99,26 +130,6 @@ namespace HotelFuen31.APIs.Services.RenYu
                     Id = type.Id,
                     Name = type.Name,
                 });
-
-            return dto;
-        }
-
-        public IQueryable<BirthdayDto> SendBirthdayNotification()
-        {
-            int birthdayNotifi = 2;
-
-            var dto = _context.SendedNotifications
-                .AsNoTracking()
-                .Include(x => x.Member)
-                .Include(x => x.Notification)
-                .Where(x => x.Notification.TypeId == birthdayNotifi)
-                .Select(x => new BirthdayDto
-                {
-                    Id = x.Id,
-                    Name = x.Notification.Name,
-                    Description = x.Notification.Description,
-                });
-               
 
             return dto;
         }
