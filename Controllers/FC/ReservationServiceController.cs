@@ -25,30 +25,35 @@ namespace HotelFuen31.APIs.Controllers.FC
 			if (selectdate == null) selectdate = DateTime.Today;
 			var dtos = _roomService.ReadTime(typeId, selectdate);
 
-
 			var model = dtos.Select(x => new ReservationServiceTimePeriodDto
 			{
 				Id = x.Id,
 				TimePeriod = x.TimePeriod,
-				Count = x.Count
+				Count = x.Count-1
 			});
 
 			return model;
 		}
 
 		[HttpPost]
-		public ActionResult<Object> CreateOrderAll([FromForm] ReservationVueDto dto)
+		public ActionResult CreateOrderAll([FromBody] ReservationVueDto dto)
 		{
-			int newId = _orderService.Create(dto);
-			if (newId > 0)
+			try
 			{
-				return Ok();
+				int newId = _orderService.Create(dto);
+				if (newId > 0)
+				{
+					return Ok(new { id = newId });
+				}
+				else
+				{
+					return BadRequest("Failed to create order.");
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				return BadRequest();
+				return BadRequest(ex.Message);
 			}
-
 		}
 	}
 }

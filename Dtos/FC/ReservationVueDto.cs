@@ -7,15 +7,15 @@ namespace HotelFuen31.APIs.Dtos.FC
 
 		public int? ClientId { get; set; }
 
-		public int ReservationStatusId { get; set; }
+		public int? ReservationStatusId { get; set; }
 
-		public DateTime CreateTime { get; set; }
+		public DateTime? CreateTime { get; set; }
 
 		public string ClientName { get; set; }
 
-		public int? PhoneNumber { get; set; }
+		public string PhoneNumber { get; set; }
 
-		public int ReservationId { get; set; }
+		public int? ReservationId { get; set; }
 
 		public int ServiceDetailId { get; set; }
 		//public string ServiceDetailName { get; set; }
@@ -36,11 +36,7 @@ namespace HotelFuen31.APIs.Dtos.FC
 		public int? RoomStatusId { get; set; }
 		//public string RoomStatusName { get; set; }
 
-
-
 		public int Subtotal { get; set; }
-
-
 
 	}
 }
