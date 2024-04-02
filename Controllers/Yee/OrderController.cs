@@ -105,7 +105,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 if (orderDto.RtnCode == 1 || orderDto.Status == 1) return BadRequest("該訂單已付款");
 
                 //string backEnd = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-                string backEnd = $"https://dd7a-114-25-169-142.ngrok-free.app";
+                string backEnd = $"https://9cc9-114-25-159-200.ngrok-free.app";
                 string frontEnd = $"localhost:5173";
 
                 var orderDic = _orderService.GetECPayDic(orderDto, backEnd, frontEnd);
@@ -148,14 +148,14 @@ namespace HotelFuen31.APIs.Controllers.Yee
             string? authorization = HttpContext.Request.Headers["Authorization"];
             if (string.IsNullOrWhiteSpace(authorization))
             {
-                throw new ArgumentException("Authorization token is missing.");
+                return "401";
             }
 
             // 將字串中的 token 拆出來
             string token = authorization.Split(" ")[1];
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new ArgumentException("Invalid Authorization token format.");
+                return "401";
             }
 
             // 驗證 token 有沒有效
