@@ -70,6 +70,7 @@ namespace HotelFuen31.APIs
             // RenYu
             builder.Services.AddScoped<SendEmailService>();
             builder.Services.AddScoped<NotificationService>();
+            builder.Services.AddScoped<LiveCustomerService>();
 
             // yee
             builder.Services.AddScoped<CartRoomService>();
@@ -137,6 +138,7 @@ namespace HotelFuen31.APIs
             app.UseHangfireDashboard();
 
             app.MapHub<NotificationHub>("/notificationHub");
+            app.MapHub<LiveCustomerServiceHub>("/liveCustomerServiceHub");
 
             app.Run();
         }
