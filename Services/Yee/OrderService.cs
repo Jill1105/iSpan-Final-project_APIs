@@ -48,7 +48,7 @@ namespace HotelFuen31.APIs.Services.Yee
                 RtnCode = o.RtnCode,
                 RtnMsg = o.RtnMsg,
                 TradeNo = o.TradeNo,
-                TradeAmt = o.RoomBookings != null ? o.RoomBookings.Select(rb => rb.OrderPrice).Aggregate((total, sub) => total + sub) : 0,
+                TradeAmt = o.RoomBookings.Count > 0 ? o.RoomBookings.Select(rb => rb.OrderPrice).Aggregate((total, sub) => total + sub) : 0,
                 PaymentDate = o.PaymentDate,
                 PaymentType = o.PaymentType,
                 PaymentTypeChargeFee = o.PaymentTypeChargeFee,
