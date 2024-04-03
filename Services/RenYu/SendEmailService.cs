@@ -17,7 +17,7 @@ namespace HotelFuen31.APIs.Services.RenYu
         }
         public void SendValidationEmail(string toEmail, string url, string subject = "Kalsari Hotel 會員認證信")
         {
-            SmtpEmail(subject,toEmail,() => EmailTemplate.Valdation(url));
+            SmtpEmail(subject,toEmail,() => EmailTemplate.Validation(url));
         }
         public void SendResetPwdEmail(string toEmail, string url, string subject = "Kalsari Hotel 會員密碼重置")
         {
