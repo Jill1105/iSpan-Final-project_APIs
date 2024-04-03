@@ -80,7 +80,6 @@ namespace HotelFuen31.APIs.Controllers.RenYu
                 _hub.Clients.All.SendNotification(dto);
                 
                 return Ok(dto);
-
             }
             catch(Exception ex)
             {
@@ -111,7 +110,20 @@ namespace HotelFuen31.APIs.Controllers.RenYu
             }
 
             string id = _user.GetMember(token);
+
             return id;
+        }
+
+        [HttpGet("GetOneNotfication")]
+        public IEnumerable<NotificationDto> GetNotification(int id) 
+        {
+            return _service.GetNotification(id);
+        }
+
+        [HttpPut("Edit")]
+        public async Task<string> Edit(NotificationDto dto)
+        {
+            return await _service.Edit(dto);
         }
     }
 }

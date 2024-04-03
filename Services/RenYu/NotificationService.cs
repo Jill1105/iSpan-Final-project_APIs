@@ -45,6 +45,7 @@ namespace HotelFuen31.APIs.Services.RenYu
             return dto;
         }
 
+        
         public IQueryable<SendedNotificationDto> GetLatestNotifications(int id)
         {
             var dto = _context.SendedNotifications
@@ -132,6 +133,40 @@ namespace HotelFuen31.APIs.Services.RenYu
                 });
 
             return dto;
+        }
+
+        public IQueryable<NotificationDto> GetNotification(int id)
+        {
+            var dto = _context.Notifications
+                .AsNoTracking()
+                .Where(n => n.Id == id)
+                .Include(n => n.Level)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    Name = n.Name,
+                    Description = n.Description,
+                    PushTime = n.PushTime,
+                    Image = n.Image,
+                    LevelId = n.LevelId,
+                    LevelName = n.Level.Name
+                });
+
+            return dto;
+        }
+
+        public async Task<string> Edit(NotificationDto dto)
+        { 
+                var notiModel = _context.Notifications.Find(dto.Id);
+
+                notiModel.Name = dto.Name;
+                notiModel.Description = dto.Description;
+                notiModel.PushTime = dto.PushTime;
+                notiModel.TypeId = dto.TypeId;
+
+                await _context.SaveChangesAsync();
+
+                return "編輯成功"; 
         }
 
         public async Task<string> Create(SendedNotificationDto dto)
