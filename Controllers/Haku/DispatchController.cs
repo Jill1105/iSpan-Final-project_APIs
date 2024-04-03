@@ -33,17 +33,17 @@ namespace HotelFuen31.APIs.Controllers.Haku
 		{
 			try
 			{
-				//string phone = ValidateToken();
-				//if (phone == "401") return Unauthorized();
+				string phone = ValidateToken();
+				if (phone == "401") return Unauthorized();
 
-				//var orderList = _dispatchService.OrderListUser(phone).ToList();
+				var orderList = _dispatchService.OrderListUser(phone).ToList();
 
 				// 測試用
-				string phone = "test";
+				//string phone = "test";
 				//int memberId = 1;
 				// 測試用
 
-				var orderList = _dispatchService.OrderListUser(phone).ToList();
+				//var orderList = _dispatchService.OrderListUser(phone).ToList();
 
 				return orderList;
 			}
@@ -84,7 +84,7 @@ namespace HotelFuen31.APIs.Controllers.Haku
 				int newId = _dispatchService.CreateItem(phone, dto);
 				if (newId > 0) return Content("成功");
 
-				return BadRequest("預訂搭乘失敗");
+				return Content("預訂搭乘失敗");
 			}
 			catch (Exception ex)
 			{
