@@ -89,6 +89,5 @@ namespace HotelFuen31.APIs.Controllers.Guanyu
         {
             return _iuser.EditPwd(editpwddto);
         }
-
     }
 }

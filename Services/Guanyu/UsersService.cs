@@ -212,21 +212,23 @@ namespace HotelFuen31.APIs.Services.Guanyu
             try
             {
                 member = _db.Members.Where(m => m.Phone == editpwddto.Phone).First();
-            }catch
+                salt = _db.Members.Where(m => m.Phone == editpwddto.Phone).First().Salt;
+            }
+            catch
             {
                 return "無此帳號";
             }
 
             //確認密碼是否正確
-            try
-            {
-                salt = _db.Members.Where(m => m.Phone == editpwddto.Phone).First().Salt;
-                string oldpwd = _pwd.CryptoPWD(editpwddto.OldPwd,salt);
-                _db.Members.Where(m => m.Password == oldpwd).First();
-            }catch
-            {
-                return "舊密碼錯誤";
-            }
+            //try
+            //{
+            //    salt = _db.Members.Where(m => m.Phone == editpwddto.Phone).First().Salt;
+            //    string oldpwd = _pwd.CryptoPWD(editpwddto.OldPwd,salt);
+            //    _db.Members.Where(m => m.Password == oldpwd).First();
+            //}catch
+            //{
+            //    return "舊密碼錯誤";
+            //}
 
             //修改密碼
             try
@@ -247,6 +249,5 @@ namespace HotelFuen31.APIs.Services.Guanyu
 
             return "更新成功";
         }
-
     }
 }
