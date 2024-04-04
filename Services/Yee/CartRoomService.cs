@@ -283,10 +283,9 @@ namespace HotelFuen31.APIs.Services.Yee
                 .AsEnumerable();
 
             var price = query
-                .Select(rc => rc.IsHoliday == "true" ?
+                .Sum(rc => rc.IsHoliday == "true" ?
                     roomeType.HolidayPrice : rc.Week == "五" || rc.Week == "六" || rc.Week == "日" ?
-                    roomeType.WeekendPrice : roomeType.WeekdayPrice)
-                .Aggregate((total, next) => total + next);
+                    roomeType.WeekendPrice : roomeType.WeekdayPrice);
 
             return price;
         }
