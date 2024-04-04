@@ -178,14 +178,14 @@ namespace HotelFuen31.APIs.Controllers.Yee
             string? authorization = HttpContext.Request.Headers["Authorization"];
             if (string.IsNullOrWhiteSpace(authorization))
             {
-                throw new ArgumentException("Authorization token is missing.");
+                return "401";
             }
 
             // 將字串中的 token 拆出來
             string token = authorization.Split(" ")[1];
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new ArgumentException("Invalid Authorization token format.");
+                return "401";
             }
 
             // 驗證 token 有沒有效
