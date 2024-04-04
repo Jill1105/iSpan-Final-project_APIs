@@ -105,7 +105,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 if (orderDto.RtnCode == 1 || orderDto.Status == 1) return BadRequest("該訂單已付款");
 
                 //string backEnd = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-                string backEnd = $"https://9cc9-114-25-159-200.ngrok-free.app";
+                string backEnd = $"https://3946-114-25-133-225.ngrok-free.app";
                 string frontEnd = $"localhost:5173";
 
                 var orderDic = _orderService.GetECPayDic(orderDto, backEnd, frontEnd);
