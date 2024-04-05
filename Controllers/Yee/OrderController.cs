@@ -123,14 +123,14 @@ namespace HotelFuen31.APIs.Controllers.Yee
         [Route("ECPay")]
         public ActionResult PostFromECPay([FromForm]IFormCollection col)
         {
-            var data = new Dictionary<string, string>();
-            foreach (string key in col.Keys)
-            {
-                data.Add(key, col[key]);
-            }
-
             try
             {
+                var data = new Dictionary<string, string>();
+                foreach (string key in col.Keys)
+                {
+                    data.Add(key, col[key].ToString() ?? "");
+                }
+
                 int rtnCod = _orderService.UpdateECpay(data);
                 if (rtnCod == 1) return Content("1|OK");
 

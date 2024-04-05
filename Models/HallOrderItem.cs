@@ -11,8 +11,6 @@ public partial class HallOrderItem
 
     public int HallLogId { get; set; }
 
-    public int HallMenuId { get; set; }
-
     public int? Price { get; set; }
 
     public int Qty { get; set; }
@@ -20,4 +18,6 @@ public partial class HallOrderItem
     public int? SubTotal { get; set; }
 
     public virtual HallLog HallLog { get; set; }
+
+    public virtual ICollection<HallMenuSchedule> HallMenuSchedules { get; set; } = new List<HallMenuSchedule>();
 }

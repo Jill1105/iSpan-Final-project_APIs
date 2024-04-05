@@ -28,7 +28,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 var info = _service.GetRoomStock(start, end);
                 if (info == null) return null;
 
-                info.RoomStocks.ToList().ForEach(ele =>
+                info.RoomStocks?.ToList().ForEach(ele =>
                 {
                     var pic = string.IsNullOrEmpty(ele.Picture) ? "noImage.png" : ele.Picture;
                     ele.Picture = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{Url.Content($"~/StaticFiles/Chen/{pic}")}";
