@@ -34,6 +34,7 @@ namespace HotelFuen31.APIs.Services.Haku
 
 			var dtos = _db.CarTaxiOrderItems
 				.Include(ctoi => ctoi.Member)
+				.Include(ctoi=>ctoi.Car)
 				.Where(ctoi => ctoi.MemberId == memId)
 				.ToList()
 				.Select(ctoi => new CarTaxiOrderItemDto
@@ -42,14 +43,27 @@ namespace HotelFuen31.APIs.Services.Haku
 					CarId = ctoi.CarId,
 					PickUpLongtitude = ctoi.PickUpLongtitude,
 					PickUpLatitude = ctoi.PickUpLatitude,
+					PickUpLocation = ctoi.PickUpLocation,
 					DestinationLatitude = ctoi.DestinationLatitude,
 					DestinationLongtitude = ctoi.DestinationLongtitude,
-					SubTotal = ctoi.SubTotal,
+					DestinationLocation = ctoi.DestinationLocation,
+					Total = ctoi.Total,
 					StartTime = ctoi.StartTime.ToString(),
 					EndTime = ctoi.EndTime.ToString(),
 					EmpId = ctoi.EmpId,
 					MemberId = ctoi.MemberId,
-	}).ToList();
+					Car=new CarsDto
+					{
+						Id=ctoi.Car.Id,
+						EmpId = ctoi.Car.EmpId,
+						Capacity = ctoi.Car.Capacity,
+						PlusPrice = ctoi.Car.PlusPrice,
+						Comment = ctoi.Car.Comment,
+						Picture = ctoi.Car.Picture,
+						Description = ctoi.Car.Description,
+					}
+				})
+				.ToList();	
 
 			return dtos;
 		}
@@ -152,9 +166,11 @@ namespace HotelFuen31.APIs.Services.Haku
 				CarId = ctoi.CarId,
 				PickUpLongtitude = ctoi.PickUpLongtitude,
 				PickUpLatitude = ctoi.PickUpLatitude,
+				PickUpLocation = ctoi.PickUpLocation,
 				DestinationLatitude = ctoi.DestinationLatitude,
 				DestinationLongtitude = ctoi.DestinationLongtitude,
-				SubTotal = ctoi.SubTotal,
+				DestinationLocation= ctoi.DestinationLocation,
+				Total = ctoi.Total,
 				StartTime = ctoi.StartTime.ToString(),
 				EndTime = ctoi.EndTime.ToString(),
 				EmpId = ctoi.EmpId,
@@ -172,17 +188,19 @@ namespace HotelFuen31.APIs.Services.Haku
 
 				PickUpLatitude = dto.PickUpLatitude,
 
+				PickUpLocation= dto.PickUpLocation,
+
 				DestinationLatitude = dto.DestinationLatitude,
 
 				DestinationLongtitude = dto.DestinationLongtitude,
 
-				SubTotal = dto.SubTotal,
+				DestinationLocation= dto.DestinationLocation,
+
+				Total = dto.Total,
 
 				StartTime = start,
 
-
 				EndTime = end,
-
 
 				EmpId = empId,
 
@@ -190,4 +208,5 @@ namespace HotelFuen31.APIs.Services.Haku
 			};
 		}
 	}
+
 

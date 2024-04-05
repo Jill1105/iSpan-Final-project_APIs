@@ -31,5 +31,9 @@ public partial class RoomType
 
     public virtual ICollection<CartRoomItem> CartRoomItems { get; set; } = new List<CartRoomItem>();
 
+    public virtual ICollection<CouponRoomCountSameDate> CouponRoomCountSameDates { get; set; } = new List<CouponRoomCountSameDate>();
+
+    public virtual ICollection<CouponRoomTimeSpan> CouponRoomTimeSpans { get; set; } = new List<CouponRoomTimeSpan>();
+
     public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

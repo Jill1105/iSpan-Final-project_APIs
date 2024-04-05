@@ -49,6 +49,18 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Cipher> Ciphers { get; set; }
 
+    public virtual DbSet<Coupon> Coupons { get; set; }
+
+    public virtual DbSet<CouponMember> CouponMembers { get; set; }
+
+    public virtual DbSet<CouponRoomCountSameDate> CouponRoomCountSameDates { get; set; }
+
+    public virtual DbSet<CouponRoomTimeSpan> CouponRoomTimeSpans { get; set; }
+
+    public virtual DbSet<CouponThresholdDiscount> CouponThresholdDiscounts { get; set; }
+
+    public virtual DbSet<CouponType> CouponTypes { get; set; }
+
     public virtual DbSet<Employee> Employees { get; set; }
 
     public virtual DbSet<EmployeeRole> EmployeeRoles { get; set; }
@@ -62,8 +74,6 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<HallMenu> HallMenus { get; set; }
 
     public virtual DbSet<HallMenuSchedule> HallMenuSchedules { get; set; }
-
-    public virtual DbSet<HallMorderItem> HallMorderItems { get; set; }
 
     public virtual DbSet<HallOrderItem> HallOrderItems { get; set; }
 
@@ -149,9 +159,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -372,16 +382,22 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.DestinationLatitude)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.DestinationLocation)
+                .IsRequired()
+                .HasMaxLength(150);
             entity.Property(e => e.DestinationLongtitude)
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.PickUpLatitude)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.PickUpLocation)
+                .IsRequired()
+                .HasMaxLength(150);
             entity.Property(e => e.PickUpLongtitude)
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
 
             entity.HasOne(d => d.Car).WithMany(p => p.CarTaxiOrderItems)
                 .HasForeignKey(d => d.CarId)
@@ -420,6 +436,86 @@ public partial class AppDbContext : DbContext
             entity.ToTable("cipher");
 
             entity.Property(e => e.Id).HasColumnName("id");
+        });
+
+        modelBuilder.Entity<Coupon>(entity =>
+        {
+            entity.Property(e => e.Comment).HasMaxLength(50);
+
+            entity.HasOne(d => d.Type).WithMany(p => p.Coupons)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Coupons_TypeId");
+        });
+
+        modelBuilder.Entity<CouponMember>(entity =>
+        {
+            entity.ToTable("CouponMember");
+
+            entity.HasOne(d => d.Coupon).WithMany(p => p.CouponMembers)
+                .HasForeignKey(d => d.CouponId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponMember_CouponId");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.CouponMembers)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponMember_MemberId");
+        });
+
+        modelBuilder.Entity<CouponRoomCountSameDate>(entity =>
+        {
+            entity.ToTable("CouponRoomCountSameDate");
+
+            entity.HasIndex(e => e.CouponId, "IX_CouponRoomCountSameDate").IsUnique();
+
+            entity.Property(e => e.PercentOff).HasColumnName("percentOff");
+
+            entity.HasOne(d => d.Coupon).WithOne(p => p.CouponRoomCountSameDate)
+                .HasForeignKey<CouponRoomCountSameDate>(d => d.CouponId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponRoomCountSameDate_CouponId");
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.CouponRoomCountSameDates)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponRoomCountSameDate_RoomTypeId");
+        });
+
+        modelBuilder.Entity<CouponRoomTimeSpan>(entity =>
+        {
+            entity.ToTable("CouponRoomTimeSpan");
+
+            entity.HasIndex(e => e.CouponId, "IX_CouponRoomTimeSpan").IsUnique();
+
+            entity.HasOne(d => d.Coupon).WithOne(p => p.CouponRoomTimeSpan)
+                .HasForeignKey<CouponRoomTimeSpan>(d => d.CouponId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponRoomTimeSpan_CouponId");
+
+            entity.HasOne(d => d.RoomType).WithMany(p => p.CouponRoomTimeSpans)
+                .HasForeignKey(d => d.RoomTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponRoomTimeSpan_RoomTypeId");
+        });
+
+        modelBuilder.Entity<CouponThresholdDiscount>(entity =>
+        {
+            entity.ToTable("CouponThresholdDiscount");
+
+            entity.HasIndex(e => e.CouponId, "IX_CouponThresholdDiscount").IsUnique();
+
+            entity.HasOne(d => d.Coupon).WithOne(p => p.CouponThresholdDiscount)
+                .HasForeignKey<CouponThresholdDiscount>(d => d.CouponId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CouponThresholdDiscount_CouponId");
+        });
+
+        modelBuilder.Entity<CouponType>(entity =>
+        {
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -541,20 +637,13 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<HallMenuSchedule>(entity =>
         {
-            entity.Property(e => e.HallMorderItemId).HasColumnName("HallMOrderItemId");
-
             entity.HasOne(d => d.HallMenu).WithMany(p => p.HallMenuSchedules)
                 .HasForeignKey(d => d.HallMenuId)
                 .HasConstraintName("FK_HallMenuSchedules_HallMenus");
 
-            entity.HasOne(d => d.HallMorderItem).WithMany(p => p.HallMenuSchedules)
-                .HasForeignKey(d => d.HallMorderItemId)
-                .HasConstraintName("FK_HallMenuSchedules_HallMOrderItems");
-        });
-
-        modelBuilder.Entity<HallMorderItem>(entity =>
-        {
-            entity.ToTable("HallMOrderItems");
+            entity.HasOne(d => d.HallOrderItem).WithMany(p => p.HallMenuSchedules)
+                .HasForeignKey(d => d.HallOrderItemId)
+                .HasConstraintName("FK_HallMenuSchedules_HallOrderItem");
         });
 
         modelBuilder.Entity<HallOrderItem>(entity =>
@@ -1195,7 +1284,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.States).HasColumnName("states");
         });
 
-        OnModelCreatingGeneratedProcedures(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 

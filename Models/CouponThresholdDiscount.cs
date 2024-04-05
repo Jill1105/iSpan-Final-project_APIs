@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class HallMenuSchedule
+public partial class CouponThresholdDiscount
 {
     public int Id { get; set; }
 
-    public int? HallMenuId { get; set; }
+    public int CouponId { get; set; }
 
-    public int? HallOrderItemId { get; set; }
+    public int Threshold { get; set; }
 
-    public virtual HallMenu HallMenu { get; set; }
+    public int Discount { get; set; }
 
-    public virtual HallOrderItem HallOrderItem { get; set; }
+    public virtual Coupon Coupon { get; set; }
 }

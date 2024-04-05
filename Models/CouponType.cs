@@ -5,13 +5,11 @@ using System.Collections.Generic;
 
 namespace HotelFuen31.APIs.Models;
 
-public partial class HallMorderItem
+public partial class CouponType
 {
     public int Id { get; set; }
 
-    public int? Price { get; set; }
+    public string Name { get; set; }
 
-    public int? Qty { get; set; }
-
-    public virtual ICollection<HallMenuSchedule> HallMenuSchedules { get; set; } = new List<HallMenuSchedule>();
+    public virtual ICollection<Coupon> Coupons { get; set; } = new List<Coupon>();
 }
