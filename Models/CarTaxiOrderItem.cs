@@ -15,19 +15,19 @@ public partial class CarTaxiOrderItem
 
     public string PickUpLatitude { get; set; }
 
+    public string PickUpLocation { get; set; }
+
     public string DestinationLatitude { get; set; }
 
     public string DestinationLongtitude { get; set; }
 
-    public decimal SubTotal { get; set; }
+    public string DestinationLocation { get; set; }
+
+    public decimal Total { get; set; }
 
     public DateTime StartTime { get; set; }
 
-    public DateTime? ActualStartTime { get; set; }
-
     public DateTime EndTime { get; set; }
-
-    public DateTime? ActualEndTime { get; set; }
 
     public int EmpId { get; set; }
 
