@@ -17,5 +17,7 @@
         public string? LevelName { get; set; }
 
         public int TypeId { get; set;}
+        
+        public string TypeName { get; set; }
     }
 }
