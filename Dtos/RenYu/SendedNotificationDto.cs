@@ -20,7 +20,5 @@ namespace HotelFuen31.APIs.Dtos.RenYu
         public int? LevelId { get; set; }
 
         public int TypeId { get; set; }
-
-        public int TotalPages {  get; set; }
     }
 }
