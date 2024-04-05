@@ -44,7 +44,7 @@ namespace HotelFuen31.APIs.Services.Haku
 					PickUpLatitude = ctoi.PickUpLatitude,
 					DestinationLatitude = ctoi.DestinationLatitude,
 					DestinationLongtitude = ctoi.DestinationLongtitude,
-					SubTotal = ctoi.SubTotal,
+					//SubTotal = ctoi.SubTotal,
 					StartTime = ctoi.StartTime.ToString(),
 					EndTime = ctoi.EndTime.ToString(),
 					EmpId = ctoi.EmpId,
@@ -154,7 +154,7 @@ namespace HotelFuen31.APIs.Services.Haku
 				PickUpLatitude = ctoi.PickUpLatitude,
 				DestinationLatitude = ctoi.DestinationLatitude,
 				DestinationLongtitude = ctoi.DestinationLongtitude,
-				SubTotal = ctoi.SubTotal,
+				//SubTotal = ctoi.SubTotal,
 				StartTime = ctoi.StartTime.ToString(),
 				EndTime = ctoi.EndTime.ToString(),
 				EmpId = ctoi.EmpId,
@@ -176,7 +176,7 @@ namespace HotelFuen31.APIs.Services.Haku
 
 				DestinationLongtitude = dto.DestinationLongtitude,
 
-				SubTotal = dto.SubTotal,
+				//SubTotal = dto.SubTotal,
 
 				StartTime = start,
 

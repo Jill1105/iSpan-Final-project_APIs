@@ -9,6 +9,7 @@ using HotelFuen31.APIs.Models;
 using HotelFuen31.APIs.Services.Jill;
 using HotelFuen31.APIs.Dto.Jill;
 using HotelFuen31.APIs.Controllers.Yee;
+using HotelFuen31.APIs.Dtos.Jill;
 
 namespace HotelFuen31.APIs.Controllers.Jill
 {
@@ -52,6 +53,12 @@ namespace HotelFuen31.APIs.Controllers.Jill
 
 
             return vms;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IEnumerable<HallItemDto>> GetHall(int id)
+        {
+            return await _service.GetHall(id).ToListAsync();
         }
 
     }
