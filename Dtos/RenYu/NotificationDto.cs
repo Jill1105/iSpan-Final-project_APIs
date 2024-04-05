@@ -15,5 +15,9 @@
         public int? LevelId { get; set; }
 
         public string? LevelName { get; set; }
+
+        public int TypeId { get; set;}
+        
+        public string TypeName { get; set; }
     }
 }

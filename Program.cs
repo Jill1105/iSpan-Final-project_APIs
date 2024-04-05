@@ -137,6 +137,7 @@ namespace HotelFuen31.APIs
             app.UseHangfireDashboard();
 
             app.MapHub<NotificationHub>("/notificationHub");
+            app.MapHub<LiveCustomerServiceHub>("/liveCustomerServiceHub");
 
             app.Run();
         }
