@@ -155,6 +155,18 @@ namespace HotelFuen31.APIs.Services.Haku
 
 			return -1;
 		}
+
+		public string CarOrderDelete(int id)
+		{
+			var carOrder = _db.CarTaxiOrderItems.Find(id);
+			if (carOrder == null)
+			{
+				return "沒有此訂單項目";
+			}
+			_db.CarTaxiOrderItems.Remove(carOrder); 
+			_db.SaveChanges();
+			return "刪除成功";
+		}
 	}
 }
 	public static class CarTaxiOrderItemExts { 

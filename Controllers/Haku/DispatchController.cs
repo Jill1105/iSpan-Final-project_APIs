@@ -92,6 +92,14 @@ namespace HotelFuen31.APIs.Controllers.Haku
 			}
 		}
 
+		// DELETE: api/Dispatch/5
+		[HttpDelete("{id}")]
+		public ActionResult DeleteCarOrder(int id)
+		{
+			string result= _dispatchService.CarOrderDelete(id);
+			return Content(result);
+		}
+
 		private string ValidateToken()
 		{
 			// 取得 request 置於 Header 中的 token
