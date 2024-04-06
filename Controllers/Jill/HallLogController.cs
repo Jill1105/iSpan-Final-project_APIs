@@ -33,7 +33,7 @@ namespace HotelFuen31.APIs.Controllers.Jill
         }
 
         [HttpPost("Create")]
-        public async Task<string> CreateOrder(CreateHallLogDto dto)
+        public async Task<string> CreateOrder([FromBody]CreateHallLogDto dto)
         {
             return await _service.Create(dto);
         }
