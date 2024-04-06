@@ -74,6 +74,7 @@ namespace HotelFuen31.APIs
             // yee
             builder.Services.AddScoped<CartRoomService>();
             builder.Services.AddScoped<OrderService>();
+            builder.Services.AddScoped<PreOrderService>();
           
             //FC
             builder.Services.AddScoped<IReservationServRepo, ReservationServEFRepo>();
@@ -137,6 +138,7 @@ namespace HotelFuen31.APIs
             app.UseHangfireDashboard();
 
             app.MapHub<NotificationHub>("/notificationHub");
+            app.MapHub<LiveCustomerServiceHub>("/liveCustomerServiceHub");
 
             app.Run();
         }

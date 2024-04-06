@@ -179,11 +179,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ShoppingCartOrder> ShoppingCartOrders { get; set; }
 
-    public virtual DbSet<State> States { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;User ID=hotel;Password=fuen31;Encrypt=False");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Data Source=sparkle206-sparkle.myftp.biz;Initial Catalog=dbHotel;Persist Security Info=True;User ID=hotel;Password=fuen31;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -470,17 +468,6 @@ public partial class AppDbContext : DbContext
             entity.ToTable("cipher");
 
             entity.Property(e => e.Id).HasColumnName("id");
-        });
-
-        modelBuilder.Entity<Counter>(entity =>
-        {
-            entity.HasKey(e => new { e.Key, e.Id }).HasName("PK_HangFire_Counter");
-
-            entity.ToTable("Counter", "HangFire");
-
-            entity.Property(e => e.Key).HasMaxLength(100);
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.ExpireAt).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Coupon>(entity =>
@@ -1431,27 +1418,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.States).HasColumnName("states");
         });
 
-        modelBuilder.Entity<State>(entity =>
-        {
-            entity.HasKey(e => new { e.JobId, e.Id }).HasName("PK_HangFire_State");
-
-            entity.ToTable("State", "HangFire");
-
-            entity.HasIndex(e => e.CreatedAt, "IX_HangFire_State_CreatedAt");
-
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(20);
-            entity.Property(e => e.Reason).HasMaxLength(100);
-
-            entity.HasOne(d => d.Job).WithMany(p => p.States)
-                .HasForeignKey(d => d.JobId)
-                .HasConstraintName("FK_HangFire_State_Job");
-        });
-
-        OnModelCreatingGeneratedProcedures(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 

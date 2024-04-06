@@ -105,7 +105,7 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 if (orderDto.RtnCode == 1 || orderDto.Status == 1) return BadRequest("該訂單已付款");
 
                 //string backEnd = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-                string backEnd = $"https://9cc9-114-25-159-200.ngrok-free.app";
+                string backEnd = $"https://fbbf-2402-7500-5d5-9470-d4c-afbc-a073-8af.ngrok-free.app";
                 string frontEnd = $"localhost:5173";
 
                 var orderDic = _orderService.GetECPayDic(orderDto, backEnd, frontEnd);
@@ -123,14 +123,14 @@ namespace HotelFuen31.APIs.Controllers.Yee
         [Route("ECPay")]
         public ActionResult PostFromECPay([FromForm]IFormCollection col)
         {
-            var data = new Dictionary<string, string>();
-            foreach (string key in col.Keys)
-            {
-                data.Add(key, col[key]);
-            }
-
             try
             {
+                var data = new Dictionary<string, string>();
+                foreach (string key in col.Keys)
+                {
+                    data.Add(key, col[key].ToString() ?? "");
+                }
+
                 int rtnCod = _orderService.UpdateECpay(data);
                 if (rtnCod == 1) return Content("1|OK");
 
