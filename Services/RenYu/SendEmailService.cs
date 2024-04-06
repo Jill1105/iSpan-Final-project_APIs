@@ -9,8 +9,6 @@ namespace HotelFuen31.APIs.Services.RenYu
 {
     public class SendEmailService
     {
-      
-
         public void SendEmail(string subject, string title, string content,string toEmail)
         {
             SmtpEmail(subject,toEmail,() => EmailTemplate.General(title, content));
