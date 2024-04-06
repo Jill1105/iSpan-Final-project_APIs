@@ -61,14 +61,9 @@ namespace HotelFuen31.APIs.Services.Guanyu
             {
                 try
                 {
-                    membersalt = _db.Members.Where(m => m.Phone.Contains(phone))
-                                    .FirstOrDefault().Salt;
-                    if (membersalt != null)
-                    {
-                        pwd = _pwd.CryptoPWD(pwd, membersalt);
-                    }
-                    memberid = _db.Members.Where(m => m.Phone.Contains(phone) && m.Password.Contains(pwd))
-                                .FirstOrDefault().Id;
+                    membersalt = _db.Members.Where(m => m.Phone.Contains(phone)).First().Salt;
+                    if (membersalt != null) pwd = _pwd.CryptoPWD(pwd, membersalt);
+                    memberid = _db.Members.Where(m => m.Phone == phone && m.Password == pwd).First().Id;
                 }
                 catch
                 {
@@ -213,6 +208,10 @@ namespace HotelFuen31.APIs.Services.Guanyu
             {
                 member = _db.Members.Where(m => m.Phone == editpwddto.Phone).First();
                 salt = _db.Members.Where(m => m.Phone == editpwddto.Phone).First().Salt;
+                if (salt == null)
+                {
+                    salt = _pwd.NewSalt();
+                }
             }
             catch
             {
@@ -236,6 +235,7 @@ namespace HotelFuen31.APIs.Services.Guanyu
                 if(editpwddto.NewPwd == editpwddto.confirmPwd)
                 {
                     member.Password = _pwd.CryptoPWD(editpwddto.NewPwd, salt);
+                    member.Salt = salt;
                     _db.SaveChanges();
                 }
                 else
