@@ -3,6 +3,7 @@ using HotelFuen31.APIs.Interfaces.Yee;
 using HotelFuen31.APIs.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace HotelFuen31.APIs.Services.Yee
 {
@@ -44,26 +45,31 @@ namespace HotelFuen31.APIs.Services.Yee
 
         private IEnumerable<IPrePayDto> LoadProducts(string phone)
         {
+            var roomCalendars = _db.RoomCalendars.AsNoTracking().ToList();
+
             var items = _db.CartRoomItems
                 .Include(cri => cri.Type)
                 .Where(cri => cri.Phone == phone && cri.Selected)
                 .ToList()
-                .Select((cri, index) => new RoomPrePayDto
+                .Select((cri, index) =>
                 {
-                    Index = index + 1,
-                    Price = _db.RoomCalendars
-                        .AsNoTracking()
+                    var totalPrice = roomCalendars
                         .Where(rc => cri.CheckInDate <= rc.Date && rc.Date < cri.CheckOutDate)
-                        .ToList()
                         .Sum(rc => rc.IsHoliday == "true" ?
-                                        cri.Type.HolidayPrice : rc.Week == "五" || rc.Week == "六" || rc.Week == "日" ?
-                                        cri.Type.WeekendPrice : cri.Type.WeekdayPrice),
-                    SKU = cri.Uid,
-                    Name = cri.Type.TypeName,
-                    Info = $"{cri.CheckInDate.ToString("yyyy/MM/dd")}~{cri.CheckOutDate.ToString("yyyy/MM/dd")},{cri.Remark}",
-                    RoomTypeId = cri.TypeId,
-                    CheckInDate = cri.CheckInDate,
-                    CheckOutDate = cri.CheckOutDate,
+                                       cri.Type.HolidayPrice : rc.Week == "五" || rc.Week == "六" || rc.Week == "日" ?
+                                       cri.Type.WeekendPrice : cri.Type.WeekdayPrice);
+
+                    return new RoomPrePayDto
+                    {
+                        Index = index + 1,
+                        Price = totalPrice,
+                        SKU = cri.Uid,
+                        Name = cri.Type.TypeName,
+                        Info = $"{cri.CheckInDate.ToString("yyyy/MM/dd")}~{cri.CheckOutDate.ToString("yyyy/MM/dd")},{cri.Remark}",
+                        RoomTypeId = cri.TypeId,
+                        CheckInDate = cri.CheckInDate,
+                        CheckOutDate = cri.CheckOutDate,
+                    };
                 }).ToList();
 
             if (items.Count < 1) throw new Exception("取得預節錯誤: 查無結算項目");
@@ -111,14 +117,6 @@ namespace HotelFuen31.APIs.Services.Yee
             }
         }
 
-        //private IEnumerable<IRuleBase> LoadRules()
-        //{
-        //    yield return new RoomTypeSpanDiscountRule(1, new DateTime(2024, 4, 3), new DateTime(2024, 4, 12), 11, _db);
-        //    yield return new RoomTypeCountDiscountRule(1, 2, 15, _db);
-        //    yield return new RoomTypeCountDiscountRule(3, 2, 30, _db);
-        //    //yield return new TotalPriceDiscountRule(1000, 100);
-        //    yield break;
-        //}
     }
 
     public static class RuleExts
@@ -135,4 +133,28 @@ namespace HotelFuen31.APIs.Services.Yee
             return dto;
         }
     }
+
+    //public static class CartRoomItemsExt
+    //{
+    //    public static IPrePayDto ToPrePay(this IEnumerable<CartRoomItem> items)
+    //    {
+    //        var dto = items.Select((cri, index) => new RoomPrePayDto
+    //        {
+    //            Index = index + 1,
+    //            Price = _db.RoomCalendars
+    //                    .AsNoTracking()
+    //            .Where(rc => cri.CheckInDate <= rc.Date && rc.Date < cri.CheckOutDate)
+    //            .ToList()
+    //                    .Sum(rc => rc.IsHoliday == "true" ?
+    //                    cri.Type.HolidayPrice : rc.Week == "五" || rc.Week == "六" || rc.Week == "日" ?
+    //                                    cri.Type.WeekendPrice : cri.Type.WeekdayPrice),
+    //            SKU = cri.Uid,
+    //            Name = cri.Type.TypeName,
+    //            Info = $"{cri.CheckInDate.ToString("yyyy/MM/dd")}~{cri.CheckOutDate.ToString("yyyy/MM/dd")},{cri.Remark}",
+    //            RoomTypeId = cri.TypeId,
+    //            CheckInDate = cri.CheckInDate,
+    //            CheckOutDate = cri.CheckOutDate,
+    //        });
+    //    }
+    //}
 }

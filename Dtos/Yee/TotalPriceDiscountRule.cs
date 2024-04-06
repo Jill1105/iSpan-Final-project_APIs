@@ -23,7 +23,7 @@ namespace HotelFuen31.APIs.Dtos.Yee
 
         public IEnumerable<Discount> Process(CartContext cart)
         {
-            if (cart.TotalPrice > this.MinDiscountPrice) yield return new Discount()
+            if (cart.TotalPrice >= this.MinDiscountPrice) yield return new Discount()
             {
                 Amount = this.DiscountAmount,
                 Rule = this,
