@@ -1,11 +1,14 @@
 ﻿using Hangfire.Server;
 using HotelFuen31.APIs.Dtos.Yee;
+using HotelFuen31.APIs.Interfaces.Yee;
 using HotelFuen31.APIs.Models;
 using Microsoft.AspNetCore.Routing.Matching;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing.Text;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -20,14 +23,16 @@ namespace HotelFuen31.APIs.Services.Yee
     {
         private readonly AppDbContext _db;
         private readonly CartRoomService _crService;
+        private readonly PreOrderService _poService;
 
-        public OrderService(AppDbContext db, CartRoomService crService)
+        public OrderService(AppDbContext db, CartRoomService crService, PreOrderService poService)
         {
             _db = db;
             _crService = crService;
+            _poService = poService;
         }
 
-        public IEnumerable<OrderDto> GetUserOrder(string phone)
+        public IEnumerable<OrderDto> GetUserOrders(string phone)
         {
             var orders = _db.Orders
                 .Include(o => o.RoomBookings)
@@ -48,7 +53,8 @@ namespace HotelFuen31.APIs.Services.Yee
                 RtnCode = o.RtnCode,
                 RtnMsg = o.RtnMsg,
                 TradeNo = o.TradeNo,
-                TradeAmt = o.RoomBookings.Count > 0 ? o.RoomBookings.Select(rb => rb.OrderPrice).Aggregate((total, sub) => total + sub) : 0,
+                //TradeAmt = o.RoomBookings.Count > 0 ? o.RoomBookings.Sum(rb => rb.OrderPrice) : 0,
+                TradeAmt = o.TradeAmt,
                 PaymentDate = o.PaymentDate,
                 PaymentType = o.PaymentType,
                 PaymentTypeChargeFee = o.PaymentTypeChargeFee,
@@ -76,11 +82,39 @@ namespace HotelFuen31.APIs.Services.Yee
             return dtos;
         }
 
-        public int CreateOrder(string phone)
+        public int CreateOrder(string phone, int[] useCoupons)
         {
-            var selectedItem = _db.CartRoomItems.Where(cri => cri.Phone == phone && cri.Selected);
-            if (!selectedItem.Any()) throw new Exception("訂單項目為空");
+            //var selectedItem = _db.CartRoomItems.Where(cri => cri.Phone == phone && cri.Selected);
+            //if (!selectedItem.Any()) throw new Exception("訂單項目為空");
+           
+            var member = _db.Members
+                            .AsNoTracking()
+                            .Include(m => m.CouponMembers)
+                                .ThenInclude(mc => mc.Coupon)
+                            .Select( m => new MemberCheckOutDto
+                            {
+                                Id = m.Id,
+                                Phone = m.Phone,
+                                Selected = _db.CartRoomItems
+                                    .Include(cri => cri.Type)
+                                    .Where(cri => cri.Phone == phone && cri.Selected)
+                                    .ToList(),
+                                CouponMembers = m.CouponMembers.ToList(),
+                            })
+                            .FirstOrDefault(m => m.Phone == phone);
 
+            if (member == null) throw new Exception("建立訂單錯誤: 查無該會員");
+            if (member.Selected == null || member.Selected.Count() < 1) throw new Exception("建立訂單錯誤: 訂單項目為空");
+            //if (!useCoupons.Except(member.CouponMembers.Select(c => c.Coupon.Id)).Any()) throw new Exception("建立訂單錯誤: 會員並無該優惠券");
+
+            var selectedItem = member.Selected.ToList();
+            var actualCoupons = member.CouponMembers?.Where(cm => useCoupons.Contains(cm.Coupon.Id)).ToList() ?? new List<CouponMember>();
+
+            var preOrder = GetCheckout(selectedItem, actualCoupons);
+
+            if (!int.TryParse(preOrder.FinalPrice.ToString(), out int final)) throw new Exception("建立訂單錯誤: decimal 轉型錯誤");
+
+            // todo 有效期限
 
             using (var scope = new TransactionScope())
             {
@@ -109,7 +143,7 @@ namespace HotelFuen31.APIs.Services.Yee
 
 
                 // 逐一寫入
-                selectedItem.ToList().ForEach(item =>
+                selectedItem.ForEach(item =>
                 {
                     // 確認有無空房
                     var room = _db.Rooms
@@ -117,7 +151,7 @@ namespace HotelFuen31.APIs.Services.Yee
                                    .Where(r => r.RoomTypeId == item.TypeId)
                                    .FirstOrDefault(r => !r.RoomBookings.Any(rb => (item.CheckInDate < rb.CheckOutDate && item.CheckOutDate > rb.CheckInDate)));
 
-                    if (room == null) throw new Exception("已無空房");
+                    if (room == null) throw new Exception("建立訂單錯誤: 已無空房");
 
                     // 新建訂單項目
                     var newBooking = new RoomBooking
@@ -138,11 +172,22 @@ namespace HotelFuen31.APIs.Services.Yee
                     _db.SaveChanges();
                 });
 
+
+                if(actualCoupons?.Count() > 0)
+                {
+                    // 排除已提交優惠券
+                    _db.CouponMembers.RemoveRange(actualCoupons);
+                }
+
                 // 購物車排除已提交訂單
-                _db.CartRoomItems.RemoveRange(selectedItem);
+                var removeItems = _db.CartRoomItems.Where(cri => cri.Phone == phone && cri.Selected);
+                _db.CartRoomItems.RemoveRange(removeItems);
+
+                order.TradeAmt = final;
+
                 _db.SaveChanges();
 
-                // 提交事务
+                // 提交
                 scope.Complete();
 
                 return order.Id;
@@ -169,7 +214,8 @@ namespace HotelFuen31.APIs.Services.Yee
                 RtnCode = order.RtnCode,
                 RtnMsg = order.RtnMsg,
                 TradeNo = order.TradeNo,
-                TradeAmt = order.RoomBookings?.Select(rb => rb.OrderPrice).Aggregate((total, sub) => total + sub) ?? 0,
+                //TradeAmt = order.TradeAmt = order.RoomBookings?.Sum(rb => rb.OrderPrice),
+                TradeAmt = order.TradeAmt,
                 PaymentDate = order.PaymentDate,
                 PaymentType = order.PaymentType,
                 PaymentTypeChargeFee = order.PaymentTypeChargeFee,
@@ -308,6 +354,108 @@ namespace HotelFuen31.APIs.Services.Yee
             return $"{new string('0', 10 - orderId.ToString().Length)}{orderId}{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10)}";
         }
 
+        private IEnumerable<IPrePayDto> LoadProducts(IEnumerable<CartRoomItem> items)
+        {
+            var checkInDates = items.Select(i => i.CheckInDate);
+            var checkOutDates = items.Select(i => i.CheckOutDate);
+            var minDate = checkInDates.Min();
+            var maxDate = checkOutDates.Max();
+
+            var relevantRoomCalendars = _db.RoomCalendars
+                .AsNoTracking()
+                .Where(rc => rc.Date >= minDate && rc.Date < maxDate)
+                .ToList();
+
+            var dtos = items.Select((cri, index) =>
+            {
+                var price = relevantRoomCalendars
+                    .Where(rc => cri.CheckInDate <= rc.Date && rc.Date < cri.CheckOutDate)
+                    .Sum(rc => rc.IsHoliday == "true" ?
+                                    cri.Type.HolidayPrice : rc.Week == "五" || rc.Week == "六" || rc.Week == "日" ?
+                                    cri.Type.WeekendPrice : cri.Type.WeekdayPrice);
+
+                return new RoomPrePayDto
+                {
+                    Index = index + 1,
+                    Price = price,
+                    SKU = cri.Uid,
+                    Name = cri.Type.TypeName,
+                    Info = $"{cri.CheckInDate:yyyy/MM/dd}~{cri.CheckOutDate:yyyy/MM/dd},{cri.Remark}",
+                    RoomTypeId = cri.TypeId,
+                    CheckInDate = cri.CheckInDate,
+                    CheckOutDate = cri.CheckOutDate,
+                };
+            }).ToList();
+
+            if (dtos.Count < 1) throw new Exception("新增訂單錯誤: 查無結算項目");
+
+            return dtos;
+        }
+
+        private IEnumerable<IRuleBase> LoadRules(IEnumerable<Coupon> coupons)
+        {
+            foreach (var c in coupons)
+            {
+                switch (c.TypeId)
+                {
+                    case 1:
+                        var couponTD = _db.CouponThresholdDiscounts.FirstOrDefault(crts => crts.CouponId == c.Id);
+                        if (couponTD != null)
+                        {
+                            yield return new TotalPriceDiscountRule(couponTD.CouponId, couponTD.Threshold, couponTD.Discount);
+                        }
+                        break;
+
+                    case 2:
+                        var couponRTS = _db.CouponRoomTimeSpans.FirstOrDefault(crts => crts.CouponId == c.Id);
+                        if (couponRTS != null)
+                        {
+                            yield return new RoomTypeSpanDiscountRule(couponRTS.CouponId, couponRTS.RoomTypeId, couponRTS.StartTime, couponRTS.EndTime, couponRTS.PercentOff, _db);
+                        }
+                        break;
+
+                    case 3:
+                        var couponRCSD = _db.CouponRoomCountSameDates.FirstOrDefault(crts => crts.CouponId == c.Id);
+                        if (couponRCSD != null)
+                        {
+                            yield return new RoomTypeCountDiscountRule(couponRCSD.CouponId, couponRCSD.RoomTypeId, couponRCSD.Count, couponRCSD.PercentOff, _db);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public PreOrderDto GetCheckout(IEnumerable<CartRoomItem> selectedItem, IEnumerable<CouponMember> actualCoupons)
+        {
+            CartContext cart = new CartContext();
+            POS pos = new POS();
+
+            var prePayDtos = LoadProducts(selectedItem);
+            var rules = LoadRules(actualCoupons?.Select(cm => cm.Coupon).ToList() ?? new List<Coupon>());
+
+            cart.PurchasedItems.AddRange(prePayDtos);
+            pos.ActivedRules.AddRange(rules);
+
+            pos.CheckoutProcess(cart);
+
+            var preOrder = new PreOrderDto
+            {
+
+                PurchasedItems = cart.PurchasedItems,
+                AppliedDiscounts = cart.AppliedDiscounts.Select(ad => new DiscountDto
+                {
+                    Id = ad.Id,
+                    Rule = ad.Rule?.RuleToDto(),
+                    MachedIndex = ad.Products?.Select(p => p.Index).ToList(),
+                    Amount = ad.Amount,
+                }).ToList(),
+            };
+
+            return preOrder;
+        }
 
         //private string GetCheckMacValue(Dictionary<string, string> dicOrder)
         //{

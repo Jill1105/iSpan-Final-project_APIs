@@ -22,14 +22,14 @@ namespace HotelFuen31.APIs.Controllers.Yee
         // POST: api/Order/create
         [HttpPost]
         [Route("create")]
-        public ActionResult<Object> PostCreateOrderLogged()
+        public ActionResult<Object> PostCreateOrderLogged([FromBody] int[] coupons)
         {
             try
             {
                 string phone = ValidateToken();
                 if (phone == "401") return Unauthorized();
 
-                int newOrderId = _orderService.CreateOrder(phone);
+                int newOrderId = _orderService.CreateOrder(phone, coupons);
 
                 return new
                 {
@@ -46,14 +46,14 @@ namespace HotelFuen31.APIs.Controllers.Yee
         // GET: api/Order/user
         [HttpGet]
         [Route("user")]
-        public ActionResult<Object> GetUserOrder()
+        public ActionResult<Object> GetUserOrders()
         {
             try
             {
                 string phone = ValidateToken();
                 if (phone == "401") return Unauthorized();
 
-                var order = _orderService.GetUserOrder(phone);
+                var order = _orderService.GetUserOrders(phone);
 
                 return new
                 {
@@ -140,7 +140,6 @@ namespace HotelFuen31.APIs.Controllers.Yee
                 return BadRequest(ex.Message);
             }
         }
-
 
         private string ValidateToken()
         {
