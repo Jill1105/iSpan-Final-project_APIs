@@ -20,17 +20,11 @@ namespace HotelFuen31.APIs.Dtos.Jill
 
         public string Email { get; set; }
 
-        public string FilePath { get; set; }
+        public List<int?> Price { get; set; }
 
+        public List<int> Qty { get; set; }
 
-        public int HallLogId { get; set; }
+        public List<int?> HallMenuId { get; set; }
 
-        public int? Price { get; set; }
-
-        public int Qty { get; set; }
-
-        public int? HallMenuId { get; set; }
-
-        public int? HallOrderItemId { get; set; }
     }
 }

@@ -31,24 +31,29 @@ namespace HotelFuen31.APIs.Services.Jill
             _context.HallLogs.Add(HallLog);
             await _context.SaveChangesAsync();
 
-            var HallOrderItem = new HallOrderItem
+            for (int i = 0; i < dto.HallMenuId.Count; i++)
             {
-                HallLogId = HallLog.Id,
-                Price = dto.Price,
-                Qty = dto.Qty,
-            };
+                var HallOrderItem = new HallOrderItem
+                {
+                    HallLogId = HallLog.Id,
+                    Price = dto.Price[i],
+                    Qty = dto.Qty[i],
+                };
+            
 
             _context.HallOrderItems.Add(HallOrderItem);
             await _context.SaveChangesAsync();
 
             var HallMenuSchedule = new HallMenuSchedule
             {
-                HallMenuId = dto.HallMenuId,
+                HallMenuId = dto.HallMenuId[i],
                 HallOrderItemId = HallOrderItem.Id,
             };
 
             _context.HallMenuSchedules.Add(HallMenuSchedule);
             await _context.SaveChangesAsync();
+
+            };
 
             return "新增訂單成功";
         }
