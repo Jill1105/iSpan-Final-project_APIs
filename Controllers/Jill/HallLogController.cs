@@ -16,13 +16,11 @@ namespace HotelFuen31.APIs.Controllers.Jill
     {
         private readonly HallLogService _service;
         private readonly SendEmailService _mailservice;
-        private readonly HallItemService _itemservice;
 
-        public HallLogController(HallLogService service, SendEmailService mailservice, HallItemService itemservice)
+        public HallLogController(HallLogService service, SendEmailService mailservice)
         {
             _service = service;
             _mailservice = mailservice;
-            _itemservice = itemservice;
         }
 
         // GET: api/HallLog
