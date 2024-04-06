@@ -26,5 +26,11 @@ namespace HotelFuen31.APIs.Dtos.Jill
 
         public List<int?> HallMenuId { get; set; }
 
+        public string HallName { get; set; }
+
+        public List<int> MenuLevel { get; set; }
+
+        public List<string> MenuName { get; set; }
+
     }
 }
