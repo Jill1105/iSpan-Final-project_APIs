@@ -271,6 +271,50 @@
          "ObjectType": 0
       },
       {
+         "Name": "[HangFire].[AggregatedCounter]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[Counter]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[Hash]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[Job]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[JobParameter]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[JobQueue]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[List]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[Schema]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[Server]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[Set]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[HangFire].[State]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[HallOrderVw]",
          "ObjectType": 3
       },
@@ -325,7 +369,6 @@
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
-   "UsePrefixNavigationNaming": false,
    "UseSchemaFolders": false,
    "UseSchemaNamespaces": false,
    "UseSpatial": false,

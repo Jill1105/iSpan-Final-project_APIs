@@ -1,7 +1,9 @@
 ﻿using HotelFuen31.APIs.Dtos.Jill;
+using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Services.Jill;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelFuen31.APIs.Controllers.Jill
@@ -29,6 +31,13 @@ namespace HotelFuen31.APIs.Controllers.Jill
         {
             return await _service.SearchLog(id).ToListAsync();
         }
+
+        [HttpPost("Create")]
+        public async Task<string> CreateOrder(CreateHallLogDto dto)
+        {
+            return await _service.Create(dto);
+        }
+
 
     }
 }

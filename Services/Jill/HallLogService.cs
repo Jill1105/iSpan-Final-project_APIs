@@ -1,4 +1,6 @@
-﻿using HotelFuen31.APIs.Dtos.Jill;
+﻿using HotelFuen31.APIs.Dtos.FC;
+using HotelFuen31.APIs.Dtos.Jill;
+using HotelFuen31.APIs.Dtos.RenYu;
 using HotelFuen31.APIs.Models;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,46 @@ namespace HotelFuen31.APIs.Services.Jill
         { 
             _context = context; 
         }
+
+        public async Task<string> Create(CreateHallLogDto dto)
+        {
+            var HallLog = new HallLog
+            {
+                Name = dto.Name,
+                HallId = dto.HallId,
+                CellPhone = dto.CellPhone,
+                Email = dto.Email,
+                Guests = dto.Guests,
+                BookingStatus = true,
+                StartTime = dto.StartTime,
+                EndTime = dto.EndTime,
+            };
+            _context.HallLogs.Add(HallLog);
+            await _context.SaveChangesAsync();
+
+            var HallOrderItem = new HallOrderItem
+            {
+                HallLogId = HallLog.Id,
+                Price = dto.Price,
+                Qty = dto.Qty,
+            };
+
+            _context.HallOrderItems.Add(HallOrderItem);
+            await _context.SaveChangesAsync();
+
+            var HallMenuSchedule = new HallMenuSchedule
+            {
+                HallMenuId = dto.HallMenuId,
+                HallOrderItemId = HallOrderItem.Id,
+            };
+
+            _context.HallMenuSchedules.Add(HallMenuSchedule);
+            await _context.SaveChangesAsync();
+
+            return "新增訂單成功";
+        }
+
+
 
         public IQueryable<HallLogDto> GetAll() {
 
@@ -59,5 +101,7 @@ namespace HotelFuen31.APIs.Services.Jill
 
             return query;
         }
+
+
     }
 }
