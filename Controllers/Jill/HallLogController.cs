@@ -89,6 +89,11 @@ namespace HotelFuen31.APIs.Controllers.Jill
                         {menuContent}
                     </tbody>
                 </table>
+                <br>
+                <br>
+                <br>
+                <br>
+                Kalsari Hotel 團隊 敬上
                 ";
 
 
